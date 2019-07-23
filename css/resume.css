@@ -12,9 +12,6 @@ body {
 
 @media (min-width: 992px) {
     body {
-        background-image: url(image.jpg);
-        background-repeat: no-repeat;
-        background-position: right top;
         padding-top: 0;
         padding-left: 17rem;
     }
