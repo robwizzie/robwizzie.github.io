@@ -29,6 +29,18 @@
     <!-- Custom styles for this template -->
     <link href="css/resume.min.css" rel="stylesheet">
 
+    <style>
+        .hoverLink {
+            transition: all .3s !important;
+        }
+        
+        .hoverLink:hover {
+            color: #495057 !important;
+            text-decoration: none !important;
+            transition: all .3s !important;
+        }
+    </style>
+
 </head>
 
 <body id="page-top">
@@ -37,12 +49,12 @@
         <a class="navbar-brand js-scroll-trigger" href="#page-top">
             <span class="d-block d-lg-none">Rob Wiscount</span>
             <span class="d-none d-lg-block">
-        <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="robProfile.png" alt="">
-      </span>
+                <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="robProfile.gif" alt="">
+            </span>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -51,6 +63,9 @@
                 <li class="nav-item">
                     <a class="nav-link js-scroll-trigger" href="#experience">Experience</a>
                 </li>
+                <!--                 <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#personal-projects">Personal Projects</a>
+                </li> -->
                 <li class="nav-item">
                     <a class="nav-link js-scroll-trigger" href="#education">Education</a>
                 </li>
@@ -75,10 +90,10 @@
                     <span class="text-primary">Wiscount
                     </span>
                 </h1>
-                <div class="subheading mb-5">261 Stone Meeting House Rd · Swedesboro, NJ 08085 · (856) 405-9470 ·
-                    <a href="mailto:robertwiscount@gmail.com">robertwiscount@gmail.com</a>
+                <div class="subheading mb-5">30 Zane Street · Glassboro, NJ 08028 · <a class="hoverLink" href="tel:8564059470">(856) 405-9470</a> ·
+                    <a class="hoverLink" href="mailto:robertwiscount@gmail.com">robertwiscount@gmail.com</a>
                 </div>
-                <p class="lead mb-5">I am a Front-End Developer that specilizes in HTML, CSS, and Javascript. I enjoy making content of many different forms, from Youtube videos to Podcasts to creating websites. This website is designed to let you get to know me! If you would
+                <p class="lead mb-5">I am a Front-End Developer that specilizes in HTML, CSS, and Javascript. I enjoy making content of many different forms, from Youtube videos to podcasts to creating websites. This website is designed to let you get to know me! If you would
                     like to contact me, do not hesitate to call, text, or email me!</p>
                 <div class="social-icons">
                     <a href="https://www.linkedin.com/in/rob-wiscount-275a2218a/">
@@ -101,15 +116,29 @@
 
         <section class="resume-section p-3 p-lg-5 d-flex justify-content-center" id="experience">
             <div class="w-100">
-                <h2 class="mb-5">Experience <img src="RW Logo.png" alt="" style="width:75px;height:75px" align="right"></h2>
+                <h2 class="mb-5">Experience <img src="RW Logo.png" alt="" style="width:75px;height:75px" align="right">
+                </h2>
 
 
                 <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
                     <div class="resume-content">
+                        <a class="company-link" href="https://foleyprep.com/" style="text-decoration: none;"><img src="foleyLogo.png" alt="" style="width: 50px;height: auto;margin-left: 10px;float: right;"></a>
+                        <h3 class="mb-0">Web Developer</h3>
+                        <div class="subheading mb-3"><a class="company-link hoverLink" href="https://foleyprep.com/" style="text-decoration: none;">Foley Prep</a></div>
+                        <p>Created and designed new website using HTML, CSS, and JS. Worked with ChatGPT and AI in different parts of the website. Created and designed the front-end for for the new digital SAT (dSAT) software. Added all tools that will be
+                            used for the dSAT. Worked in-office in a team and a SCRUM envoirnment. Designed and helped create new gamified tutoring application "Bulb" with team. Created "Brainy", the new Foley mascot, and created Brainy's Question of
+                            the Day.</p>
+                    </div>
+                    <div class="resume-date text-md-right">
+                        <span class="text-primary">March 2023 - Current</span>
+                    </div>
+                </div>
+                <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
+                    <div class="resume-content">
                         <a class="company-link" href="https://xgen.ai/" style="text-decoration: none;"><img src="xgenLogo.png" alt="" style="width: 50px;height: auto;margin-left: 10px;float: right;"></a>
                         <h3 class="mb-0">Integrations Developer</h3>
-                        <div class="subheading mb-3"><a class="company-link" href="https://xgen.ai/" style="text-decoration: none;">XGen</a></div>
-                        <p>A Saas start-up company located in Florida where I was able to work a full-time job creating different recommended for you elements for many different brands in order to blend in with the websites HTML and CSS. Created custom javascript
+                        <div class="subheading mb-3"><a class="company-link hoverLink" href="https://xgen.ai/" style="text-decoration: none;">XGen</a></div>
+                        <p>SAAS start-up company located in Florida where I was able to work a full-time job creating different recommended for you elements for many different brands in order to blend in with the websites HTML and CSS. Created custom javascript
                             for different clients that required it. Debugged various different issues related to javascript. Helped with many different rulesets and page triggers.</p>
                     </div>
                     <div class="resume-date text-md-right">
@@ -121,7 +150,7 @@
                     <div class="resume-content">
                         <a class="company-link" href="https://customers.usli.com/sites/collegehelp/student-careers.html" style="text-decoration: none;"><img src="usliLogo.png" alt="" style="width: 85px;height: auto;margin-left: 10px;float: right;"></a>
                         <h3 class="mb-0">College Help Programming Paid Internship</h3>
-                        <div class="subheading mb-3"><a class="company-link" href="https://customers.usli.com/sites/collegehelp/student-careers.html" style="text-decoration: none;">USLi</a></div>
+                        <div class="subheading mb-3"><a class="company-link hoverLink" href="https://customers.usli.com/sites/collegehelp/student-careers.html" style="text-decoration: none;">USLi</a></div>
                         <p>Internship opportunity where I was given the amazing opportunity to be apart of a programming team. Learned a wide variety of programming languages/tools (C#, HTML, CSS, JavaScript, SQL). Performed tasked under experienced developers
                             in a SCRUM/Agile environment. Debugged issues in Visual Studios.</p>
                     </div>
@@ -134,7 +163,7 @@
                     <div class="resume-content">
                         <a class="company-link" href="https://www.lavnercampsandprograms.com/location/cherry-hill-nj-summer-camp-katz-jcc/" style="text-decoration: none;"><img src="lavnerLogo.png" alt="" style="width: 85px;height: auto;margin-left: 10px;float: right;"></a>
                         <h3 class="mb-0">Technology Instructor</h3>
-                        <div class="subheading mb-3"><a class="company-link" href="https://www.lavnercampsandprograms.com/location/cherry-hill-nj-summer-camp-katz-jcc/" style="text-decoration: none;">Lavner Camps</a></div>
+                        <div class="subheading mb-3"><a class="company-link hoverLink" href="https://www.lavnercampsandprograms.com/location/cherry-hill-nj-summer-camp-katz-jcc/" style="text-decoration: none;">Lavner Camps</a></div>
                         <p>Granted the opportunity to teach children how to code in applications such as python, C++, and scratch. I also demonstrated editing software, graphic design, and YouTube skills to children. They were taught the very basics in each
                             program and had a great time learning about technology that I am passionate about.</p>
                     </div>
@@ -148,10 +177,11 @@
                         <a class="company-link" href="https://www.krsd.org/" style="text-decoration: none;"><img src="kingswayLogo.png" alt="" style="width: 75px;height: auto;margin-left: 10px;float: right;"></a>
                         <h3 class="mb-0">Technology Aid</h3>
                         <div class="subheading mb-3">
-                            <a class="company-link" href="https://www.krsd.org/" style="text-decoration: none;">Kingsway Regional High School</a>
+                            <a class="company-link hoverLink" href="https://www.krsd.org/" style="text-decoration: none;">Kingsway
+                                Regional High School</a>
                         </div>
-                        <p>Working in a group setting by assisting others with technical problems and issues. Made sure there were no technical issues before school started. Set up every computer and projector in school. Opened desktops up and fixed any
-                            issues with software. Communicated solutions to problems involving technical support.</p>
+                        <p>Worked in a group setting and assited others with technical problems and issues. Made sure there were no technical issues before school started. Set up every computer and projector in school. Opened desktops up and fixed any issues
+                            with software. Communicated solutions to problems involving technical support.</p>
                     </div>
                     <div class="resume-date text-md-right">
                         <span class="text-primary">June 2018 - September 2018</span>
@@ -160,10 +190,19 @@
             </div>
         </section>
 
+        <!--         <hr class="m-0">
+        <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="personal-projects">
+            <div class="w-100">
+                <h2 class="mb-5">Personal Projects <img src="RW Logo.png" alt="" style="width:75px;height:75px" align="right"></h2>
+                <p></p>
+            </div>
+        </section> -->
+
         <hr class="m-0">
         <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="education">
             <div class="w-100">
-                <h2 class="mb-5">Education <img src="RW Logo.png" alt="" style="width:75px;height:75px" align="right"></h2>
+                <h2 class="mb-5">Education <img src="RW Logo.png" alt="" style="width:75px;height:75px" align="right">
+                </h2>
 
                 <div class="resume-item d-flex flex-column flex-md-row justify-content-between">
                     <div class="resume-content">
@@ -178,7 +217,8 @@
 
                 <div class="resume-item d-flex flex-column flex-md-row justify-content-between">
                     <div class="resume-content">
-                        <h3 class="mb-0"> <a style="text-decoration: none;" href="Robert Wiscount - Web Completion.pdf">Miles Technologies Boot Camp Certificate</a></h3>
+                        <h3 class="mb-0"> <a class="hoverLink" style="text-decoration: none;" href="Robert Wiscount - Web Completion.pdf">Miles Technologies Boot Camp Certificate</a>
+                        </h3>
                         <div class="subheading mb-3">Web Development</div>
                     </div>
                     <div class="resume-date text-md-right">
@@ -188,7 +228,8 @@
 
                 <div class="resume-item d-flex flex-column flex-md-row justify-content-between">
                     <div class="resume-content">
-                        <h3 class="mb-0"> <a style="text-decoration: none;" href="Robert Wiscount - DB Boot Camp.pdf">Miles Technologies Boot Camp Certificate</a></h3>
+                        <h3 class="mb-0"> <a class="hoverLink" style="text-decoration: none;" href="Robert Wiscount - DB Boot Camp.pdf">Miles Technologies Boot Camp Certificate</a>
+                        </h3>
                         <div class="subheading mb-3">Database Development</div>
                     </div>
                     <div class="resume-date text-md-right">
@@ -208,48 +249,65 @@
                 <div class="subheading mb-3">Programming Languages &amp; Other Helpful Skills</div>
                 <ul class="list-inline dev-icons">
                     <li class="list-inline-item">
-                        <i class="fab fa-html5"></i>
+                        <i class="fab fa-html5" title="HTML"></i>
                     </li>
                     <li class="list-inline-item">
-                        <i class="fab fa-css3-alt"></i>
+                        <i class="fab fa-css3-alt" title="CSS"></i>
                     </li>
                     <li class="list-inline-item">
-                        <i class="fab fa-js-square"></i>
+                        <i class="fab fa-js-square" title="Javascript"></i>
                     </li>
                     <li class="list-inline-item">
-                        <i class="fab fa-apple"></i>
+                        <i class="fab fa-apple" title="Swift/Apple"></i>
                     </li>
                     <li class="list-inline-item">
-                        <i class="fab fa-adobe"></i>
+                        <i class="fab fa-adobe" title="Adobe Software"></i>
                     </li>
                     <li class="list-inline-item">
-                        <i class="fab fa-youtube"></i>
+                        <i class="fab fa-youtube" title="YouTube"></i>
+                    </li>
+                    <li class="list-inline-item">
+                        <i class="fab fa-stripe" title="Stripe API"></i>
+                    </li>
+                    <li class="list-inline-item">
+                        <i class="fas fa-robot" title="ChatGPT/AI"></i>
                     </li>
                 </ul>
 
                 <div class="subheading mb-3">Workflow </div>
                 <ul class="fa-ul mb-0">
                     <li>
-                        <i class="fa-li fa fa-check"></i> Willing to Learn</li>
+                        <i class="fa-li fa fa-check"></i> Willing to Learn
+                    </li>
                     <li>
-                        <i class="fa-li fa fa-check"></i> Quick &amp; Efficient</li>
+                        <i class="fa-li fa fa-check"></i> Quick &amp; Efficient
+                    </li>
                     <li>
-                        <i class="fa-li fa fa-check"></i> Multiple Different Abilities</li>
+                        <i class="fa-li fa fa-check"></i> Great at Meeting Deadlines
+                    </li>
                     <li>
-                        <i class="fa-li fa fa-check"></i> Good Communication &amp; Team Player</li>
+                        <i class="fa-li fa fa-check"></i> Goes Above &amp; Beyond
+                    </li>
+                    <li>
+                        <i class="fa-li fa fa-check"></i> Great Communicator
+                    </li>
+                    <li>
+                        <i class="fa-li fa fa-check"></i> Knows How to Recieve &amp; Give Feedback
+                    </li>
                 </ul>
             </div>
         </section>
 
         <hr class="m-0">
-
         <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="interests">
             <div class="w-100">
-                <h2 class="mb-5">Interests <img src="RW Logo.png" alt="" style="width:75px;height:75px" align="right"></h2>
-                <p>Apart from coding, I enjoy beating my friends in basketball and volleyball. I have been in many different play and musical drama productions and love meeting new people. Aside from all of that, I have a podcast that I co-created with my
-                    long time pal and I also have my own YouTube channel.</p>
-                <p class="mb-0">When forced indoors, I tend to watch a lot of basketball and Netflix. I enjoy playing all different types of sports video games and competetive team video games such as Call of Duty, Smite, or 2k. I spend a lot of my free time keeping
-                    up with the technological advancements going on in the world by watching Apples WWDC or Googles I/O. I love hearing about all of the new advancements being made and I love thinking about what else could be made in the future.</p>
+                <h2 class="mb-5">Interests <img src="RW Logo.png" alt="" style="width:75px;height:75px" align="right">
+                </h2>
+                <p>Apart from coding, I enjoy beating my friends in basketball 🏀, volleyball 🏐, and pool 🎱. I am an AVID Philly sports fan, Sixers, Phillies, Flyers, Eagles - GO BIRDS 🦅! I was in many different play and musical drama productions in high
+                    school and love meeting new people. Aside from all of that, I used to run a podcast that I co-created with my long time friend and I also used to run my own YouTube channel!</p>
+                <p class="mb-0">When forced indoors, I tend to watch a lot of basketball and Netflix. I enjoy playing all different types of sports video games and competetive team video games such as 2k, NHL, Call of Duty, or sometimes even Smite. I spend a lot of my
+                    free time keeping up with the technological advancements going on in the world by watching Apples WWDC or Googles I/O. I do my best to stay up to date on anything and everything AI. It's crazy how fast technology has been moving these
+                    past few years 🤯</p>
             </div>
         </section>
 
