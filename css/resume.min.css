@@ -1,9 +1,3 @@
-/*!
- * Start Bootstrap - Resume v5.0.7 (https://startbootstrap.com/template-overviews/resume)
- * Copyright 2013-2019 Start Bootstrap
- * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-resume/blob/master/LICENSE)
- */
-
 body {
     font-family: Muli, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     padding-top: 54px;
@@ -196,21 +190,18 @@ a:hover {
 .project-item {
     position: relative;
     margin-bottom: 30px;
-    /* Spacing between rows */
 }
 
 .project-content {
     overflow: hidden;
     max-width: 100%;
     position: relative;
-    /* Ensure no overflow from scaling images or iframes */
 }
 
 .project-content img {
     width: 100%;
     height: auto;
     transition: transform .5s ease;
-    /* Smooth scaling transition */
 }
 
 .overlay {
@@ -220,10 +211,8 @@ a:hover {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.9);
-    /* Darker overlay for better readability */
     color: #ffffff;
     opacity: 0;
-    /* Hidden by default */
     transition: opacity .5s ease;
     display: flex;
     justify-content: center;
@@ -232,27 +221,20 @@ a:hover {
 
 .website-preview {
     width: 100%;
-    /* Adjust based on your preference */
     height: 100%;
-    /* Adjust based on your preference */
     border: none;
-    /* Remove iframe border */
     opacity: 0;
-    /* Start hidden, show on hover */
     transition: opacity .5s ease;
 }
 
 .project-content:hover .overlay {
     opacity: 1;
-    /* Show overlay on hover */
 }
 
 .project-content:hover .website-preview {
     opacity: 1;
-    /* Show website preview on hover */
 }
 
 .project-item:hover .project-content img {
     transform: scale(1.1);
-    /* Optional: Slightly enlarge image on hover */
 }
