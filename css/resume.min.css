@@ -153,7 +153,6 @@ p.lead {
 section.resume-section {
     padding-top: 5rem!important;
     padding-bottom: 5rem!important;
-    max-width: 75rem
 }
 
 section.resume-section .resume-item .resume-date {
@@ -192,4 +191,68 @@ a:active,
 a:focus,
 a:hover {
     color: #824027
+}
+
+.project-item {
+    position: relative;
+    margin-bottom: 30px;
+    /* Spacing between rows */
+}
+
+.project-content {
+    overflow: hidden;
+    max-width: 100%;
+    position: relative;
+    /* Ensure no overflow from scaling images or iframes */
+}
+
+.project-content img {
+    width: 100%;
+    height: auto;
+    transition: transform .5s ease;
+    /* Smooth scaling transition */
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    /* Darker overlay for better readability */
+    color: #ffffff;
+    opacity: 0;
+    /* Hidden by default */
+    transition: opacity .5s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.website-preview {
+    width: 100%;
+    /* Adjust based on your preference */
+    height: 100%;
+    /* Adjust based on your preference */
+    border: none;
+    /* Remove iframe border */
+    opacity: 0;
+    /* Start hidden, show on hover */
+    transition: opacity .5s ease;
+}
+
+.project-content:hover .overlay {
+    opacity: 1;
+    /* Show overlay on hover */
+}
+
+.project-content:hover .website-preview {
+    opacity: 1;
+    /* Show website preview on hover */
+}
+
+.project-item:hover .project-content img {
+    transform: scale(1.1);
+    /* Optional: Slightly enlarge image on hover */
 }
