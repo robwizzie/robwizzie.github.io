@@ -52,9 +52,15 @@
         }
         .about-highlights {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             flex-wrap: wrap;
             margin: 2rem 0;
+            justify-content: center;
+        }
+        @media (min-width: 768px) {
+            .about-highlights {
+                justify-content: flex-start;
+            }
         }
         .highlight-stat {
             text-align: center;
@@ -148,6 +154,12 @@
             gap: 0.75rem;
             margin-bottom: 2.5rem;
             flex-wrap: wrap;
+            justify-content: center;
+        }
+        @media (min-width: 768px) {
+            .projects-filter {
+                justify-content: flex-start;
+            }
         }
         .filter-btn {
             padding: 0.5rem 1.25rem;
@@ -175,6 +187,7 @@
         @media (max-width: 768px) {
             .projects-grid {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
         }
 
@@ -292,6 +305,13 @@
         @media (max-width: 768px) {
             .skills-container {
                 grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .skill-items {
+                justify-content: center;
+            }
+            .skill-category h4 {
+                text-align: center;
             }
         }
         .skill-category h4 {
@@ -451,6 +471,43 @@
             vertical-align: middle;
             margin-left: 0.5rem;
         }
+
+        /* ===== Mobile Centering & Spacing ===== */
+        @media (max-width: 768px) {
+            .section-header {
+                justify-content: center;
+                text-align: center;
+            }
+            .section-header img {
+                display: none;
+            }
+            .highlight-stat {
+                min-width: 120px;
+                flex: 1 1 120px;
+            }
+            .interests-grid {
+                grid-template-columns: 1fr;
+            }
+            .interest-card {
+                text-align: center;
+            }
+            .ai-banner {
+                text-align: center;
+            }
+            .ai-tools {
+                justify-content: center;
+            }
+            .tech-tags {
+                justify-content: flex-start;
+            }
+            .project-card .card-footer-custom {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            .experience-card {
+                padding-left: 1rem;
+            }
+        }
     </style>
 
 </head>
@@ -504,7 +561,7 @@
                     <span class="text-primary">Wiscount</span>
                 </h1>
                 <p class="hero-tagline">Web Developer &bull; App Creator &bull; AI Enthusiast</p>
-                <div class="subheading mb-4">Glassboro, NJ &middot; <a class="hoverLink" href="tel:8564059470">(856) 405-9470</a> &middot;
+                <div class="subheading mb-4">203 Albany Ave, Barrington, NJ &middot; <a class="hoverLink" href="tel:8564059470">(856) 405-9470</a> &middot;
                     <a class="hoverLink" href="mailto:robertwiscount@gmail.com">robertwiscount@gmail.com</a>
                 </div>
                 <p class="lead mb-4">I'm a developer who turns ideas into real, working products. From production websites used by thousands of students to iOS apps built from scratch, I love taking on projects that challenge me and shipping things people actually use. I bring the same energy to my full-time role as I do to my personal projects &mdash; always building, always learning, and always looking for the next thing to create.</p>
@@ -560,13 +617,14 @@
                             <h3 class="mb-0">Web Developer <span class="current-badge">CURRENT</span></h3>
                             <div class="subheading mb-3"><a class="company-link hoverLink" href="https://foleyprep.com/" style="text-decoration: none;">Foley Prep</a></div>
                             <ul>
-                                <li>Lead web developer responsible for the entire front-end of <strong>foleyprep.com</strong>, a platform used daily by students and educators for SAT preparation and tutoring services.</li>
+                                <li>Lead web developer responsible for the entire front-end of <strong>foleyprep.com</strong>, a platform used daily by students and educators for SAT preparation, tutoring, and AI-powered study tools.</li>
                                 <li>Architected and built the company's website from the ground up using HTML, CSS, Bootstrap, and JavaScript &mdash; delivering a polished, responsive experience across all devices.</li>
-                                <li>Integrated AI-powered features including ChatGPT-driven tools directly into the platform, giving students intelligent study aids and enhancing the overall learning experience.</li>
-                                <li>Played a key front-end role in developing the <strong>digital SAT (dSAT) software</strong>, building out the interface and essential interactive tools that power the test prep experience.</li>
-                                <li>Co-designed and developed <strong>"Bulb"</strong>, a gamified tutoring application that makes learning engaging through interactive mechanics and reward systems.</li>
-                                <li>Collaborate daily in a fast-paced Agile/SCRUM environment, shipping features consistently while maintaining code quality and meeting tight deadlines.</li>
-                                <li>Continuously improve site performance, accessibility, and UX &mdash; treating the platform as a living product that evolves based on user needs and feedback.</li>
+                                <li>Built and integrated <strong>AI-powered features</strong> including a ChatGPT-driven study assistant directly into the platform, giving students on-demand intelligent help with practice questions, explanations, and study strategies.</li>
+                                <li>Designed and developed the front-end for the <strong>digital SAT (dSAT) software</strong> &mdash; including the test-taking interface, timer system, question navigation, answer review tools, and score reporting dashboards that students and tutors rely on every day.</li>
+                                <li>Co-created <strong>"Bulb"</strong>, a gamified tutoring application with interactive mechanics, reward systems, and progress tracking that makes studying feel like a game rather than a chore.</li>
+                                <li>Built a full <strong>Stripe-powered payment system</strong> handling subscriptions, one-time purchases, and billing management for the platform's paid features.</li>
+                                <li>Designed and shipped <strong>landing pages, marketing sections, and conversion-focused UI</strong> that drive new student sign-ups and communicate the brand effectively.</li>
+                                <li>Work daily in a fast-paced Agile/SCRUM environment, consistently shipping features, squashing bugs, and iterating on the product based on real user feedback.</li>
                             </ul>
                             <div class="tech-tags">
                                 <span class="tech-tag">HTML5</span>
@@ -575,6 +633,7 @@
                                 <span class="tech-tag">Bootstrap</span>
                                 <span class="tech-tag">ChatGPT API</span>
                                 <span class="tech-tag">AI Integration</span>
+                                <span class="tech-tag">Stripe API</span>
                                 <span class="tech-tag">Agile/SCRUM</span>
                                 <span class="tech-tag">Responsive Design</span>
                             </div>
@@ -720,8 +779,8 @@
 
                     <!-- Sip on Pressed -->
                     <div class="project-card" data-type="website">
-                        <div class="card-image bg-light-warm">
-                            <i class="fas fa-leaf project-icon"></i>
+                        <div class="card-image">
+                            <img src="https://image.thum.io/get/width/700/crop/400/https://siponpressed.com/" alt="Sip on Pressed" loading="lazy">
                         </div>
                         <div class="card-body-custom">
                             <div class="project-type">Website &bull; Design Showcase</div>
@@ -744,7 +803,7 @@
                     <!-- Foley Prep -->
                     <div class="project-card" data-type="website">
                         <div class="card-image">
-                            <img src="foleyPrepWebsite.png" alt="Foley Prep">
+                            <img src="https://image.thum.io/get/width/700/crop/400/https://foleyprep.com/" alt="Foley Prep" loading="lazy">
                         </div>
                         <div class="card-body-custom">
                             <div class="project-type">Website &bull; Education Platform</div>
@@ -769,7 +828,7 @@
                     <!-- Traveling Tastebuds -->
                     <div class="project-card" data-type="website">
                         <div class="card-image">
-                            <img src="ttbWebsite.png" alt="Traveling Tastebuds">
+                            <img src="https://image.thum.io/get/width/700/crop/400/https://travelingtastebuds.org/" alt="Traveling Tastebuds" loading="lazy">
                         </div>
                         <div class="card-body-custom">
                             <div class="project-type">Website &bull; Food & Travel Blog</div>
@@ -792,8 +851,8 @@
 
                     <!-- SportsPick5 -->
                     <div class="project-card" data-type="website">
-                        <div class="card-image bg-light-green">
-                            <i class="fas fa-football-ball project-icon"></i>
+                        <div class="card-image">
+                            <img src="https://image.thum.io/get/width/700/crop/400/https://www.sportspick5.com/" alt="SportsPick5" loading="lazy">
                         </div>
                         <div class="card-body-custom">
                             <div class="project-type">Web App &bull; Sports & Gaming</div>
@@ -815,8 +874,8 @@
 
                     <!-- Rack Up Billiards -->
                     <div class="project-card" data-type="website">
-                        <div class="card-image bg-light-gray">
-                            <i class="fas fa-circle project-icon"></i>
+                        <div class="card-image">
+                            <img src="https://image.thum.io/get/width/700/crop/400/https://rackupbilliards.com/" alt="Rack Up Billiards" loading="lazy">
                         </div>
                         <div class="card-body-custom">
                             <div class="project-type">Web App &bull; Sports Tracker</div>
@@ -986,8 +1045,12 @@
                             <span class="skill-pill"><i class="fab fa-stripe"></i> Stripe API</span>
                             <span class="skill-pill"><i class="fab fa-adobe"></i> Adobe Suite</span>
                             <span class="skill-pill"><i class="fab fa-figma"></i> Figma</span>
+                            <span class="skill-pill"><i class="fas fa-paint-roller"></i> Canva</span>
                             <span class="skill-pill"><i class="fab fa-npm"></i> npm</span>
                             <span class="skill-pill"><i class="fas fa-gulp"></i> Gulp</span>
+                            <span class="skill-pill"><i class="fab fa-slack"></i> Slack</span>
+                            <span class="skill-pill"><i class="fas fa-tasks"></i> Jira</span>
+                            <span class="skill-pill"><i class="fab fa-wordpress"></i> WordPress</span>
                         </div>
                     </div>
                     <div class="skill-category">
@@ -1017,15 +1080,16 @@
                 <!-- AI Expertise Banner -->
                 <div class="ai-banner">
                     <h4><i class="fas fa-robot"></i> AI-Powered Development</h4>
-                    <p>I don't just use AI &mdash; I've built it into the products I ship. From integrating ChatGPT-powered study tools into a live education platform at Foley Prep, to using AI assistants daily to accelerate my development workflow, I stay on the cutting edge of how AI transforms the way we build software. I leverage AI for code generation, debugging, design iteration, content creation, and rapid prototyping &mdash; making me significantly faster and more effective as a developer.</p>
+                    <p>AI is the single best tool available to developers right now, and I feel like I can do anything with it. I don't just use AI &mdash; I've built it directly into the products I ship. At Foley Prep, I integrated ChatGPT-powered study tools into a live education platform that students use every day. In my personal workflow, AI is baked into everything I do: writing code, debugging, designing interfaces, generating content, and rapidly prototyping new ideas. It's made me a faster, more capable developer and I'm constantly finding new ways to push what's possible with it.</p>
                     <div class="ai-tools">
                         <span class="ai-tool-tag">ChatGPT</span>
                         <span class="ai-tool-tag">Claude</span>
                         <span class="ai-tool-tag">GitHub Copilot</span>
+                        <span class="ai-tool-tag">Cursor</span>
                         <span class="ai-tool-tag">AI API Integration</span>
                         <span class="ai-tool-tag">Prompt Engineering</span>
+                        <span class="ai-tool-tag">Claude Code</span>
                         <span class="ai-tool-tag">AI-Assisted Design</span>
-                        <span class="ai-tool-tag">Cursor</span>
                     </div>
                 </div>
             </div>
