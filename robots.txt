@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /play/fetch/
+
+Sitemap: https://robwiscount.org/sitemap.xml

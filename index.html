@@ -3,22 +3,31 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Rob Wiscount — Developer &amp; App Builder</title>
-    <meta name="description" content="Rob Wiscount builds websites, apps and games people actually use — Mile A Day on the App Store, Fetch (playable right here), LeBronify, Dawg House Duel and more.">
+    <title>Rob Wiscount — Front-End &amp; Full-Stack Developer | South Jersey</title>
+    <meta name="description" content="Rob Wiscount: front-end &amp; full-stack developer in South Jersey. He builds Foley Prep's platform, co-founded Mile A Day on the App Store, and made a game you can play here.">
     <meta name="author" content="Rob Wiscount">
+    <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://robwiscount.org/">
 
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="Rob Wiscount">
+    <meta property="og:locale" content="en_US">
     <meta property="og:url" content="https://robwiscount.org/">
-    <meta property="og:title" content="Rob Wiscount — Developer & App Builder">
-    <meta property="og:description" content="Websites, apps and games people actually use — including Mile A Day on the App Store and Fetch, a dog party game you can play in your browser.">
+    <meta property="og:title" content="Rob Wiscount — Front-End &amp; Full-Stack Developer">
+    <meta property="og:description" content="I build Foley Prep's platform by day and ship my own apps by night: Mile A Day on the App Store, a 3D dog party game you can play in your browser, and more.">
     <meta property="og:image" content="https://robwiscount.org/assets/og-image.png">
+    <meta property="og:image:secure_url" content="https://robwiscount.org/assets/og-image.png">
+    <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Rob Wiscount, front-end and full-stack developer, in the blue RW hexagon">
+    <meta property="profile:first_name" content="Rob">
+    <meta property="profile:last_name" content="Wiscount">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Rob Wiscount — Developer & App Builder">
-    <meta name="twitter:description" content="Websites, apps and games people actually use — including Mile A Day on the App Store and Fetch, playable in your browser.">
+    <meta name="twitter:title" content="Rob Wiscount — Front-End &amp; Full-Stack Developer">
+    <meta name="twitter:description" content="I build Foley Prep's platform by day and ship my own apps by night: Mile A Day on the App Store, a 3D dog party game you can play in your browser, and more.">
     <meta name="twitter:image" content="https://robwiscount.org/assets/og-image.png">
+    <meta name="twitter:image:alt" content="Rob Wiscount, front-end and full-stack developer, in the blue RW hexagon">
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -35,13 +44,50 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Rob Wiscount",
-      "url": "https://robwiscount.org",
-      "jobTitle": "Software Developer",
-      "worksFor": { "@type": "Organization", "name": "Foley Prep" },
-      "email": "mailto:robertwiscount@gmail.com",
-      "sameAs": ["https://github.com/robwizzie", "https://www.linkedin.com/in/rob-wiscount-275a2218a/"]
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://robwiscount.org/#rob",
+          "name": "Rob Wiscount",
+          "givenName": "Robert",
+          "familyName": "Wiscount",
+          "alternateName": ["Robert Wiscount", "robwizzie"],
+          "url": "https://robwiscount.org/",
+          "image": "https://robwiscount.org/assets/rob.png",
+          "jobTitle": "Software Developer",
+          "description": "Front-end and full-stack developer, graphic designer and video editor in South Jersey.",
+          "worksFor": { "@type": "Organization", "name": "Foley Prep", "url": "https://foleyprep.com/" },
+          "alumniOf": { "@type": "CollegeOrUniversity", "name": "Rowan College of South Jersey" },
+          "address": { "@type": "PostalAddress", "addressRegion": "NJ", "addressCountry": "US" },
+          "email": "mailto:robertwiscount@gmail.com",
+          "knowsAbout": ["Front-end development", "Full-stack development", "JavaScript", "TypeScript", "React", "Next.js", "Node.js", "SwiftUI", "iOS development", "MongoDB", "PostgreSQL", "Stripe", "Graphic design", "Video editing", "Game development"],
+          "sameAs": ["https://github.com/robwizzie", "https://www.linkedin.com/in/rob-wiscount-275a2218a/"]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://robwiscount.org/#site",
+          "url": "https://robwiscount.org/",
+          "name": "Rob Wiscount",
+          "inLanguage": "en-US",
+          "about": { "@id": "https://robwiscount.org/#rob" }
+        },
+        {
+          "@type": "ProfilePage",
+          "url": "https://robwiscount.org/",
+          "name": "Rob Wiscount — Front-End & Full-Stack Developer",
+          "isPartOf": { "@id": "https://robwiscount.org/#site" },
+          "mainEntity": { "@id": "https://robwiscount.org/#rob" },
+          "dateModified": "2026-10-02"
+        },
+        {
+          "@type": "MobileApplication",
+          "name": "Mile A Day",
+          "operatingSystem": "iOS, watchOS",
+          "applicationCategory": "HealthApplication",
+          "url": "https://apps.apple.com/us/app/mile-a-day/id6746970905",
+          "creator": { "@id": "https://robwiscount.org/#rob" }
+        }
+      ]
     }
     </script>
 </head>
@@ -84,7 +130,7 @@
                         <span class="line"><span class="outline">Wiscount</span></span>
                     </h1>
                     <p class="hero-sub">I build <span class="typed" aria-live="polite">iOS apps</span></p>
-                    <p class="hero-copy">Front-end developer at heart, full stack by now. Software developer at <strong>Foley Prep</strong>, based in South Jersey. By day I build the platform students use to prep for the SAT. By night I ship <strong>an App Store app, a 3D dog party game, a LeBron parody Spotify</strong> and whatever else my friends dare me to build.</p>
+                    <p class="hero-copy">Front-end developer at heart, full stack by now. Software developer at <strong>Foley Prep</strong>, based in South Jersey. By day I build the platform students use to prep for the SAT. By night I ship <strong>an App Store app, a 3D dog party game, a LeBron parody Spotify</strong> and whatever else my friends dare me to build. I design the graphics and cut the videos myself, too.</p>
                     <div class="hero-actions">
                         <a class="btn btn-primary" href="#work"><i class="fas fa-bolt"></i> See the work</a>
                         <a class="btn btn-ghost" href="#fetch"><i class="fas fa-gamepad"></i> Play my game</a>
@@ -108,7 +154,6 @@
                     </div>
                 </div>
             </div>
-            <a class="scroll-hint" href="#stats" aria-label="Scroll down"></a>
         </section>
 
         <!-- ===== STATS ===== -->
@@ -129,7 +174,7 @@
                 <div class="section-head reveal">
                     <span class="eyebrow">Experience</span>
                     <h2 class="h-display h2">Where I've <span class="blue">shipped.</span></h2>
-                    <p class="lede">From an enterprise dev-team internship to building the platform students use every day.</p>
+                    <p class="lede">From an enterprise dev-team internship, to e-commerce storefronts, to running the software behind a growing tutoring company.</p>
                 </div>
                 <div class="timeline">
                     <div class="timeline-fill" aria-hidden="true"></div>
@@ -141,22 +186,27 @@
                                 <div><h3 class="job-role">Software Developer</h3><a class="job-company" href="https://foleyprep.com/" target="_blank" rel="noopener">Foley Prep <i class="fas fa-external-link-alt"></i></a></div>
                                 <span class="job-date job-now"><span class="pulse"></span> Mar 2023 — Present</span>
                             </div>
-                            <p class="job-summary">Lead developer on the front end of foleyprep.com — the platform students and tutors use every day for SAT prep, tutoring and AI study tools.</p>
+                            <p class="job-summary">I build the software Foley Prep runs on: the Digital SAT practice platform, the public site, the shop and checkout, scheduling, the ad and attribution tools, and the kiosk at the front desk. 2,700+ commits to the main codebase since 2023 — mostly front end, increasingly full stack.</p>
                             <ul class="job-list">
-                                <li>Built the <strong>digital SAT test-taking software</strong> front end: timed sections, question navigation, answer review and score-report dashboards.</li>
-                                <li>Shipped an <strong>AI study assistant</strong> powered by the ChatGPT API, giving students on-demand explanations and strategies.</li>
-                                <li>Built a full <strong>Stripe payments system</strong> — subscriptions, one-time purchases and billing management.</li>
+                                <li><strong>Digital SAT platform:</strong> helped build Foley's practice-test app for the new digital SAT and built its <strong>adaptive score reports</strong> — performance by topic, missed and omitted questions, timing, and printable reports emailed to families.</li>
+                                <li><strong>Ad Studio</strong> (built solo): one dashboard that pulls Meta and Google Ads campaigns, spend and creatives and ties each ad to the <strong>Stripe purchases it actually drove</strong>, including new vs. returning clients. Every ad dollar now has a measured return.</li>
+                                <li>Added an <strong>AI content studio</strong> to Ad Studio: plans the month, writes the copy and generates the images, then schedules the posts straight to Foley's Instagram and Facebook.</li>
+                                <li>Built the tracking that feeds it: <strong>Meta Pixel + Conversions API</strong> (still counts when a browser blocks the pixel), Google Ads and Reddit conversions, and lead-source attribution on every inquiry.</li>
+                                <li><strong>Front-desk kiosk</strong> (built solo): tutors and students check in with <strong>on-device face recognition</strong>, with an admin view for live cameras, kiosk health, punctuality reports and automatic texts when a tutor is running late.</li>
                             </ul>
                             <div class="job-more">
                                 <ul class="job-list">
+                                    <li>Built the in-test <strong>issue reporter</strong>, print-a-test and MCVSD entrance-exam reports, and question views on the Insights dashboard.</li>
+                                    <li>Core developer on the <strong>staff and client scheduling apps</strong>: booking, availability, rosters, session notes and payment status for every location.</li>
+                                    <li>Built <strong>PTO and calendar management</strong>: requests, approvals, sick-day alerts, peak-season rules and conflict detection that blocks double-booking.</li>
+                                    <li>Rebuilt much of the <strong>shop and Stripe checkout</strong>: service packages, cart and pre-checkout flow, fundraiser events, and adding students to their sessions automatically after purchase.</li>
+                                    <li>Co-built <strong>Thumper</strong>, the in-house calls and texting inbox (Twilio), and the client dashboard with customizable widgets.</li>
+                                    <li>Design and ship the <strong>marketing site and SEO landing pages</strong> (SAT, ACT, HSPT, SSAT, MCVSD, college essays, executive function and more), plus newsletters and seasonal campaigns.</li>
                                     <li>Built the marketing site for <strong>Scorgi</strong>, Foley Prep's SAT platform for tutors and educators.</li>
-                                    <li>Co-created <strong>"Bulb"</strong>, a gamified tutoring app with rewards and progress tracking.</li>
-                                    <li>Architected the company website from the ground up and ship conversion-focused landing pages.</li>
-                                    <li>Work in a fast Agile/SCRUM loop, iterating on real feedback from students and tutors.</li>
                                 </ul>
                             </div>
                             <button class="job-toggle" type="button" aria-expanded="true">Show less <i class="fas fa-chevron-down"></i></button>
-                            <div class="chips"><span class="chip">JavaScript</span><span class="chip">HTML/CSS</span><span class="chip">ChatGPT API</span><span class="chip">Stripe</span><span class="chip">Agile</span></div>
+                            <div class="chips"><span class="chip">JavaScript</span><span class="chip">Node / Bun</span><span class="chip">Express</span><span class="chip">MongoDB</span><span class="chip">Stripe</span><span class="chip">Meta + Google Ads APIs</span><span class="chip">OpenAI API</span><span class="chip">Twilio</span><span class="chip">Socket.IO</span></div>
                         </div>
                     </article>
 
@@ -167,19 +217,20 @@
                                 <div><h3 class="job-role">Integrations Developer</h3><a class="job-company" href="https://xgen.ai/" target="_blank" rel="noopener">XGen <i class="fas fa-external-link-alt"></i></a></div>
                                 <span class="job-date">Mar 2021 — Jun 2022 · Remote</span>
                             </div>
-                            <p class="job-summary">Full-time developer at a Florida SaaS startup building personalized "Recommended for You" experiences for e-commerce brands.</p>
+                            <p class="job-summary">Full-time, remote developer at a Florida AI startup whose recommendation engine powers "Recommended for You" product experiences for e-commerce brands. I was the person who got it live on each client's storefront.</p>
                             <ul class="job-list">
-                                <li>Built and deployed <strong>custom JavaScript integrations</strong> directly into client storefronts, matched pixel-for-pixel to each brand.</li>
-                                <li>Owned the rulesets and page triggers that decided when personalized content appeared — <strong>directly moving client conversion</strong>.</li>
+                                <li>Built and deployed <strong>custom JavaScript, HTML and CSS integrations</strong> straight into client storefronts, matched pixel-for-pixel to each brand so the recommendations looked native.</li>
+                                <li>Owned the <strong>rulesets and page triggers</strong> that decided when and where personalized content appeared, which directly moved client conversion.</li>
+                                <li>Built one-off solutions when a client needed something the product didn't do, from dynamic product carousels to custom recommendation widgets.</li>
                             </ul>
                             <div class="job-more">
                                 <ul class="job-list">
-                                    <li>Built bespoke solutions from dynamic product carousels to recommendation widgets.</li>
-                                    <li>Debugged complex cross-browser issues across dozens of client sites.</li>
+                                    <li>Debugged complex <strong>cross-browser JavaScript issues across dozens of live client sites</strong>, where a bug meant a store losing sales.</li>
+                                    <li>Worked directly with client teams to scope integrations, then shipped and maintained them in production.</li>
                                 </ul>
                             </div>
                             <button class="job-toggle" type="button" aria-expanded="false">Show more <i class="fas fa-chevron-down"></i></button>
-                            <div class="chips"><span class="chip">JavaScript</span><span class="chip">HTML/CSS</span><span class="chip">SaaS</span><span class="chip">E-commerce</span></div>
+                            <div class="chips"><span class="chip">JavaScript</span><span class="chip">HTML/CSS</span><span class="chip">SaaS</span><span class="chip">E-commerce</span><span class="chip">Personalization</span></div>
                         </div>
                     </article>
 
@@ -190,7 +241,13 @@
                                 <div><h3 class="job-role">Programming Intern</h3><a class="job-company" href="https://customers.usli.com/sites/collegehelp/student-careers.html" target="_blank" rel="noopener">USLI <i class="fas fa-external-link-alt"></i></a></div>
                                 <span class="job-date">Jul 2020 — Mar 2021</span>
                             </div>
-                            <p class="job-summary">Competitive paid internship on an enterprise development team — C#, SQL and JavaScript in production, with standups, sprints and code reviews.</p>
+                            <p class="job-summary">Selected for USLI's competitive paid College Help internship, working on a real enterprise development team at a national specialty insurance company.</p>
+                            <ul class="job-list">
+                                <li>Learned <strong>C#, SQL, JavaScript, HTML and CSS</strong> on the job and shipped changes to production alongside senior developers.</li>
+                                <li>Worked in a full <strong>SCRUM/Agile</strong> loop: daily standups, sprint planning and code reviews.</li>
+                                <li>Diagnosed and fixed bugs in Visual Studio, which is where I learned to debug properly.</li>
+                            </ul>
+                            <div class="chips"><span class="chip">C#</span><span class="chip">SQL</span><span class="chip">JavaScript</span><span class="chip">Visual Studio</span><span class="chip">Agile</span></div>
                         </div>
                     </article>
 
@@ -407,9 +464,9 @@
                         <div class="card-body">
                             <span class="kind">Education platform</span>
                             <h3>Foley Prep</h3>
-                            <p class="bit">The platform students use every day to prep for the SAT. I build its front end.</p>
-                            <p class="desc">Digital SAT practice software, an AI study assistant and Stripe payments.</p>
-                            <div class="card-foot"><span class="tech">JS · AI · Stripe</span><div class="links"><a href="https://foleyprep.com/" target="_blank" rel="noopener">Visit <i class="fas fa-external-link-alt"></i></a></div></div>
+                            <p class="bit">My day job. I build the software the whole company runs on.</p>
+                            <p class="desc">Digital SAT practice tests and score reports, the shop and Stripe checkout, scheduling, a face-recognition check-in kiosk and Ad Studio, which ties every ad to the sale it drove.</p>
+                            <div class="card-foot"><span class="tech">JS · Node · MongoDB · Stripe</span><div class="links"><a href="https://foleyprep.com/" target="_blank" rel="noopener">Visit <i class="fas fa-external-link-alt"></i></a></div></div>
                         </div>
                     </article>
 
@@ -548,18 +605,19 @@
                 <div class="section-head reveal">
                     <span class="eyebrow">Toolbox</span>
                     <h2 class="h-display h2">Phone to server. <span class="blue">Browser to game night.</span></h2>
-                    <p class="lede">The front end is home: interfaces, motion and the details people actually touch. These days I own the whole stack too — APIs, databases and native apps — but give me a UI to sweat over and I'm happiest.</p>
+                    <p class="lede">I design it, too. Every logo, app icon, game graphic and promo video for my projects is mine. The front end is home: interfaces, motion and the details people actually touch. These days I own the whole stack too — APIs, databases and native apps — but give me a UI to sweat over and I'm happiest.</p>
                 </div>
                 <div class="skills">
                     <div class="skill-group reveal"><h3>Front end <small class="fav">· home base</small></h3><p>JavaScript · TypeScript · React · Next.js · Vite · HTML &amp; CSS · Tailwind · Bootstrap</p></div>
                     <div class="skill-group reveal" data-delay="1"><h3>Apple</h3><p>Swift · SwiftUI · watchOS · HealthKit · WidgetKit · Live Activities · MapKit · CarPlay</p></div>
                     <div class="skill-group reveal" data-delay="2"><h3>Backend &amp; data</h3><p>Node · Express · PostgreSQL · Supabase · MongoDB · Firebase · Cloudflare Workers · Stripe</p></div>
-                    <div class="skill-group reveal" data-delay="3"><h3>Games &amp; more</h3><p>Godot · GDScript · Canvas · Web Audio · Gamepad API · Playwright · CI/CD · Figma</p></div>
+                    <div class="skill-group reveal" data-delay="3"><h3>Games &amp; more</h3><p>Godot · GDScript · Canvas · Web Audio · Gamepad API · Playwright · CI/CD</p></div>
+                    <div class="skill-group reveal" data-delay="4"><h3>Design &amp; video</h3><p>Graphic design · Video editing · Logos &amp; app icons · Ad creative · UI design · Figma</p></div>
                 </div>
                 <div class="ai-panel reveal">
                     <div>
                         <h3>I build with AI — and build AI in.</h3>
-                        <p>I shipped a ChatGPT-powered study assistant to a live education platform, and AI is wired into how I work: prototyping, debugging, reviewing and shipping faster than I ever could alone. It's how one person ships an App Store app, a 3D game and a client CMS in the same year.</p>
+                        <p>At Foley Prep I built an AI content studio that plans, writes and designs social posts and schedules them to Instagram and Facebook, and AI is wired into how I work: prototyping, debugging, reviewing and shipping faster than I ever could alone. It's how one person ships an App Store app, a 3D game and a client CMS in the same year.</p>
                     </div>
                     <div class="ai-tools"><span>Claude Code</span><span>Claude</span><span>ChatGPT</span><span>OpenAI API</span><span>Cursor</span><span>GitHub Copilot</span></div>
                 </div>
@@ -582,9 +640,10 @@
                         <p>Walk or run, rain or shine. Mile A Day started as my own streak — now other people use it to build theirs.</p>
                     </div>
                     <div class="life-card reveal" data-delay="1"><span class="emoji">🦅</span><h3>Philly through and through</h3><p>Sixers, Phillies, Flyers, Eagles. GO BIRDS. (And yes, LeBron's a Sixer now. I'd like to think LeBronify helped.)</p></div>
+                    <div class="life-card wide reveal"><span class="emoji">🎨</span><h3>Designer &amp; video editor, too</h3><p>No templates, no hired designer. The logos, app icons, game art, ad creative and promo videos for everything on this page, I made myself.</p></div>
                     <div class="life-card reveal"><span class="emoji">🎱</span><h3>Pool league regular</h3><p>I shoot in an APA league with the Top Dawgs — and built us a stats site, because of course I did.</p></div>
                     <div class="life-card reveal" data-delay="1"><span class="emoji">🎬</span><h3>Movie obsessive</h3><p>Box office numbers, Oscar predictions, Letterboxd logs. Hence FantasyFlicks.</p></div>
-                    <div class="life-card reveal" data-delay="2"><span class="emoji">🎉</span><h3>Designated game-night host</h3><p>Game shows, party games, a dog brawler. If friends are coming over, I'm writing code first.</p></div>
+                    <div class="life-card reveal"><span class="emoji">🎉</span><h3>Designated game-night host</h3><p>Game shows, party games, a dog brawler. If friends are coming over, I'm writing code first.</p></div>
                 </div>
                 <div class="edu">
                     <div class="edu-card reveal"><span class="ico"><i class="fas fa-graduation-cap"></i></span><div><h3>Associate's Degree, Computer Science</h3><p>Rowan College of South Jersey (RCSJ)</p></div></div>
