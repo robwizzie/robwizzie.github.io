@@ -1,1216 +1,632 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Rob Wiscount - Full-Stack Web Developer & App Creator. Building high-impact websites, web apps, and iOS applications with modern technologies and AI integration.">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Rob Wiscount — Developer &amp; App Builder</title>
+    <meta name="description" content="Rob Wiscount builds websites, web apps and iOS apps people actually use — including Mile A Day, live on the App Store. Web developer at Foley Prep. Open to new opportunities.">
     <meta name="author" content="Rob Wiscount">
+    <link rel="canonical" href="https://robwiscount.org/">
 
-    <title>Rob Wiscount | Developer & Creator</title>
+    <!-- Social sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://robwiscount.org/">
+    <meta property="og:title" content="Rob Wiscount — Developer & App Builder">
+    <meta property="og:description" content="Websites, web apps and iOS apps people actually use — including Mile A Day, live on the App Store.">
+    <meta property="og:image" content="https://robwiscount.org/assets/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Rob Wiscount — Developer & App Builder">
+    <meta name="twitter:description" content="Websites, web apps and iOS apps people actually use — including Mile A Day, live on the App Store.">
+    <meta name="twitter:image" content="https://robwiscount.org/assets/og-image.png">
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5b8ff9">
+    <meta name="theme-color" content="#05070c">
 
-    <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom fonts for this template -->
-    <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="assets/fonts/saira-extra-condensed-3.woff2" as="font" type="font/woff2" crossorigin>
+    <link href="assets/fonts.css" rel="stylesheet">
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="css/resume.min.css" rel="stylesheet">
-
-    <style>
-        /* ===== Enhanced Link Styles ===== */
-        .hoverLink {
-            transition: all .3s !important;
-        }
-        .hoverLink:hover {
-            color: #495057 !important;
-            text-decoration: none !important;
-            transition: all .3s !important;
-        }
-
-        /* ===== Hero About Section ===== */
-        .hero-tagline {
-            font-family: 'Inter', sans-serif;
-            font-size: 1.35rem;
-            font-weight: 500;
-            color: #4d94ff;
-            margin-bottom: 1rem;
-            letter-spacing: 0.02em;
-        }
-        .about-highlights {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            margin: 2rem 0;
-            justify-content: center;
-        }
-        @media (min-width: 768px) {
-            .about-highlights {
-                justify-content: flex-start;
-            }
-        }
-        .highlight-stat {
-            text-align: center;
-            padding: 1.25rem 1.5rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-            min-width: 140px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .highlight-stat:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        .highlight-stat .stat-number {
-            font-family: 'Saira Extra Condensed', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #4d94ff;
-            line-height: 1;
-        }
-        .highlight-stat .stat-label {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #868e96;
-            margin-top: 0.25rem;
-        }
-
-        /* ===== Section Headers ===== */
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2.5rem;
-        }
-        .section-header h2 {
-            margin-bottom: 0;
-        }
-
-        /* ===== Experience Enhancements ===== */
-        .experience-card {
-            position: relative;
-            padding-left: 1.5rem;
-            border-left: 3px solid rgba(77, 148, 255, 0.2);
-            transition: border-color 0.3s ease;
-        }
-        .experience-card:hover {
-            border-left-color: #4d94ff;
-        }
-        .experience-card .company-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.25rem 0.75rem;
-            background: #4d94ff;
-            color: white;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-            margin-bottom: 0.75rem;
-        }
-        .tech-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        .tech-tag {
-            display: inline-block;
-            padding: 0.2rem 0.65rem;
-            background: #f0f4ff;
-            color: #4d94ff;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            border: 1px solid rgba(77, 148, 255, 0.2);
-            transition: all 0.2s ease;
-        }
-        .tech-tag:hover {
-            background: #4d94ff;
-            color: white;
-        }
-
-        /* ===== Project Showcase ===== */
-        .projects-filter {
-            display: flex;
-            gap: 0.75rem;
-            margin-bottom: 2.5rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        @media (min-width: 768px) {
-            .projects-filter {
-                justify-content: flex-start;
-            }
-        }
-        .filter-btn {
-            padding: 0.5rem 1.25rem;
-            border: 2px solid #dee2e6;
-            background: white;
-            border-radius: 25px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #868e96;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .filter-btn:hover, .filter-btn.active {
-            border-color: #4d94ff;
-            color: #4d94ff;
-            background: #f0f4ff;
-        }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 2rem;
-        }
-        @media (max-width: 768px) {
-            .projects-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-        }
-
-        .project-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            transition: all 0.25s ease;
-            border: 1px solid #e9ecef;
-            position: relative;
-        }
-        .project-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            border-color: #4d94ff;
-        }
-
-        .project-card .card-image {
-            position: relative;
-            height: 180px;
-            overflow: hidden;
-            background: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .project-card .card-image .project-icon {
-            font-size: 3rem;
-            color: #4d94ff;
-            opacity: 0.6;
-        }
-        .project-card .card-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .project-card .card-body-custom {
-            padding: 1.5rem;
-        }
-        .project-card .card-body-custom .project-type {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: #4d94ff;
-            margin-bottom: 0.5rem;
-        }
-        .project-card .card-body-custom h4 {
-            font-size: 1.35rem;
-            margin-bottom: 0.5rem;
-            text-transform: none;
-            font-family: 'Saira Extra Condensed', sans-serif;
-            color: #343a40;
-        }
-        .project-card .card-body-custom p {
-            font-size: 0.9rem;
-            color: #6c757d;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-        }
-        .project-card .card-footer-custom {
-            padding: 0 1.5rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .project-card .visit-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.45rem 1rem;
-            background: #4d94ff;
-            color: white;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            font-family: 'Inter', sans-serif;
-        }
-        .project-card .visit-link:hover {
-            background: #3a7bdf;
-            color: white;
-            text-decoration: none;
-        }
-        .project-card .app-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.3rem 0.75rem;
-            background: #f8f9fa;
-            color: #868e96;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-        }
-
-        /* Project placeholder backgrounds */
-        .project-card .card-image.bg-light-blue { background: #e8f0fe; }
-        .project-card .card-image.bg-light-green { background: #e6f4ea; }
-        .project-card .card-image.bg-light-gray { background: #f1f3f4; }
-        .project-card .card-image.bg-light-purple { background: #eee8f8; }
-        .project-card .card-image.bg-light-warm { background: #fef3e8; }
-
-        /* ===== Skills Section Redesign ===== */
-        .skills-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2.5rem;
-        }
-        @media (max-width: 768px) {
-            .skills-container {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            .skill-items {
-                justify-content: center;
-            }
-            .skill-category h4 {
-                text-align: center;
-            }
-        }
-        .skill-category h4 {
-            font-size: 1.1rem;
-            color: #4d94ff;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid rgba(77, 148, 255, 0.2);
-            text-transform: uppercase;
-            font-family: 'Saira Extra Condensed', sans-serif;
-        }
-        .skill-items {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-        }
-        .skill-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.4rem 0.85rem;
-            background: white;
-            border: 1.5px solid #dee2e6;
-            border-radius: 25px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #495057;
-            transition: all 0.3s ease;
-        }
-        .skill-pill:hover {
-            border-color: #4d94ff;
-            color: #4d94ff;
-            background: #f8f9fa;
-        }
-        .skill-pill i {
-            font-size: 1rem;
-            color: #4d94ff;
-        }
-
-        /* AI Expertise Banner */
-        .ai-banner {
-            background: #343a40;
-            border-radius: 10px;
-            padding: 2rem;
-            margin-top: 2.5rem;
-            color: white;
-        }
-        .ai-banner h4 {
-            color: white;
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            text-transform: none;
-            font-family: 'Saira Extra Condensed', sans-serif;
-        }
-        .ai-banner p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.95rem;
-            line-height: 1.7;
-            margin-bottom: 0;
-        }
-        .ai-tools {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        .ai-tool-tag {
-            padding: 0.3rem 0.7rem;
-            background: rgba(255, 255, 255, 0.1);
-            color: #adb5bd;
-            border-radius: 4px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        /* ===== Interests Section ===== */
-        .interests-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        .interest-card {
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-            transition: all 0.2s ease;
-        }
-        .interest-card:hover {
-            border-color: #4d94ff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-        }
-        .interest-card .interest-icon {
-            font-size: 2rem;
-            margin-bottom: 0.75rem;
-        }
-        .interest-card h5 {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-            text-transform: none;
-            font-family: 'Inter', sans-serif;
-            font-weight: 700;
-            color: #343a40;
-        }
-        .interest-card p {
-            font-size: 0.88rem;
-            color: #6c757d;
-            margin-bottom: 0;
-            line-height: 1.6;
-        }
-
-        /* ===== Resume Section ===== */
-        .resume-download {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 1rem 2rem;
-            background: #4d94ff;
-            color: white;
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 1rem;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-        .resume-download:hover {
-            background: #3a7bdf;
-            color: white;
-            text-decoration: none;
-        }
-
-        /* ===== Animations ===== */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* ===== General Polish ===== */
-        .resume-item ul li {
-            margin-bottom: 0.5rem;
-            line-height: 1.6;
-        }
-        .current-badge {
-            display: inline-block;
-            padding: 0.2rem 0.6rem;
-            background: #28a745;
-            color: white;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            font-family: 'Inter', sans-serif;
-            letter-spacing: 0.05em;
-            vertical-align: middle;
-            margin-left: 0.5rem;
-        }
-
-        /* ===== Mobile Centering & Spacing ===== */
-        @media (max-width: 768px) {
-            .section-header {
-                justify-content: center;
-                text-align: center;
-            }
-            .section-header img {
-                display: none;
-            }
-            .highlight-stat {
-                min-width: 120px;
-                flex: 1 1 120px;
-            }
-            .interests-grid {
-                grid-template-columns: 1fr;
-            }
-            .interest-card {
-                text-align: center;
-            }
-            .ai-banner {
-                text-align: center;
-            }
-            .ai-tools {
-                justify-content: center;
-            }
-            .tech-tags {
-                justify-content: flex-start;
-            }
-            .project-card .card-footer-custom {
-                flex-wrap: wrap;
-                gap: 0.5rem;
-            }
-            .experience-card {
-                padding-left: 1rem;
-            }
-        }
-    </style>
-
-</head>
-
-<body id="page-top">
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
-        <a class="navbar-brand js-scroll-trigger" href="#page-top">
-            <span class="d-block d-lg-none">Rob Wiscount</span>
-            <span class="d-none d-lg-block">
-                <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="robProfile.gif" alt="Rob Wiscount">
-            </span>
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#about">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#experience">Experience</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#projects">Projects</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#education">Education</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#skills">Skills</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#interests">Interests</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#resume">Resume</a>
-                </li>
-            </ul>
-        </div>
-        <img src="RW Logo.png" alt="RW" style="width:90px;height:90px; position: fixed; bottom: 10px; left: calc(8.5rem - 45px);" class="d-none d-lg-block">
-    </nav>
-
-    <div class="container-fluid p-0">
-
-        <!-- ===== ABOUT ===== -->
-        <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="about">
-            <div class="w-100">
-                <h1 class="mb-0">Rob
-                    <span class="text-primary">Wiscount</span>
-                </h1>
-                <p class="hero-tagline">Web Developer &bull; App Creator &bull; AI Enthusiast</p>
-                <div class="subheading mb-4">203 Albany Ave, Barrington, NJ &middot; <a class="hoverLink" href="tel:8564059470">(856) 405-9470</a> &middot;
-                    <a class="hoverLink" href="mailto:robertwiscount@gmail.com">robertwiscount@gmail.com</a>
-                </div>
-                <p class="lead mb-4">I'm a developer who turns ideas into real, working products. From production websites used by thousands of students to iOS apps built from scratch, I love taking on projects that challenge me and shipping things people actually use. I bring the same energy to my full-time role as I do to my personal projects &mdash; always building, always learning, and always looking for the next thing to create.</p>
-
-                <div class="about-highlights">
-                    <div class="highlight-stat">
-                        <div class="stat-number">5+</div>
-                        <div class="stat-label">Years Experience</div>
-                    </div>
-                    <div class="highlight-stat">
-                        <div class="stat-number">9+</div>
-                        <div class="stat-label">Live Projects</div>
-                    </div>
-                    <div class="highlight-stat">
-                        <div class="stat-number">3</div>
-                        <div class="stat-label">iOS Apps</div>
-                    </div>
-                    <div class="highlight-stat">
-                        <div class="stat-number">24/7</div>
-                        <div class="stat-label">Building Things</div>
-                    </div>
-                </div>
-
-                <div class="social-icons mt-4">
-                    <a href="https://www.linkedin.com/in/rob-wiscount-275a2218a/" title="LinkedIn">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a href="https://github.com/robwizzie" title="GitHub">
-                        <i class="fab fa-github"></i>
-                    </a>
-                    <a href="https://www.youtube.com/channel/UC4Z5ZAYejSG-DW_X-vfPBlA" title="YouTube">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <hr class="m-0">
-
-        <!-- ===== EXPERIENCE ===== -->
-        <section class="resume-section p-3 p-lg-5 d-flex justify-content-center" id="experience">
-            <div class="w-100">
-                <div class="section-header">
-                    <h2>Experience</h2>
-                    <img src="RW Logo.png" alt="" style="width:75px;height:75px">
-                </div>
-
-                <!-- Foley Prep -->
-                <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-                    <div class="resume-content">
-                        <div class="experience-card">
-                            <a class="company-link" href="https://foleyprep.com/" style="text-decoration: none;"><img src="foleyLogo.png" alt="Foley Prep" style="width: 50px;height: auto;margin-left: 10px;float: right;"></a>
-                            <h3 class="mb-0">Web Developer <span class="current-badge">CURRENT</span></h3>
-                            <div class="subheading mb-3"><a class="company-link hoverLink" href="https://foleyprep.com/" style="text-decoration: none;">Foley Prep</a></div>
-                            <ul>
-                                <li>Lead web developer responsible for the entire front-end of <strong>foleyprep.com</strong>, a platform used daily by students and educators for SAT preparation, tutoring, and AI-powered study tools.</li>
-                                <li>Architected and built the company's website from the ground up using HTML, CSS, Bootstrap, and JavaScript &mdash; delivering a polished, responsive experience across all devices.</li>
-                                <li>Built and integrated <strong>AI-powered features</strong> including a ChatGPT-driven study assistant directly into the platform, giving students on-demand intelligent help with practice questions, explanations, and study strategies.</li>
-                                <li>Designed and developed the front-end for the <strong>digital SAT (dSAT) software</strong> &mdash; including the test-taking interface, timer system, question navigation, answer review tools, and score reporting dashboards that students and tutors rely on every day.</li>
-                                <li>Co-created <strong>"Bulb"</strong>, a gamified tutoring application with interactive mechanics, reward systems, and progress tracking that makes studying feel like a game rather than a chore.</li>
-                                <li>Built a full <strong>Stripe-powered payment system</strong> handling subscriptions, one-time purchases, and billing management for the platform's paid features.</li>
-                                <li>Designed and shipped <strong>landing pages, marketing sections, and conversion-focused UI</strong> that drive new student sign-ups and communicate the brand effectively.</li>
-                                <li>Work daily in a fast-paced Agile/SCRUM environment, consistently shipping features, squashing bugs, and iterating on the product based on real user feedback.</li>
-                            </ul>
-                            <div class="tech-tags">
-                                <span class="tech-tag">HTML5</span>
-                                <span class="tech-tag">CSS3</span>
-                                <span class="tech-tag">JavaScript</span>
-                                <span class="tech-tag">Bootstrap</span>
-                                <span class="tech-tag">ChatGPT API</span>
-                                <span class="tech-tag">AI Integration</span>
-                                <span class="tech-tag">Stripe API</span>
-                                <span class="tech-tag">Agile/SCRUM</span>
-                                <span class="tech-tag">Responsive Design</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="resume-date text-md-right">
-                        <span class="text-primary">March 2023 &mdash; Present</span>
-                    </div>
-                </div>
-
-                <!-- XGen -->
-                <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-                    <div class="resume-content">
-                        <div class="experience-card">
-                            <a class="company-link" href="https://xgen.ai/" style="text-decoration: none;"><img src="xgenLogo.png" alt="XGen" style="width: 50px;height: auto;margin-left: 10px;float: right;"></a>
-                            <h3 class="mb-0">Integrations Developer</h3>
-                            <div class="subheading mb-3"><a class="company-link hoverLink" href="https://xgen.ai/" style="text-decoration: none;">XGen</a></div>
-                            <ul>
-                                <li>Served as a full-time developer at a Florida-based SaaS startup (remote), building personalized "Recommended for You" product experiences for e-commerce brands.</li>
-                                <li>Developed and deployed custom HTML, CSS, and JavaScript integrations directly into client websites, ensuring pixel-perfect implementation that matched each brand's identity.</li>
-                                <li>Built bespoke JavaScript solutions to handle unique client requirements &mdash; from dynamic product carousels to personalized recommendation engines.</li>
-                                <li>Debugged and resolved complex cross-browser JavaScript issues across dozens of client sites, improving reliability and user satisfaction.</li>
-                                <li>Created and maintained rulesets and page triggers that controlled when and how personalized content appeared, directly impacting conversion rates for clients.</li>
-                            </ul>
-                            <div class="tech-tags">
-                                <span class="tech-tag">JavaScript</span>
-                                <span class="tech-tag">HTML/CSS</span>
-                                <span class="tech-tag">SaaS</span>
-                                <span class="tech-tag">E-Commerce</span>
-                                <span class="tech-tag">Cross-Browser</span>
-                                <span class="tech-tag">Remote</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="resume-date text-md-right">
-                        <span class="text-primary">March 2021 &mdash; June 2022</span>
-                    </div>
-                </div>
-
-                <!-- USLi -->
-                <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-                    <div class="resume-content">
-                        <div class="experience-card">
-                            <a class="company-link" href="https://customers.usli.com/sites/collegehelp/student-careers.html" style="text-decoration: none;"><img src="usliLogo.png" alt="USLi" style="width: 85px;height: auto;margin-left: 10px;float: right;"></a>
-                            <h3 class="mb-0">Programming Intern</h3>
-                            <div class="subheading mb-3"><a class="company-link hoverLink" href="https://customers.usli.com/sites/collegehelp/student-careers.html" style="text-decoration: none;">USLi</a></div>
-                            <ul>
-                                <li>Selected for a competitive paid internship on USLi's development team, gaining hands-on experience with enterprise-level software development practices.</li>
-                                <li>Rapidly learned and applied C#, HTML, CSS, JavaScript, and SQL in a production environment, contributing to real projects alongside senior developers.</li>
-                                <li>Worked within a SCRUM/Agile framework with daily standups, sprint planning, and code reviews &mdash; building strong collaborative development habits early in my career.</li>
-                                <li>Diagnosed and resolved bugs in Visual Studio, developing a sharp eye for debugging that continues to serve me in every role since.</li>
-                            </ul>
-                            <div class="tech-tags">
-                                <span class="tech-tag">C#</span>
-                                <span class="tech-tag">JavaScript</span>
-                                <span class="tech-tag">SQL</span>
-                                <span class="tech-tag">HTML/CSS</span>
-                                <span class="tech-tag">Visual Studio</span>
-                                <span class="tech-tag">Agile/SCRUM</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="resume-date text-md-right">
-                        <span class="text-primary">July 2020 &mdash; March 2021</span>
-                    </div>
-                </div>
-
-                <!-- Lavner Camps -->
-                <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-                    <div class="resume-content">
-                        <div class="experience-card">
-                            <a class="company-link" href="https://www.lavnercampsandprograms.com/location/cherry-hill-nj-summer-camp-katz-jcc/" style="text-decoration: none;"><img src="lavnerLogo.png" alt="Lavner Camps" style="width: 85px;height: auto;margin-left: 10px;float: right;"></a>
-                            <h3 class="mb-0">Technology Instructor</h3>
-                            <div class="subheading mb-3"><a class="company-link hoverLink" href="https://www.lavnercampsandprograms.com/location/cherry-hill-nj-summer-camp-katz-jcc/" style="text-decoration: none;">Lavner Camps</a></div>
-                            <ul>
-                                <li>Taught coding fundamentals to kids using Python, C++, and Scratch &mdash; breaking down complex concepts into fun, digestible lessons that kept students engaged.</li>
-                                <li>Expanded the curriculum beyond just code to include video editing, graphic design, and content creation &mdash; giving students a well-rounded intro to the tech world.</li>
-                                <li>Managed classrooms of students with varying skill levels, adapting teaching methods on the fly to ensure every kid walked away having learned something new.</li>
-                            </ul>
-                            <div class="tech-tags">
-                                <span class="tech-tag">Python</span>
-                                <span class="tech-tag">C++</span>
-                                <span class="tech-tag">Scratch</span>
-                                <span class="tech-tag">Teaching</span>
-                                <span class="tech-tag">Graphic Design</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="resume-date text-md-right">
-                        <span class="text-primary">June 2019 &mdash; September 2019</span>
-                    </div>
-                </div>
-
-                <!-- Kingsway -->
-                <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-                    <div class="resume-content">
-                        <div class="experience-card">
-                            <a class="company-link" href="https://www.krsd.org/" style="text-decoration: none;"><img src="kingswayLogo.png" alt="Kingsway Regional" style="width: 75px;height: auto;margin-left: 10px;float: right;"></a>
-                            <h3 class="mb-0">Technology Aide</h3>
-                            <div class="subheading mb-3">
-                                <a class="company-link hoverLink" href="https://www.krsd.org/" style="text-decoration: none;">Kingsway Regional High School</a>
-                            </div>
-                            <ul>
-                                <li>Provided hands-on technical support across the school district, troubleshooting hardware and software issues to keep systems running smoothly before the school year.</li>
-                                <li>Diagnosed and resolved a variety of IT issues including network connectivity, device configuration, and software installation.</li>
-                                <li>Worked as part of the IT team to prepare and deploy hundreds of devices, ensuring everything was ready for students and staff on day one.</li>
-                            </ul>
-                            <div class="tech-tags">
-                                <span class="tech-tag">IT Support</span>
-                                <span class="tech-tag">Hardware</span>
-                                <span class="tech-tag">Troubleshooting</span>
-                                <span class="tech-tag">Networking</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="resume-date text-md-right">
-                        <span class="text-primary">June 2018 &mdash; September 2018</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <hr class="m-0">
-
-        <!-- ===== PROJECTS ===== -->
-        <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="projects">
-            <div class="w-100">
-                <div class="section-header">
-                    <h2>Projects</h2>
-                    <img src="RW Logo.png" alt="" style="width:75px;height:75px">
-                </div>
-                <p class="lead mb-4">I don't just code at work &mdash; I build things on my own time because I genuinely love it. Here's a collection of websites and apps I've designed, developed, and shipped.</p>
-
-                <!-- Filter Buttons -->
-                <div class="projects-filter">
-                    <button class="filter-btn active" onclick="filterProjects('all')">All Projects</button>
-                    <button class="filter-btn" onclick="filterProjects('website')">Websites</button>
-                    <button class="filter-btn" onclick="filterProjects('app')">Apps</button>
-                </div>
-
-                <!-- Projects Grid -->
-                <div class="projects-grid">
-
-                    <!-- Sip on Pressed -->
-                    <div class="project-card" data-type="website">
-                        <div class="card-image">
-                            <img src="sipOnPressedWebsite.png" alt="Sip on Pressed" onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fas fa-leaf project-icon\'></i>';">
-                        </div>
-                        <div class="card-body-custom">
-                            <div class="project-type">Website &bull; Design Showcase</div>
-                            <h4>Sip on Pressed</h4>
-                            <p>One of my proudest visual designs. A sleek, modern website for a cold-pressed juice brand that focuses on stunning aesthetics and smooth user experience. This project pushed my design skills to a new level.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">HTML5</span>
-                                <span class="tech-tag">CSS3</span>
-                                <span class="tech-tag">JavaScript</span>
-                                <span class="tech-tag">UI/UX Design</span>
-                            </div>
-                        </div>
-                        <div class="card-footer-custom">
-                            <a href="https://siponpressed.com/" target="_blank" class="visit-link">
-                                Visit Site <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Foley Prep -->
-                    <div class="project-card" data-type="website">
-                        <div class="card-image">
-                            <img src="foleyPrepWebsite.png" alt="Foley Prep">
-                        </div>
-                        <div class="card-body-custom">
-                            <div class="project-type">Website &bull; Education Platform</div>
-                            <h4>Foley Prep</h4>
-                            <p>The production website I build and maintain daily for my full-time job. A comprehensive education platform used by students for SAT prep, tutoring, and AI-powered study tools.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">HTML5</span>
-                                <span class="tech-tag">CSS3</span>
-                                <span class="tech-tag">Bootstrap</span>
-                                <span class="tech-tag">JavaScript</span>
-                                <span class="tech-tag">AI</span>
-                            </div>
-                        </div>
-                        <div class="card-footer-custom">
-                            <a href="https://foleyprep.com/" target="_blank" class="visit-link">
-                                Visit Site <i class="fas fa-external-link-alt"></i>
-                            </a>
-                            <span class="app-badge"><i class="fas fa-briefcase"></i> Full-Time Role</span>
-                        </div>
-                    </div>
-
-                    <!-- Traveling Tastebuds -->
-                    <div class="project-card" data-type="website">
-                        <div class="card-image">
-                            <img src="ttbWebsite.png" alt="Traveling Tastebuds">
-                        </div>
-                        <div class="card-body-custom">
-                            <div class="project-type">Website &bull; Food & Travel Blog</div>
-                            <h4>Traveling Tastebuds</h4>
-                            <p>A fully revamped food and travel blog featuring a fresh design, improved navigation, and a modern layout that makes exploring culinary adventures a visual delight.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">HTML5</span>
-                                <span class="tech-tag">CSS3</span>
-                                <span class="tech-tag">JavaScript</span>
-                                <span class="tech-tag">Responsive</span>
-                            </div>
-                        </div>
-                        <div class="card-footer-custom">
-                            <a href="https://travelingtastebuds.org" target="_blank" class="visit-link">
-                                Visit Site <i class="fas fa-external-link-alt"></i>
-                            </a>
-                            <span class="app-badge"><i class="fas fa-sync-alt"></i> Revamped</span>
-                        </div>
-                    </div>
-
-                    <!-- SportsPick5 -->
-                    <div class="project-card" data-type="website">
-                        <div class="card-image">
-                            <img src="sportsPick5Website.png" alt="SportsPick5" onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fas fa-football-ball project-icon\'></i>';">
-                        </div>
-                        <div class="card-body-custom">
-                            <div class="project-type">Web App &bull; Sports & Gaming</div>
-                            <h4>SportsPick5</h4>
-                            <p>A football pick'em web app I built to replace a friend's uncle's pen-and-paper scoring system. Players make their weekly picks, scores are tracked automatically, and standings update in real time. Took a real-world problem and turned it into a fun digital experience.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">HTML5</span>
-                                <span class="tech-tag">CSS3</span>
-                                <span class="tech-tag">JavaScript</span>
-                                <span class="tech-tag">Score Tracking</span>
-                            </div>
-                        </div>
-                        <div class="card-footer-custom">
-                            <a href="https://www.sportspick5.com/" target="_blank" class="visit-link">
-                                Visit Site <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Rack Up Billiards -->
-                    <div class="project-card" data-type="website">
-                        <div class="card-image">
-                            <img src="rackUpBilliardsWebsite.png" alt="Rack Up Billiards" onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fas fa-circle project-icon\'></i>';">
-                        </div>
-                        <div class="card-body-custom">
-                            <div class="project-type">Web App &bull; Sports Tracker</div>
-                            <h4>Rack Up Billiards</h4>
-                            <p>A custom-built pool stats tracker for tracking records and game history on my home table. Because every game of pool deserves proper stats. Designed with a clean, dark interface that matches the billiards vibe.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">HTML5</span>
-                                <span class="tech-tag">CSS3</span>
-                                <span class="tech-tag">JavaScript</span>
-                                <span class="tech-tag">Stats & Records</span>
-                            </div>
-                        </div>
-                        <div class="card-footer-custom">
-                            <a href="https://rackupbilliards.com" target="_blank" class="visit-link">
-                                Visit Site <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Unused CSS Detector -->
-                    <div class="project-card" data-type="website">
-                        <div class="card-image bg-light-gray">
-                            <i class="fas fa-broom project-icon"></i>
-                        </div>
-                        <div class="card-body-custom">
-                            <div class="project-type"><i class="fas fa-puzzle-piece"></i> VS Code Extension &bull; Developer Tool</div>
-                            <h4>Unused CSS Detector</h4>
-                            <p>A VS Code extension I built and published to the marketplace that intelligently finds unused CSS classes and IDs in your project. It follows HTML link relationships, traces JavaScript imports, supports React, Vue, PHP, and preprocessors, and automatically ignores utility frameworks like Bootstrap and Tailwind. Built for developers who care about clean, maintainable code.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">JavaScript</span>
-                                <span class="tech-tag">VS Code API</span>
-                                <span class="tech-tag">Node.js</span>
-                                <span class="tech-tag">CSS Parsing</span>
-                                <span class="tech-tag">AST Analysis</span>
-                            </div>
-                        </div>
-                        <div class="card-footer-custom">
-                            <a href="https://marketplace.visualstudio.com/items?itemName=robwizzie.unused-css-detector" target="_blank" class="visit-link">
-                                View on Marketplace <i class="fas fa-external-link-alt"></i>
-                            </a>
-                            <span class="app-badge"><i class="fas fa-puzzle-piece"></i> Published</span>
-                        </div>
-                    </div>
-
-                    <!-- Mile A Day -->
-                    <div class="project-card" data-type="app">
-                        <div class="card-image bg-light-blue">
-                            <i class="fas fa-running project-icon"></i>
-                        </div>
-                        <div class="card-body-custom">
-                            <div class="project-type"><i class="fab fa-apple"></i> iOS App &bull; Health & Fitness</div>
-                            <h4>Mile A Day</h4>
-                            <p>An iOS fitness app built with a friend that challenges users to run at least one mile every single day. Features streak tracking, progress visualization, GPS-based run mapping, and motivational tools to keep the daily habit alive. Built natively in Swift with a focus on clean design and seamless Apple ecosystem integration.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">Swift</span>
-                                <span class="tech-tag">Xcode</span>
-                                <span class="tech-tag">iOS</span>
-                                <span class="tech-tag">HealthKit</span>
-                                <span class="tech-tag">MapKit</span>
-                                <span class="tech-tag">CoreLocation</span>
-                            </div>
-                        </div>
-                        <div class="card-footer-custom">
-                            <span class="app-badge"><i class="fab fa-apple"></i> iOS &bull; In Development</span>
-                        </div>
-                    </div>
-
-                    <!-- FantasyFlicks -->
-                    <div class="project-card" data-type="app">
-                        <div class="card-image bg-light-purple">
-                            <i class="fas fa-film project-icon"></i>
-                        </div>
-                        <div class="card-body-custom">
-                            <div class="project-type"><i class="fab fa-apple"></i> iOS App &bull; Entertainment</div>
-                            <h4>FantasyFlicks</h4>
-                            <p>Fantasy football, but for movies. A personal app where you draft films and compete with friends across three unique modes: <strong>Box Office</strong> (highest grossing picks win), <strong>Rotten Tomatoes</strong> (best-reviewed picks win), and <strong>Oscars</strong> (most nominations and wins). A passion project that combines my love of movies and competition.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">Swift</span>
-                                <span class="tech-tag">Xcode</span>
-                                <span class="tech-tag">iOS</span>
-                                <span class="tech-tag">API Integration</span>
-                                <span class="tech-tag">UI/UX Design</span>
-                            </div>
-                        </div>
-                        <div class="card-footer-custom">
-                            <span class="app-badge"><i class="fab fa-apple"></i> iOS &bull; In Development</span>
-                        </div>
-                    </div>
-
-                    <!-- LeBronify -->
-                    <div class="project-card" data-type="app">
-                        <div class="card-image bg-light-warm">
-                            <i class="fas fa-music project-icon"></i>
-                        </div>
-                        <div class="card-body-custom">
-                            <div class="project-type"><i class="fab fa-apple"></i> iOS App &bull; Entertainment / Parody</div>
-                            <h4>LeBronify</h4>
-                            <p>A parody of Spotify &mdash; but it's all LeBron James. A fun iOS app built in Xcode featuring a Spotify-inspired UI filled with LeBron-themed playlists, parody songs, and over-the-top LeBron branding everywhere. A creative side project that let me flex my app design and Swift skills while having a blast.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">Swift</span>
-                                <span class="tech-tag">Xcode</span>
-                                <span class="tech-tag">iOS</span>
-                                <span class="tech-tag">Audio Playback</span>
-                                <span class="tech-tag">UI Design</span>
-                            </div>
-                        </div>
-                        <div class="card-footer-custom">
-                            <span class="app-badge"><i class="fab fa-apple"></i> iOS App</span>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <hr class="m-0">
-
-        <!-- ===== EDUCATION ===== -->
-        <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="education">
-            <div class="w-100">
-                <div class="section-header">
-                    <h2>Education</h2>
-                    <img src="RW Logo.png" alt="" style="width:75px;height:75px">
-                </div>
-
-                <div class="resume-item d-flex flex-column flex-md-row justify-content-between">
-                    <div class="resume-content">
-                        <h3 class="mb-0">Kingsway Regional High School</h3>
-                        <div class="subheading mb-3">High School Diploma</div>
-                        <p>GPA: 3.82</p>
-                    </div>
-                    <div class="resume-date text-md-right">
-                        <span class="text-primary">September 2015 &mdash; June 2019</span>
-                    </div>
-                </div>
-
-                <div class="resume-item d-flex flex-column flex-md-row justify-content-between mt-4">
-                    <div class="resume-content">
-                        <h3 class="mb-0"><a class="hoverLink" style="text-decoration: none;" href="Robert Wiscount - Web Completion.pdf">Miles Technologies Boot Camp</a></h3>
-                        <div class="subheading mb-3">Web Development Certificate</div>
-                    </div>
-                    <div class="resume-date text-md-right">
-                        <span class="text-primary">March 2021</span>
-                    </div>
-                </div>
-
-                <div class="resume-item d-flex flex-column flex-md-row justify-content-between mt-4">
-                    <div class="resume-content">
-                        <h3 class="mb-0"><a class="hoverLink" style="text-decoration: none;" href="Robert Wiscount - DB Boot Camp.pdf">Miles Technologies Boot Camp</a></h3>
-                        <div class="subheading mb-3">Database Development Certificate</div>
-                    </div>
-                    <div class="resume-date text-md-right">
-                        <span class="text-primary">February 2021</span>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <hr class="m-0">
-
-        <!-- ===== SKILLS ===== -->
-        <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="skills">
-            <div class="w-100">
-                <div class="section-header">
-                    <h2>Skills</h2>
-                    <img src="RW Logo.png" alt="" style="width:75px;height:75px">
-                </div>
-
-                <div class="skills-container">
-                    <div class="skill-category">
-                        <h4><i class="fas fa-code"></i> Languages & Frameworks</h4>
-                        <div class="skill-items">
-                            <span class="skill-pill"><i class="fab fa-html5"></i> HTML5</span>
-                            <span class="skill-pill"><i class="fab fa-css3-alt"></i> CSS3</span>
-                            <span class="skill-pill"><i class="fab fa-js-square"></i> JavaScript</span>
-                            <span class="skill-pill"><i class="fab fa-swift"></i> Swift</span>
-                            <span class="skill-pill"><i class="fab fa-bootstrap"></i> Bootstrap</span>
-                            <span class="skill-pill"><i class="fas fa-database"></i> SQL</span>
-                            <span class="skill-pill"><i class="fab fa-microsoft"></i> C#</span>
-                            <span class="skill-pill"><i class="fab fa-python"></i> Python</span>
-                            <span class="skill-pill"><i class="fab fa-sass"></i> SCSS/Sass</span>
-                            <span class="skill-pill"><i class="fas fa-terminal"></i> jQuery</span>
-                        </div>
-                    </div>
-                    <div class="skill-category">
-                        <h4><i class="fas fa-tools"></i> Tools & Platforms</h4>
-                        <div class="skill-items">
-                            <span class="skill-pill"><i class="fab fa-apple"></i> Xcode</span>
-                            <span class="skill-pill"><i class="fab fa-git-alt"></i> Git & GitHub</span>
-                            <span class="skill-pill"><i class="fas fa-code-branch"></i> VS Code</span>
-                            <span class="skill-pill"><i class="fab fa-stripe"></i> Stripe API</span>
-                            <span class="skill-pill"><i class="fab fa-adobe"></i> Adobe Suite</span>
-                            <span class="skill-pill"><i class="fab fa-figma"></i> Figma</span>
-                            <span class="skill-pill"><i class="fas fa-paint-roller"></i> Canva</span>
-                            <span class="skill-pill"><i class="fab fa-npm"></i> npm</span>
-                            <span class="skill-pill"><i class="fas fa-gulp"></i> Gulp</span>
-                            <span class="skill-pill"><i class="fab fa-slack"></i> Slack</span>
-                            <span class="skill-pill"><i class="fas fa-tasks"></i> Jira</span>
-                            <span class="skill-pill"><i class="fab fa-wordpress"></i> WordPress</span>
-                        </div>
-                    </div>
-                    <div class="skill-category">
-                        <h4><i class="fas fa-palette"></i> Design & UX</h4>
-                        <div class="skill-items">
-                            <span class="skill-pill"><i class="fas fa-mobile-alt"></i> Responsive Design</span>
-                            <span class="skill-pill"><i class="fas fa-paint-brush"></i> UI/UX Design</span>
-                            <span class="skill-pill"><i class="fas fa-universal-access"></i> Accessibility</span>
-                            <span class="skill-pill"><i class="fas fa-th-large"></i> CSS Grid & Flexbox</span>
-                            <span class="skill-pill"><i class="fas fa-magic"></i> CSS Animations</span>
-                            <span class="skill-pill"><i class="fas fa-vector-square"></i> Wireframing</span>
-                        </div>
-                    </div>
-                    <div class="skill-category">
-                        <h4><i class="fas fa-users"></i> Workflow & Soft Skills</h4>
-                        <div class="skill-items">
-                            <span class="skill-pill"><i class="fas fa-sync-alt"></i> Agile/SCRUM</span>
-                            <span class="skill-pill"><i class="fas fa-bolt"></i> Fast Learner</span>
-                            <span class="skill-pill"><i class="fas fa-comments"></i> Communication</span>
-                            <span class="skill-pill"><i class="fas fa-clock"></i> Deadline Driven</span>
-                            <span class="skill-pill"><i class="fas fa-lightbulb"></i> Problem Solving</span>
-                            <span class="skill-pill"><i class="fas fa-rocket"></i> Self-Starter</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- AI Expertise Banner -->
-                <div class="ai-banner">
-                    <h4><i class="fas fa-robot"></i> AI-Powered Development</h4>
-                    <p>AI is the single best tool available to developers right now, and I feel like I can do anything with it. I don't just use AI &mdash; I've built it directly into the products I ship. At Foley Prep, I integrated ChatGPT-powered study tools into a live education platform that students use every day. In my personal workflow, AI is baked into everything I do: writing code, debugging, designing interfaces, generating content, and rapidly prototyping new ideas. It's made me a faster, more capable developer and I'm constantly finding new ways to push what's possible with it.</p>
-                    <div class="ai-tools">
-                        <span class="ai-tool-tag">ChatGPT</span>
-                        <span class="ai-tool-tag">Claude</span>
-                        <span class="ai-tool-tag">GitHub Copilot</span>
-                        <span class="ai-tool-tag">Cursor</span>
-                        <span class="ai-tool-tag">AI API Integration</span>
-                        <span class="ai-tool-tag">Prompt Engineering</span>
-                        <span class="ai-tool-tag">Claude Code</span>
-                        <span class="ai-tool-tag">AI-Assisted Design</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <hr class="m-0">
-
-        <!-- ===== INTERESTS ===== -->
-        <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="interests">
-            <div class="w-100">
-                <div class="section-header">
-                    <h2>Interests</h2>
-                    <img src="RW Logo.png" alt="" style="width:75px;height:75px">
-                </div>
-
-                <div class="interests-grid">
-                    <div class="interest-card">
-                        <div class="interest-icon">&#127936;</div>
-                        <h5>Sports & Competition</h5>
-                        <p>Whether it's basketball, volleyball, or running up the score in pool on my home table, I'm always competing. Die-hard Philly sports fan &mdash; Sixers, Phillies, Flyers, and Eagles. GO BIRDS.</p>
-                    </div>
-                    <div class="interest-card">
-                        <div class="interest-icon">&#127916;</div>
-                        <h5>Content Creation</h5>
-                        <p>I've co-hosted a podcast and run my own YouTube channel. I love creating content in all forms &mdash; it's the same creative energy I put into building websites and apps.</p>
-                    </div>
-                    <div class="interest-card">
-                        <div class="interest-icon">&#129302;</div>
-                        <h5>Tech & AI</h5>
-                        <p>I stay plugged into the tech world &mdash; from Apple's WWDC to Google I/O to every new AI breakthrough. Keeping up with emerging tech isn't just a hobby, it's how I stay sharp.</p>
-                    </div>
-                    <div class="interest-card">
-                        <div class="interest-icon">&#127918;</div>
-                        <h5>Gaming & Downtime</h5>
-                        <p>When I'm not coding, you'll find me on 2K, NHL, Call of Duty, or watching basketball and binge-watching shows. Even my downtime fuels project ideas.</p>
-                    </div>
-                    <div class="interest-card">
-                        <div class="interest-icon">&#127917;</div>
-                        <h5>Movies & Entertainment</h5>
-                        <p>I love movies so much I'm literally building an app around them (FantasyFlicks). From box office numbers to Oscar predictions, I'm always paying attention to what's playing.</p>
-                    </div>
-                    <div class="interest-card">
-                        <div class="interest-icon">&#128161;</div>
-                        <h5>Building Things</h5>
-                        <p>My real interest is building things that didn't exist before. Whether it's a pool stats tracker, a pick'em game, or a fitness app &mdash; if I can dream it, I'm going to build it.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <hr class="m-0">
-
-        <!-- ===== RESUME ===== -->
-        <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="resume">
-            <div class="w-100">
-                <div class="section-header">
-                    <h2>Resume</h2>
-                    <img src="RW Logo.png" alt="" style="width:75px;height:75px">
-                </div>
-                <p class="lead mb-4">Want the full picture? Download my resume below. And if you've made it this far &mdash; thanks for checking out my work. Let's connect.</p>
-                <a href="Robert Wiscount Resume.pdf" class="resume-download">
-                    <i class="fas fa-file-pdf"></i> Download My Resume
-                </a>
-            </div>
-        </section>
-    </div>
-
-    <!-- Bootstrap core JavaScript -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for this template -->
-    <script src="js/resume.min.js"></script>
-
-    <!-- Project Filter Script -->
-    <script>
-    function filterProjects(type) {
-        var cards = document.querySelectorAll('.project-card');
-        var buttons = document.querySelectorAll('.filter-btn');
-
-        buttons.forEach(function(btn) { btn.classList.remove('active'); });
-        event.target.classList.add('active');
-
-        cards.forEach(function(card) {
-            if (type === 'all' || card.getAttribute('data-type') === type) {
-                card.style.display = '';
-                card.style.animation = 'fadeIn 0.3s ease forwards';
-            } else {
-                card.style.display = 'none';
-            }
-        });
+    <link href="css/site.css" rel="stylesheet">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Rob Wiscount",
+      "url": "https://robwiscount.org",
+      "jobTitle": "Web Developer",
+      "worksFor": { "@type": "Organization", "name": "Foley Prep" },
+      "email": "mailto:robertwiscount@gmail.com",
+      "sameAs": ["https://github.com/robwizzie", "https://www.linkedin.com/in/rob-wiscount-275a2218a/"]
     }
     </script>
+</head>
 
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="loader" aria-hidden="true"><img src="assets/rw-logo.png" alt=""></div>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="spotlight" aria-hidden="true"></div>
+    <div class="progress" aria-hidden="true"></div>
+    <canvas id="confetti" aria-hidden="true"></canvas>
+
+    <!-- ===== NAV ===== -->
+    <header>
+        <nav class="nav" aria-label="Main">
+            <a class="nav-brand" href="#top" aria-label="Rob Wiscount — back to top">
+                <img src="assets/rw-logo.png" alt="">
+                <span>Rob Wiscount</span>
+            </a>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#mile-a-day">Mile A Day</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a class="btn btn-primary btn-sm magnetic" href="#contact">Hire me <i class="fas fa-arrow-right"></i></a>
+                <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links"><span></span></button>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main">
+
+        <!-- ===== HERO ===== -->
+        <section class="hero" id="top">
+            <canvas id="hero-canvas" aria-hidden="true"></canvas>
+            <div class="wrap hero-grid">
+                <div class="hero-text">
+                    <span class="status-pill"><span class="pulse"></span> Open to new opportunities</span>
+                    <h1 class="h-display hero-title">
+                        <span class="line"><span>Rob</span></span>
+                        <span class="line"><span class="outline">Wiscount</span></span>
+                    </h1>
+                    <p class="hero-sub">I build <span class="typed" aria-live="polite">iOS apps</span></p>
+                    <p class="hero-copy">Full-stack developer from South Jersey who turns ideas into <strong>real products people use every day</strong> — from the education platform I run at Foley Prep to <strong>Mile A Day</strong>, an iPhone &amp; Apple Watch app now live on the App Store.</p>
+                    <div class="hero-actions">
+                        <a class="btn btn-primary magnetic" href="#mile-a-day"><i class="fas fa-bolt"></i> See my work</a>
+                        <a class="btn btn-ghost magnetic" href="Robert Wiscount Resume.pdf" target="_blank" rel="noopener"><i class="fas fa-file-download"></i> Resume</a>
+                    </div>
+                    <div class="hero-socials">
+                        <a class="icon-link" href="https://github.com/robwizzie" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                        <a class="icon-link" href="https://www.linkedin.com/in/rob-wiscount-275a2218a/" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="icon-link" href="https://apps.apple.com/us/app/mile-a-day/id6746970905" target="_blank" rel="noopener" aria-label="Mile A Day on the App Store"><i class="fab fa-app-store-ios"></i></a>
+                        <a class="icon-link" href="https://www.youtube.com/channel/UC4Z5ZAYejSG-DW_X-vfPBlA" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a class="icon-link" href="mailto:robertwiscount@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <div class="portrait" data-tilt>
+                        <div class="portrait-ring"></div>
+                        <div class="portrait-hex">
+                            <img src="assets/rob.png" alt="Portrait of Rob Wiscount" width="440" height="440">
+                        </div>
+                        <div class="float-badge fb-1"><span class="ico"><i class="fab fa-apple"></i></span><span>Shipped to the App Store<small>Mile A Day · iOS + watchOS</small></span></div>
+                        <div class="float-badge fb-2"><span class="ico"><i class="fas fa-code"></i></span><span>5+ years<small>building for the web</small></span></div>
+                        <div class="float-badge fb-3"><span class="ico">🔥</span><span>A mile a day<small>and the app to prove it</small></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-hint" aria-hidden="true"><span class="mouse"></span>SCROLL</div>
+        </section>
+
+        <!-- ===== MARQUEE ===== -->
+        <div class="marquee" aria-hidden="true">
+            <div class="marquee-track">
+                <span class="marquee-item">Swift <i class="fas fa-star-of-life"></i></span>
+                <span class="marquee-item">SwiftUI <i class="fas fa-star-of-life"></i></span>
+                <span class="marquee-item">TypeScript <i class="fas fa-star-of-life"></i></span>
+                <span class="marquee-item">JavaScript <i class="fas fa-star-of-life"></i></span>
+                <span class="marquee-item">Node &amp; Express <i class="fas fa-star-of-life"></i></span>
+                <span class="marquee-item">PostgreSQL <i class="fas fa-star-of-life"></i></span>
+                <span class="marquee-item">Next.js <i class="fas fa-star-of-life"></i></span>
+                <span class="marquee-item">React <i class="fas fa-star-of-life"></i></span>
+                <span class="marquee-item">HealthKit <i class="fas fa-star-of-life"></i></span>
+                <span class="marquee-item">Stripe <i class="fas fa-star-of-life"></i></span>
+                <span class="marquee-item">AI Integration <i class="fas fa-star-of-life"></i></span>
+                <span class="marquee-item">UI / UX <i class="fas fa-star-of-life"></i></span>
+            </div>
+        </div>
+
+        <!-- ===== STATS ===== -->
+        <section class="section" style="padding-bottom: 0;">
+            <div class="wrap">
+                <div class="stats reveal">
+                    <div class="stat"><div class="stat-num"><span data-count="5">0</span><span class="unit">+</span></div><div class="stat-label">Years shipping production code</div></div>
+                    <div class="stat"><div class="stat-num"><span data-count="270">0</span><span class="unit">K+</span></div><div class="stat-label">Lines of code in Mile A Day</div></div>
+                    <div class="stat"><div class="stat-num"><span data-count="10">0</span><span class="unit">+</span></div><div class="stat-label">Sites, apps &amp; tools launched</div></div>
+                    <div class="stat"><div class="stat-num"><span data-count="1">0</span><span class="unit"> App</span></div><div class="stat-label">Live on the App Store (more coming)</div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== FEATURED: MILE A DAY ===== -->
+        <section class="section featured" id="mile-a-day">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Featured build</span>
+                    <h2 class="h-display h2">From idea to <span class="blue">App Store.</span></h2>
+                    <p class="lede">My biggest project yet: a social fitness app with real users, real data, and a live production backend — designed, built and shipped with a friend.</p>
+                </div>
+
+                <div class="mad-card reveal">
+                    <div>
+                        <div class="mad-head">
+                            <img src="assets/mad-icon.png" alt="Mile A Day app icon" width="64" height="64">
+                            <span class="live-tag"><span class="pulse"></span> Live on the App Store</span>
+                        </div>
+                        <h3 class="h-display mad-title">Mile <span class="red">A Day</span></h3>
+                        <p class="mad-pitch">Run or walk <strong>one mile, every single day</strong>. Build a streak, keep it alive with friends, and compete in head-to-head challenges. It's the habit app I wanted to exist — so we built it, end to end.</p>
+                        <div class="chips">
+                            <span class="chip"><i class="fab fa-apple"></i> iPhone</span>
+                            <span class="chip"><i class="fas fa-clock"></i> Apple Watch</span>
+                            <span class="chip"><i class="fas fa-th-large"></i> Widgets &amp; Live Activities</span>
+                            <span class="chip"><i class="fas fa-heartbeat"></i> HealthKit</span>
+                            <span class="chip"><i class="fas fa-user-friends"></i> Live buddy walks</span>
+                            <span class="chip"><i class="fas fa-trophy"></i> Competitions</span>
+                            <span class="chip"><i class="fas fa-map-marked-alt"></i> 3D route flyovers</span>
+                            <span class="chip"><i class="fas fa-camera"></i> Social feed</span>
+                        </div>
+                        <div class="mad-numbers">
+                            <div class="mad-num"><b><span data-count="190">0</span>K+</b><span>lines of Swift</span></div>
+                            <div class="mad-num"><b><span data-count="80">0</span>K+</b><span>lines of TypeScript</span></div>
+                            <div class="mad-num"><b><span data-count="90">0</span>+</b><span>DB migrations</span></div>
+                        </div>
+                        <div class="mad-actions">
+                            <a class="btn btn-appstore magnetic" href="https://apps.apple.com/us/app/mile-a-day/id6746970905" target="_blank" rel="noopener"><i class="fab fa-apple"></i> Download on the App Store</a>
+                            <a class="btn btn-ghost magnetic" href="https://mileaday.run" target="_blank" rel="noopener">mileaday.run <i class="fas fa-arrow-right"></i></a>
+                        </div>
+
+                        <div class="streak-toy">
+                            <span class="flame" aria-hidden="true">🔥</span>
+                            <div>
+                                <div class="count"><span id="toy-count">0</span> day streak</div>
+                                <div class="meta" id="toy-meta">Try it — log today's mile.</div>
+                            </div>
+                            <button class="btn btn-primary btn-sm" id="toy-btn" type="button"><i class="fas fa-running"></i> Log a mile</button>
+                        </div>
+                    </div>
+
+                    <div class="phones" aria-hidden="true">
+                        <div class="phone phone-back" data-depth="0.5"><img src="assets/mad-compete.jpg" alt="" loading="lazy"></div>
+                        <div class="phone phone-front" data-depth="1"><img src="assets/mad-dashboard.jpg" alt="" loading="lazy"></div>
+                    </div>
+                </div>
+
+                <div class="hood">
+                    <div class="hood-card reveal" data-delay="1">
+                        <div class="ico"><i class="fab fa-apple"></i></div>
+                        <h3>Native iOS &amp; watchOS</h3>
+                        <p>SwiftUI app with a Watch companion, home-screen widgets, Live Activities, Siri &amp; Control Center shortcuts, and GPS tracking tuned to never miscount a mile.</p>
+                    </div>
+                    <div class="hood-card reveal" data-delay="2">
+                        <div class="ico"><i class="fas fa-server"></i></div>
+                        <h3>Production backend</h3>
+                        <p>TypeScript + Express API on PostgreSQL: streaks, feeds, real-time group walks, competitions, push notifications and scheduled jobs — with CI gating every deploy.</p>
+                    </div>
+                    <div class="hood-card reveal" data-delay="3">
+                        <div class="ico"><i class="fas fa-layer-group"></i></div>
+                        <h3>Web + admin dashboard</h3>
+                        <p>A Next.js 16 marketing site at mileaday.run and an internal analytics dashboard tracking growth, retention and feature adoption.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== EXPERIENCE ===== -->
+        <section class="section" id="experience">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Experience</span>
+                    <h2 class="h-display h2">Where I've <span class="blue">shipped.</span></h2>
+                    <p class="lede">From fixing laptops in a school district to leading the front end of a live education platform — every role made me a sharper builder.</p>
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-fill" aria-hidden="true"></div>
+
+                    <article class="job open reveal">
+                        <div class="job-dot"><img src="assets/foley-logo.png" alt="Foley Prep logo"></div>
+                        <div class="job-card">
+                            <div class="job-top">
+                                <div>
+                                    <h3 class="job-role">Web Developer</h3>
+                                    <a class="job-company" href="https://foleyprep.com/" target="_blank" rel="noopener">Foley Prep <i class="fas fa-external-link-alt"></i></a>
+                                </div>
+                                <span class="job-date job-now"><span class="pulse"></span> Mar 2023 — Present</span>
+                            </div>
+                            <p class="job-summary">Lead developer on the front end of foleyprep.com — the platform students and tutors use every day for SAT prep, tutoring and AI study tools.</p>
+                            <ul class="job-list">
+                                <li>Built the <strong>digital SAT test-taking software</strong> front end: timed sections, question navigation, answer review and score-report dashboards.</li>
+                                <li>Shipped an <strong>AI study assistant</strong> powered by the ChatGPT API, giving students on-demand explanations and strategies.</li>
+                                <li>Built a full <strong>Stripe payments system</strong> — subscriptions, one-time purchases and billing management.</li>
+                            </ul>
+                            <div class="job-more">
+                                <ul class="job-list">
+                                    <li>Architected the company website from the ground up — responsive across every device.</li>
+                                    <li>Co-created <strong>"Bulb"</strong>, a gamified tutoring app with rewards and progress tracking that makes studying feel like a game.</li>
+                                    <li>Design and ship landing pages and conversion-focused UI that drive new student sign-ups.</li>
+                                    <li>Work in a fast Agile/SCRUM loop, iterating on real feedback from students and tutors.</li>
+                                </ul>
+                            </div>
+                            <button class="job-toggle" type="button" aria-expanded="true">Show less <i class="fas fa-chevron-down"></i></button>
+                            <div class="tags"><span class="tag">JavaScript</span><span class="tag">HTML/CSS</span><span class="tag">Bootstrap</span><span class="tag">ChatGPT API</span><span class="tag">Stripe</span><span class="tag">Agile</span></div>
+                        </div>
+                    </article>
+
+                    <article class="job reveal">
+                        <div class="job-dot"><img src="assets/xgen-logo.png" alt="XGen logo"></div>
+                        <div class="job-card">
+                            <div class="job-top">
+                                <div>
+                                    <h3 class="job-role">Integrations Developer</h3>
+                                    <a class="job-company" href="https://xgen.ai/" target="_blank" rel="noopener">XGen <i class="fas fa-external-link-alt"></i></a>
+                                </div>
+                                <span class="job-date">Mar 2021 — Jun 2022 · Remote</span>
+                            </div>
+                            <p class="job-summary">Full-time developer at a Florida SaaS startup building personalized "Recommended for You" experiences for e-commerce brands.</p>
+                            <ul class="job-list">
+                                <li>Built and deployed <strong>custom JavaScript integrations</strong> directly into client storefronts, matched pixel-for-pixel to each brand.</li>
+                                <li>Owned the rulesets and page triggers that decided when personalized content appeared — <strong>directly moving client conversion</strong>.</li>
+                            </ul>
+                            <div class="job-more">
+                                <ul class="job-list">
+                                    <li>Built bespoke solutions from dynamic product carousels to recommendation widgets.</li>
+                                    <li>Debugged complex cross-browser issues across dozens of client sites.</li>
+                                </ul>
+                            </div>
+                            <button class="job-toggle" type="button" aria-expanded="false">Show more <i class="fas fa-chevron-down"></i></button>
+                            <div class="tags"><span class="tag">JavaScript</span><span class="tag">HTML/CSS</span><span class="tag">SaaS</span><span class="tag">E-commerce</span></div>
+                        </div>
+                    </article>
+
+                    <article class="job reveal">
+                        <div class="job-dot"><img src="assets/usli-logo.png" alt="USLI logo"></div>
+                        <div class="job-card">
+                            <div class="job-top">
+                                <div>
+                                    <h3 class="job-role">Programming Intern</h3>
+                                    <a class="job-company" href="https://customers.usli.com/sites/collegehelp/student-careers.html" target="_blank" rel="noopener">USLI <i class="fas fa-external-link-alt"></i></a>
+                                </div>
+                                <span class="job-date">Jul 2020 — Mar 2021</span>
+                            </div>
+                            <p class="job-summary">Competitive paid internship on an enterprise development team.</p>
+                            <ul class="job-list">
+                                <li>Picked up <strong>C#, SQL and JavaScript</strong> in production, shipping alongside senior developers.</li>
+                                <li>Daily standups, sprint planning and code reviews — the habits I still build by.</li>
+                            </ul>
+                            <div class="tags"><span class="tag">C#</span><span class="tag">SQL</span><span class="tag">JavaScript</span><span class="tag">Visual Studio</span></div>
+                        </div>
+                    </article>
+
+                    <article class="job reveal">
+                        <div class="job-dot"><img src="assets/lavner-logo.png" alt="Lavner Camps logo"></div>
+                        <div class="job-card">
+                            <div class="job-top">
+                                <div>
+                                    <h3 class="job-role">Technology Instructor</h3>
+                                    <a class="job-company" href="https://www.lavnercampsandprograms.com/" target="_blank" rel="noopener">Lavner Camps <i class="fas fa-external-link-alt"></i></a>
+                                </div>
+                                <span class="job-date">Summer 2019</span>
+                            </div>
+                            <p class="job-summary">Taught kids to code in Python, C++ and Scratch — plus video editing and graphic design — turning complex ideas into fun lessons.</p>
+                        </div>
+                    </article>
+
+                    <article class="job reveal">
+                        <div class="job-dot"><img src="assets/kingsway-logo.png" alt="Kingsway Regional logo"></div>
+                        <div class="job-card">
+                            <div class="job-top">
+                                <div>
+                                    <h3 class="job-role">Technology Aide</h3>
+                                    <a class="job-company" href="https://www.krsd.org/" target="_blank" rel="noopener">Kingsway Regional School District <i class="fas fa-external-link-alt"></i></a>
+                                </div>
+                                <span class="job-date">Summer 2018</span>
+                            </div>
+                            <p class="job-summary">Prepped and deployed hundreds of devices and solved hardware, network and software issues before the school year — where it all started.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== PROJECTS ===== -->
+        <section class="section" id="projects">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Side projects</span>
+                    <h2 class="h-display h2">Things I built <span class="blue">for fun.</span></h2>
+                    <p class="lede">I don't stop coding at 5. If a friend has a pen-and-paper problem or I want a stat that doesn't exist, I build it.</p>
+                </div>
+
+                <div class="filters reveal" role="group" aria-label="Filter projects">
+                    <button class="filter active" data-filter="all" type="button" aria-pressed="true">All</button>
+                    <button class="filter" data-filter="web" type="button" aria-pressed="false">Websites</button>
+                    <button class="filter" data-filter="app" type="button" aria-pressed="false">iOS apps</button>
+                    <button class="filter" data-filter="tool" type="button" aria-pressed="false">Dev tools</button>
+                </div>
+
+                <div class="projects">
+                    <article class="project wide reveal" data-kind="web" data-tilt>
+                        <div class="project-cover">
+                            <div class="browser-bar"><i></i><i></i><i></i><span>foleyprep.com</span></div>
+                            <img src="assets/foleyprep.jpg" alt="Foley Prep website" loading="lazy">
+                        </div>
+                        <div class="project-body">
+                            <span class="project-kind">Education platform · Day job</span>
+                            <h3 class="project-name">Foley Prep</h3>
+                            <p class="project-desc">The production platform I build and maintain daily — SAT prep, tutoring, digital SAT practice tests and AI-powered study tools.</p>
+                            <div class="project-foot"><a class="project-link" href="https://foleyprep.com/" target="_blank" rel="noopener">Visit site <i class="fas fa-external-link-alt"></i></a><span class="badge blue">Full-time role</span></div>
+                        </div>
+                    </article>
+
+                    <article class="project wide reveal" data-kind="web" data-delay="1" data-tilt>
+                        <div class="project-cover">
+                            <div class="art art-juice"><span class="glyph">🥤</span><span class="word">Pressed</span></div>
+                        </div>
+                        <div class="project-body">
+                            <span class="project-kind">Brand site · Design showcase</span>
+                            <h3 class="project-name">Sip on Pressed</h3>
+                            <p class="project-desc">One of my proudest designs — a sleek, modern site for a cold-pressed juice brand built around bold visuals and a smooth experience.</p>
+                            <div class="project-foot"><a class="project-link" href="https://siponpressed.com/" target="_blank" rel="noopener">Visit site <i class="fas fa-external-link-alt"></i></a><span class="badge">Design</span></div>
+                        </div>
+                    </article>
+
+                    <article class="project reveal" data-kind="web" data-tilt>
+                        <div class="project-cover"><div class="art art-picks"><span class="glyph">🏈</span><span class="word">Pick 5</span></div></div>
+                        <div class="project-body">
+                            <span class="project-kind">Web app · Sports</span>
+                            <h3 class="project-name">SportsPick5</h3>
+                            <p class="project-desc">A football pick'em that replaced a friend's uncle's pen-and-paper league — weekly picks, automatic scoring, live standings.</p>
+                            <div class="project-foot"><a class="project-link" href="https://www.sportspick5.com/" target="_blank" rel="noopener">Visit site <i class="fas fa-external-link-alt"></i></a></div>
+                        </div>
+                    </article>
+
+                    <article class="project reveal" data-kind="web" data-delay="1" data-tilt>
+                        <div class="project-cover"><div class="art art-pool"><span class="glyph">🎱</span></div></div>
+                        <div class="project-body">
+                            <span class="project-kind">Web app · Stats tracker</span>
+                            <h3 class="project-name">Rack Up Billiards</h3>
+                            <p class="project-desc">Every game on my home pool table deserves real stats. Records, head-to-heads and game history in a dark, felt-green UI.</p>
+                            <div class="project-foot"><a class="project-link" href="https://rackupbilliards.com" target="_blank" rel="noopener">Visit site <i class="fas fa-external-link-alt"></i></a></div>
+                        </div>
+                    </article>
+
+                    <article class="project reveal" data-kind="web" data-delay="2" data-tilt>
+                        <div class="project-cover">
+                            <div class="browser-bar"><i></i><i></i><i></i><span>travelingtastebuds.org</span></div>
+                            <img src="assets/ttb.jpg" alt="Traveling Tastebuds website" loading="lazy">
+                        </div>
+                        <div class="project-body">
+                            <span class="project-kind">Blog · Redesign</span>
+                            <h3 class="project-name">Traveling Tastebuds</h3>
+                            <p class="project-desc">A full revamp of a food &amp; travel blog — fresh design, better navigation and a layout that makes browsing feel like a trip.</p>
+                            <div class="project-foot"><a class="project-link" href="https://travelingtastebuds.org" target="_blank" rel="noopener">Visit site <i class="fas fa-external-link-alt"></i></a><span class="badge">Revamped</span></div>
+                        </div>
+                    </article>
+
+                    <article class="project reveal" data-kind="tool" data-tilt>
+                        <div class="project-cover">
+                            <div class="art art-code"><pre><span class="c">/* styles.css — 3 unused */</span>
+<span class="k">.hero</span> { <span class="s">display: grid;</span> }
+<span class="x">.old-banner</span> { … }
+<span class="k">.card</span> { <span class="s">padding: 24px;</span> }
+<span class="x">.legacy-btn</span> { … }
+<span class="x">#promo-2019</span> { … }</pre></div>
+                        </div>
+                        <div class="project-body">
+                            <span class="project-kind">VS Code extension · Published</span>
+                            <h3 class="project-name">Unused CSS Detector</h3>
+                            <p class="project-desc">Finds dead CSS classes and IDs by tracing HTML links and JS imports — React, Vue, PHP and preprocessors included, Bootstrap/Tailwind ignored.</p>
+                            <div class="project-foot"><a class="project-link" href="https://marketplace.visualstudio.com/items?itemName=robwizzie.unused-css-detector" target="_blank" rel="noopener">Marketplace <i class="fas fa-external-link-alt"></i></a><span class="badge blue">Published</span></div>
+                        </div>
+                    </article>
+
+                    <article class="project reveal" data-kind="app" data-delay="1" data-tilt>
+                        <div class="project-cover"><div class="art art-film"><span class="glyph">🎬</span><span class="word">Flicks</span></div></div>
+                        <div class="project-body">
+                            <span class="project-kind">iOS app · Entertainment</span>
+                            <h3 class="project-name">FantasyFlicks</h3>
+                            <p class="project-desc">Fantasy football, but for movies. Draft films with friends and win on Box Office, Rotten Tomatoes or Oscars scoring.</p>
+                            <div class="project-foot"><span class="badge"><i class="fab fa-apple"></i> In development</span></div>
+                        </div>
+                    </article>
+
+                    <article class="project reveal" data-kind="app" data-delay="2" data-tilt>
+                        <div class="project-cover"><div class="art art-goat"><span class="glyph">👑</span><span class="word">LeBronify</span></div></div>
+                        <div class="project-body">
+                            <span class="project-kind">iOS app · Parody</span>
+                            <h3 class="project-name">LeBronify</h3>
+                            <p class="project-desc">Spotify — but everything is LeBron James. A Spotify-style player full of LeBron playlists and parody tracks. Pure fun, real Swift.</p>
+                            <div class="project-foot"><span class="badge"><i class="fab fa-apple"></i> iOS app</span></div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SKILLS ===== -->
+        <section class="section" id="skills">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Toolbox</span>
+                    <h2 class="h-display h2">Front to back, <span class="blue">phone to server.</span></h2>
+                </div>
+                <div class="skills">
+                    <div class="skill-group reveal">
+                        <h3>Web</h3>
+                        <div class="skill-list">
+                            <span class="skill"><i class="fab fa-js"></i> JavaScript</span>
+                            <span class="skill"><i class="fas fa-code"></i> TypeScript</span>
+                            <span class="skill"><i class="fab fa-html5"></i> HTML5</span>
+                            <span class="skill"><i class="fab fa-css3-alt"></i> CSS3 / SCSS</span>
+                            <span class="skill"><i class="fab fa-react"></i> React</span>
+                            <span class="skill"><i class="fas fa-layer-group"></i> Next.js</span>
+                            <span class="skill"><i class="fas fa-wind"></i> Tailwind</span>
+                            <span class="skill"><i class="fab fa-bootstrap"></i> Bootstrap</span>
+                            <span class="skill"><i class="fab fa-wordpress"></i> WordPress</span>
+                        </div>
+                    </div>
+                    <div class="skill-group reveal" data-delay="1">
+                        <h3>Apple</h3>
+                        <div class="skill-list">
+                            <span class="skill"><i class="fab fa-apple"></i> Swift</span>
+                            <span class="skill"><i class="fas fa-mobile-alt"></i> SwiftUI</span>
+                            <span class="skill"><i class="fas fa-clock"></i> watchOS</span>
+                            <span class="skill"><i class="fas fa-heartbeat"></i> HealthKit</span>
+                            <span class="skill"><i class="fas fa-map"></i> MapKit</span>
+                            <span class="skill"><i class="fas fa-th-large"></i> WidgetKit</span>
+                            <span class="skill"><i class="fab fa-apple"></i> Xcode</span>
+                        </div>
+                    </div>
+                    <div class="skill-group reveal" data-delay="2">
+                        <h3>Backend &amp; data</h3>
+                        <div class="skill-list">
+                            <span class="skill"><i class="fab fa-node-js"></i> Node.js</span>
+                            <span class="skill"><i class="fas fa-server"></i> Express</span>
+                            <span class="skill"><i class="fas fa-database"></i> PostgreSQL</span>
+                            <span class="skill"><i class="fas fa-database"></i> SQL</span>
+                            <span class="skill"><i class="fas fa-plug"></i> REST APIs</span>
+                            <span class="skill"><i class="fab fa-stripe-s"></i> Stripe</span>
+                            <span class="skill"><i class="fab fa-microsoft"></i> C#</span>
+                            <span class="skill"><i class="fab fa-python"></i> Python</span>
+                        </div>
+                    </div>
+                    <div class="skill-group reveal" data-delay="3">
+                        <h3>Design &amp; workflow</h3>
+                        <div class="skill-list">
+                            <span class="skill"><i class="fab fa-figma"></i> Figma</span>
+                            <span class="skill"><i class="fas fa-pen-nib"></i> UI / UX</span>
+                            <span class="skill"><i class="fas fa-universal-access"></i> Accessibility</span>
+                            <span class="skill"><i class="fab fa-git-alt"></i> Git &amp; GitHub</span>
+                            <span class="skill"><i class="fas fa-check-double"></i> CI / CD</span>
+                            <span class="skill"><i class="fas fa-sync-alt"></i> Agile / SCRUM</span>
+                            <span class="skill"><i class="fab fa-adobe"></i> Adobe</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai-panel reveal">
+                    <div>
+                        <h3>I build with AI — and build AI in.</h3>
+                        <p>I shipped a ChatGPT-powered study assistant to a live education platform, and AI is wired into how I work: prototyping, debugging, reviewing and shipping faster than I ever could alone. It's the best tool developers have ever had, and I treat it like one.</p>
+                    </div>
+                    <div class="ai-tools">
+                        <span>Claude Code</span><span>Claude</span><span>ChatGPT</span><span>OpenAI API</span><span>Cursor</span><span>GitHub Copilot</span><span>Prompt engineering</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TERMINAL ===== -->
+        <section class="section" id="terminal" style="padding-top: 0;">
+            <div class="wrap terminal-wrap">
+                <div class="reveal">
+                    <span class="eyebrow">Interactive</span>
+                    <h2 class="h-display h2">Go ahead, <span class="blue">poke around.</span></h2>
+                    <p class="lede">A tiny shell that knows everything about me. Type <code>help</code> to start — or just try <code>hire rob</code>.</p>
+                    <div class="term-hints">
+                        <button type="button" data-cmd="whoami">whoami</button>
+                        <button type="button" data-cmd="projects">projects</button>
+                        <button type="button" data-cmd="stack">stack</button>
+                        <button type="button" data-cmd="hire rob">hire rob</button>
+                        <button type="button" data-cmd="go birds">go birds</button>
+                    </div>
+                </div>
+                <div class="terminal reveal" data-delay="1">
+                    <div class="term-bar"><i></i><i></i><i></i><span>rob@wiscount: ~</span></div>
+                    <div class="term-body" id="term-body">
+                        <div id="term-out"></div>
+                        <label class="term-line"><span class="p">rob@wiscount:~$</span><input id="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal command"></label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== ABOUT / BEYOND THE CODE ===== -->
+        <section class="section" id="about" style="padding-top: 0;">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Beyond the code</span>
+                    <h2 class="h-display h2">The guy behind <span class="blue">the commits.</span></h2>
+                </div>
+                <div class="life">
+                    <div class="life-card feature reveal">
+                        <span class="emoji">🏃</span>
+                        <h3>I actually run the mile.</h3>
+                        <span class="big">Every. Single. Day.</span>
+                        <p>Mile A Day started as my own streak. Now it's an app other people use to build theirs — the best kind of dogfooding.</p>
+                    </div>
+                    <div class="life-card reveal" data-delay="1">
+                        <span class="emoji">🦅</span>
+                        <h3>Philly through and through</h3>
+                        <p>Sixers, Phillies, Flyers, Eagles. Basketball, volleyball, and running up the score on my home pool table. GO BIRDS.</p>
+                    </div>
+                    <div class="life-card reveal">
+                        <span class="emoji">🎙️</span>
+                        <h3>Content creator</h3>
+                        <p>Co-hosted a podcast and ran my own YouTube channel — same creative energy I put into products.</p>
+                    </div>
+                    <div class="life-card reveal" data-delay="1">
+                        <span class="emoji">🎬</span>
+                        <h3>Movie obsessive</h3>
+                        <p>Box office numbers, Oscar predictions — I love it enough to be building an app about it.</p>
+                    </div>
+                    <div class="life-card reveal" data-delay="2">
+                        <span class="emoji">🎮</span>
+                        <h3>Gamer &amp; tech nerd</h3>
+                        <p>2K, NHL, Call of Duty — and every WWDC keynote live. Downtime is where the next idea shows up.</p>
+                    </div>
+                </div>
+
+                <div class="edu">
+                    <div class="edu-card reveal"><span class="ico"><i class="fas fa-laptop-code"></i></span><div><h3><a href="Robert Wiscount - Web Completion.pdf" target="_blank" rel="noopener">Web Development Certificate</a></h3><p>Miles Technologies Boot Camp · 2021</p></div></div>
+                    <div class="edu-card reveal" data-delay="1"><span class="ico"><i class="fas fa-database"></i></span><div><h3><a href="Robert Wiscount - DB Boot Camp.pdf" target="_blank" rel="noopener">Database Development Certificate</a></h3><p>Miles Technologies Boot Camp · 2021</p></div></div>
+                    <div class="edu-card reveal" data-delay="2"><span class="ico"><i class="fas fa-graduation-cap"></i></span><div><h3>Kingsway Regional High School</h3><p>Diploma · 3.82 GPA · 2019</p></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== CONTACT ===== -->
+        <section class="section contact" id="contact">
+            <div class="wrap">
+                <img class="contact-logo reveal" src="assets/rw-logo.png" alt="RW logo" id="contact-logo" title="Click me">
+                <h2 class="h-display contact-title reveal">Let's build<br><span class="outline">something.</span></h2>
+                <p class="lede reveal">Hiring, have a project, or just want to talk ball? My inbox is open and I reply fast.</p>
+                <div class="contact-actions reveal">
+                    <button class="btn btn-primary email-btn magnetic" id="email-btn" type="button" data-email="robertwiscount@gmail.com">
+                        <i class="fas fa-copy"></i><span class="addr">robertwiscount@gmail.com</span><span class="copied">Copied to clipboard!</span>
+                    </button>
+                    <a class="btn btn-ghost magnetic" href="mailto:robertwiscount@gmail.com"><i class="fas fa-paper-plane"></i> Send an email</a>
+                    <a class="btn btn-ghost magnetic" href="Robert Wiscount Resume.pdf" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i> Resume</a>
+                </div>
+                <div class="contact-links reveal">
+                    <a class="icon-link" href="https://www.linkedin.com/in/rob-wiscount-275a2218a/" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a class="icon-link" href="https://github.com/robwizzie" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a class="icon-link" href="tel:8564059470" aria-label="Call (856) 405-9470"><i class="fas fa-phone"></i></a>
+                    <button class="icon-link" id="share-btn" type="button" aria-label="Share this site"><i class="fas fa-share-alt"></i></button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap">
+            <span><img src="assets/rw-logo.png" alt="">© <span id="year">2026</span> Rob Wiscount · Designed &amp; built in South Jersey</span>
+            <span>Psst — try <kbd>↑</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><kbd>←</kbd><kbd>→</kbd><kbd>B</kbd><kbd>A</kbd></span>
+        </div>
+    </footer>
+
+    <div class="toast" role="status" aria-live="polite"></div>
+
+    <script src="js/site.js"></script>
 </body>
 </html>
