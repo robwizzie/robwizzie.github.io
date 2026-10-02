@@ -36,7 +36,7 @@
   function onScroll() {
     var y = window.scrollY, max = document.documentElement.scrollHeight - innerHeight;
     progress.style.transform = 'scaleX(' + (max > 0 ? y / max : 0) + ')';
-    if (!document.body.classList.contains('menu-open')) nav.classList.toggle('hidden', y > lastY && y > 300);
+    var hp = document.getElementById('hire-panel'); if (!document.body.classList.contains('menu-open') && (!hp || hp.hidden)) nav.classList.toggle('hidden', y > lastY && y > 300);
     lastY = y;
     var current = -1;
     sections.forEach(function (s, i) { if (s && s.getBoundingClientRect().top < innerHeight * 0.4) current = i; });
@@ -315,6 +315,25 @@
       ta.remove();
     });
   }
+  /* ---------- Hire me panel ---------- */
+  (function () {
+    var btn = $('#hire-btn'), panel = $('#hire-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.hidden = !open; btn.setAttribute('aria-expanded', String(open));
+      if (open) { document.body.classList.remove('menu-open'); var first = panel.querySelector('.hire-opt'); if (first) first.focus(); }
+    }
+    btn.addEventListener('click', function (e) { e.stopPropagation(); setOpen(panel.hidden); });
+    document.addEventListener('click', function (e) { if (!panel.hidden && !panel.contains(e.target)) setOpen(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !panel.hidden) { setOpen(false); btn.focus(); } });
+    $$('a.hire-opt', panel).forEach(function (a) { a.addEventListener('click', function () { setOpen(false); }); });
+    $('#hire-copy').addEventListener('click', function () {
+      var note = panel.querySelector('.hire-copy-note');
+      copy('robertwiscount@gmail.com').then(function () { note.textContent = 'Copied!'; setTimeout(function () { note.textContent = 'Paste it anywhere'; }, 2000); },
+        function () { location.href = 'mailto:robertwiscount@gmail.com'; });
+    });
+  })();
+
   var emailBtn = $('#email-btn');
   emailBtn.addEventListener('click', function () {
     copy(emailBtn.getAttribute('data-email')).then(function () {
