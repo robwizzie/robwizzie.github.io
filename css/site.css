@@ -99,7 +99,7 @@ body.modal-open { overflow: hidden; }
   .nav-links a { padding: 14px 16px; font-size: 1.05rem; }
   .menu-open .nav-links { opacity: 1; pointer-events: auto; transform: none; }
   .menu-btn { display: block; }
-  .nav-cta .btn-sm { display: none; }
+  .hire-btn { padding: 9px 14px; font-size: .86rem; }
 }
 
 /* ---------- Buttons ---------- */
@@ -598,3 +598,24 @@ kbd { font-family: var(--mono); font-size: .74rem; min-width: 24px; text-align: 
 .mad-live-foot a { color: var(--blue-hi); }
 @media (max-width: 900px) { .mad-live-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 520px) { .mad-live-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* Hire me: a small panel under the nav button instead of a jump to the page bottom */
+.hire { position: relative; }
+.hire-btn .fa-chevron-down { font-size: .72em; transition: transform .25s var(--ease); }
+.hire-btn[aria-expanded="true"] .fa-chevron-down { transform: rotate(180deg); }
+.hire-panel { position: absolute; right: 0; top: calc(100% + 10px); width: min(320px, calc(100vw - 32px)); padding: 16px; border-radius: 18px; background: rgba(13,17,27,.98); border: 1px solid var(--line-strong); box-shadow: 0 24px 60px -18px rgba(0,0,0,.8); z-index: 400; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); animation: hireIn .22s var(--ease); }
+.hire-panel[hidden] { display: none; }
+@keyframes hireIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.hire-title { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.5rem; text-transform: uppercase; line-height: 1; }
+.hire-sub { margin: 6px 0 12px; font-size: .86rem; color: var(--muted); }
+.hire-opt { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; border-radius: 12px; text-align: left; color: var(--text); font-weight: 600; font-size: .92rem; transition: background .2s; }
+.hire-opt + .hire-opt { margin-top: 2px; }
+.hire-opt:hover, .hire-opt:focus-visible { background: rgba(91,143,249,.12); outline: none; }
+.hire-opt i { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 10px; background: var(--blue-soft); color: var(--blue-hi); }
+.hire-opt small { display: block; font-size: .76rem; font-weight: 500; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .hire-panel { animation: none; } }
+@media (max-width: 900px) {
+  .hire-panel { position: fixed; left: 16px; right: 16px; top: 78px; width: auto; }
+  .nav-brand { white-space: nowrap; }
+}
+@media (max-width: 380px) { .nav-brand span { font-size: 1.1rem; } .hire-btn { padding: 8px 12px; } }
