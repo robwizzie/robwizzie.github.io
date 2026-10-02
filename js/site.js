@@ -487,7 +487,7 @@
       print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  hire rob    the best command\n  contact     how to reach me\n  clear       wipe the screen', 'dim');
     },
     whoami: function () {
-      print('Rob Wiscount — full-stack developer from South Jersey.');
+      print('Rob Wiscount — front-end developer at heart, full stack by now. South Jersey.');
       print('Builds apps, games and sites — then makes his friends play them.', 'dim');
       print('Software developer @ Foley Prep. Co-founder of Mile A Day (live on the App Store).', 'dim');
       print('Builds websites, web apps and iOS apps people actually use.', 'dim');
@@ -536,7 +536,7 @@
     'hire rob': function () {
       print('Checking candidate…', 'dim');
       setTimeout(function () { print('✔ ships real products', 'ok'); }, 250);
-      setTimeout(function () { print('✔ full stack: web, iOS, backend', 'ok'); }, 500);
+      setTimeout(function () { print('✔ front end first, full stack when it counts', 'ok'); }, 500);
       setTimeout(function () { print('✔ fast, curious, AI-native', 'ok'); }, 750);
       setTimeout(function () {
         print('Match found. Opening a line of communication… <a href="#contact">↓ contact</a>');
