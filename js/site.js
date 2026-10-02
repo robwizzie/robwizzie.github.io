@@ -621,35 +621,43 @@
   print('Welcome to robOS v2026. Type <span class="p">help</span> to see what I can do.', 'ok');
 
   /* ---------- Mile A Day live community stats ----------
-     Read-only public endpoint the mileaday.run site uses (cached 60 s server-side).
-     If it can't be reached, the panel just stays hidden. */
+     Same read-only public endpoint mileaday.run uses (cached 60 s server-side).
+     The HTML holds a recent snapshot, so the panel is never empty; it counts up when
+     it scrolls into view and then follows the live numbers every minute. */
   (function () {
     var box = document.getElementById('mad-live');
-    if (!box || !window.fetch) return;
-    var shown = {};
+    if (!box) return;
+    var els = $$('[data-stat]', box), latest = {}, shown = {}, seen = false;
+    els.forEach(function (el) { latest[el.getAttribute('data-stat')] = parseFloat(el.textContent.replace(/,/g, '')) || 0; });
     function fmt(n, d) { return Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); }
-    function paint(el, target) {
-      var d = +(el.getAttribute('data-decimals') || 0), suffix = el.getAttribute('data-suffix') || '';
-      var key = el.getAttribute('data-stat'), from = shown[key] || 0;
-      shown[key] = target;
-      if (reduceMotion || from === target) { el.textContent = fmt(target, d) + suffix; return; }
-      var t0 = performance.now();
-      (function tick(now) {
-        var t = Math.min((now - t0) / 1400, 1), e = 1 - Math.pow(1 - t, 3);
-        el.textContent = fmt(from + (target - from) * e, d) + suffix;
-        if (t < 1) requestAnimationFrame(tick);
-      })(t0);
+    function paint() {
+      els.forEach(function (el) {
+        var key = el.getAttribute('data-stat'), to = latest[key], from = shown[key] || 0;
+        var d = +(el.getAttribute('data-decimals') || 0), suffix = el.getAttribute('data-suffix') || '';
+        shown[key] = to;
+        if (reduceMotion || from === to) { el.textContent = fmt(to, d) + suffix; return; }
+        var t0 = performance.now();
+        (function tick(now) {
+          var t = Math.min((now - t0) / 1600, 1), e = 1 - Math.pow(1 - t, 3);
+          el.textContent = fmt(from + (to - from) * e, d) + suffix;
+          if (t < 1) requestAnimationFrame(tick);
+        })(t0);
+      });
     }
+    if ('IntersectionObserver' in window && !reduceMotion) {
+      new IntersectionObserver(function (entries, obs) {
+        if (!entries[0].isIntersecting) return;
+        obs.disconnect(); seen = true; paint();
+      }, { threshold: 0.4 }).observe(box);
+    } else { seen = true; }
     function load() {
+      if (!window.fetch) return;
       fetch('https://mad.mindgoblin.tech/public/stats', { cache: 'no-store' })
         .then(function (r) { if (!r.ok) throw 0; return r.json(); })
         .then(function (data) {
           if (!data || !data.total_users) return;
-          box.hidden = false;
-          $$('[data-stat]', box).forEach(function (el) {
-            var v = data[el.getAttribute('data-stat')];
-            if (typeof v === 'number') paint(el, v);
-          });
+          Object.keys(latest).forEach(function (k) { if (typeof data[k] === 'number') latest[k] = data[k]; });
+          if (seen) paint();
         })
         .catch(function () {});
     }
