@@ -236,6 +236,7 @@
   var modal = $('#game-modal'), frame = $('#game-frame'), lastFocus = null;
   function openFetch() {
     lastFocus = document.activeElement;
+    var music = document.getElementById('lbf-audio'); if (music && !music.paused) music.pause();
     modal.classList.add('open'); document.body.classList.add('modal-open');
     if (!frame.getAttribute('src')) frame.setAttribute('src', 'play/fetch/index.html');
     setTimeout(function () { frame.focus(); }, 50);
@@ -257,7 +258,11 @@
     frame.focus();
   });
   // Esc belongs to the game while it has focus; this only fires when focus is on the page around it.
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.classList.contains('open')) closeFetch(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (modal.classList.contains('open')) closeFetch();
+    var adEl = document.getElementById('ad-break'); if (adEl && !adEl.hidden) adEl.querySelector('[data-ad]').click();
+  });
 
   /* ---------- Copy email / share ---------- */
   function copy(text) {
@@ -342,6 +347,124 @@
     if (kpos === konami.length) { kpos = 0; party(); toast('🎮 Cheat code unlocked: +30 lives. Now go hire Rob.'); }
   });
 
+  /* ---------- LeBronify player ---------- */
+  var TRACKS = [
+    { id: 'lehips', title: "LeHips Don't Lie", artist: '@ant.jr06' },
+    { id: 'lebronifornia', title: 'LeBronifornia Girls', artist: '@izzydrip' },
+    { id: 'lenade', title: 'Catch a LeNade For You', artist: '@ilyaugust' },
+    { id: 'glazed', title: 'I Glazed LeBron (And I Liked It)', artist: '@timringling' },
+    { id: 'brongedies', title: 'Brons Not Brongedies', artist: '@ilyaugust' },
+    { id: 'dance', title: 'Shut Up and Dance With Bron', artist: '@ilyaugust' },
+    { id: 'bronicide', title: 'Romantic Bronicide', artist: '@ilyaugust' },
+    { id: 'taco', title: 'Taco Tuesday', artist: 'LeBron fan anthem' }
+  ];
+  var DURATIONS = { lehips: 40, lebronifornia: 59, lenade: 60, glazed: 60, brongedies: 71, dance: 37, bronicide: 68, taco: 36 };
+  var audio = $('#lbf-audio'), lbf = $('#lbf'), cur = 0, plays = 0, shuffle = false;
+  var playBtn = $('#lbf-play'), list = $('#lbf-list'), mini = $('#mini-player');
+  function fmt(t) { t = Math.max(0, Math.round(t || 0)); return Math.floor(t / 60) + ':' + ('0' + (t % 60)).slice(-2); }
+  list.innerHTML = TRACKS.map(function (t, i) {
+    return '<li><button type="button" data-i="' + i + '"><span class="n">' + (i + 1) + '</span><img src="assets/lebronify/' + t.id + '.jpg" alt="" width="40" height="40" loading="lazy">' +
+      '<span class="t"><strong>' + t.title + '</strong><small>' + t.artist + '</small></span><span class="d">' + fmt(DURATIONS[t.id]) + '</span></button></li>';
+  }).join('');
+  var rows = $$('#lbf-list button');
+  function paint() {
+    var t = TRACKS[cur], playing = !audio.paused;
+    $('#lbf-art').src = $('#mini-art').src = 'assets/lebronify/' + t.id + '.jpg';
+    $('#lbf-title').textContent = $('#mini-title').textContent = t.title;
+    $('#lbf-artist').textContent = t.artist;
+    $('#lbf-kicker').textContent = playing ? 'Now playing' : (plays ? 'Paused' : "LeBron's pick of the day");
+    $('#lbf-dur').textContent = fmt(audio.duration || DURATIONS[t.id]);
+    playBtn.innerHTML = '<i class="fas fa-' + (playing ? 'pause' : 'play') + '"></i>';
+    playBtn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+    $('#mini-toggle').innerHTML = '<i class="fas fa-' + (playing ? 'pause' : 'play') + '"></i>';
+    lbf.classList.toggle('is-playing', playing);
+    rows.forEach(function (r, i) { r.classList.toggle('on', i === cur); r.setAttribute('aria-current', i === cur ? 'true' : 'false'); });
+    updateMini();
+  }
+  function lbfLoad(i, autoplay) {
+    cur = (i + TRACKS.length) % TRACKS.length;
+    audio.src = 'assets/lebronify/' + TRACKS[cur].id + '.mp3';
+    $('#lbf-bar').style.width = '0%'; $('#lbf-cur').textContent = '0:00';
+    if (autoplay) play(); else paint();
+  }
+  function play() {
+    if (!audio.getAttribute('src')) audio.src = 'assets/lebronify/' + TRACKS[cur].id + '.mp3';
+    var pr = audio.play(); if (pr && pr.catch) pr.catch(function () {});
+    plays++;
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({ title: TRACKS[cur].title, artist: TRACKS[cur].artist, album: 'LeBronify', artwork: [{ src: 'assets/lebronify/' + TRACKS[cur].id + '.jpg', sizes: '300x300', type: 'image/jpeg' }] });
+    }
+  }
+  function nextIndex() { return shuffle ? (cur + 1 + Math.floor(Math.random() * (TRACKS.length - 1))) % TRACKS.length : cur + 1; }
+  playBtn.addEventListener('click', function () { audio.paused ? play() : audio.pause(); });
+  $('#lbf-next').addEventListener('click', function () { lbfLoad(nextIndex(), true); });
+  $('#lbf-prev').addEventListener('click', function () { audio.currentTime > 3 ? (audio.currentTime = 0) : lbfLoad(cur - 1, true); });
+  $('#lbf-shuffle').addEventListener('click', function () {
+    shuffle = !shuffle; this.classList.toggle('on', shuffle);
+    toast(shuffle ? '👑 The King will decide what plays next.' : 'Shuffle off. You\'re in charge again.');
+  });
+  rows.forEach(function (r) { r.addEventListener('click', function () { var i = +r.getAttribute('data-i'); i === cur && !audio.paused ? audio.pause() : (i === cur ? play() : lbfLoad(i, true)); }); });
+  ['play', 'pause'].forEach(function (ev) { audio.addEventListener(ev, paint); });
+  audio.addEventListener('loadedmetadata', function () { $('#lbf-dur').textContent = fmt(audio.duration); });
+  audio.addEventListener('timeupdate', function () {
+    var p = audio.duration ? audio.currentTime / audio.duration : 0;
+    $('#lbf-bar').style.width = (p * 100) + '%'; $('#lbf-cur').textContent = fmt(audio.currentTime);
+    $('#lbf-progress').setAttribute('aria-valuenow', Math.round(p * 100));
+  });
+  var songsFinished = 0;
+  audio.addEventListener('ended', function () {
+    songsFinished++;
+    if (songsFinished % 2 === 0) showAd(); else lbfLoad(nextIndex(), true);
+  });
+  function seek(e) {
+    var r = $('#lbf-progress').getBoundingClientRect(), x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+    if (audio.duration) audio.currentTime = Math.max(0, Math.min(1, x / r.width)) * audio.duration;
+  }
+  $('#lbf-progress').addEventListener('click', seek);
+  $('#lbf-progress').addEventListener('keydown', function (e) {
+    if (!audio.duration) return;
+    if (e.key === 'ArrowRight') audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+    if (e.key === 'ArrowLeft') audio.currentTime = Math.max(0, audio.currentTime - 5);
+  });
+
+  /* AD Break — the real app interrupts every so often with Anthony Davis */
+  var ad = $('#ad-break');
+  function showAd() { audio.pause(); ad.hidden = false; setTimeout(function () { ad.classList.add('open'); $('.ad-actions button').focus(); }, 10); }
+  $$('[data-ad]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      ad.classList.remove('open'); setTimeout(function () { ad.hidden = true; }, 300);
+      toast(b.getAttribute('data-ad')); lbfLoad(nextIndex(), true);
+    });
+  });
+
+  /* Taco Tuesday */
+  $('#lbf-taco').addEventListener('click', function () {
+    var tuesday = new Date().getDay() === 2;
+    toast(tuesday ? '🌮 TACO TUESDAYYYYY' : "🌮 It's not even Tuesday. LeBron doesn't care.");
+    lbfLoad(TRACKS.length - 1, true);
+    if (reduceMotion) return;
+    for (var i = 0; i < 28; i++) {
+      var t = document.createElement('img');
+      t.src = 'assets/lebronify/taco.png'; t.alt = ''; t.className = 'taco-drop';
+      t.style.left = (Math.random() * 100) + 'vw'; t.style.animationDelay = (Math.random() * 1.6) + 's';
+      t.style.width = (28 + Math.random() * 36) + 'px'; t.style.setProperty('--spin', (Math.random() * 720 - 360) + 'deg');
+      document.body.appendChild(t);
+      setTimeout(function (el) { el.remove(); }, 5200, t);
+    }
+  });
+
+  /* Mini player shows up when music plays and the section is off screen */
+  var lbfVisible = true, sessionOn = false;
+  function updateMini() { if (!audio.paused) sessionOn = true; mini.hidden = !(sessionOn && !lbfVisible); }
+  if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { lbfVisible = en[0].isIntersecting; updateMini(); }, { threshold: 0.15 }).observe(lbf);
+  $('#mini-toggle').addEventListener('click', function () { audio.paused ? play() : audio.pause(); });
+  $('#mini-close').addEventListener('click', function () { sessionOn = false; audio.pause(); audio.currentTime = 0; mini.hidden = true; });
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.setActionHandler('nexttrack', function () { lbfLoad(nextIndex(), true); });
+    navigator.mediaSession.setActionHandler('previoustrack', function () { lbfLoad(cur - 1, true); });
+  }
+  paint();
+
   /* ---------- Terminal ---------- */
   var out = $('#term-out'), input = $('#term-input'), body = $('#term-body'), history = [], hpos = 0;
   function esc(s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
@@ -350,7 +473,7 @@
   var commands = {
     help: function () {
       print('Available commands:', 'ok');
-      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      a random LeBronify track\n  roast me    courtesy of Spiral\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  hire rob    the best command\n  contact     how to reach me\n  clear       wipe the screen', 'dim');
+      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  hire rob    the best command\n  contact     how to reach me\n  clear       wipe the screen', 'dim');
     },
     whoami: function () {
       print('Rob Wiscount — full-stack developer from South Jersey.');
@@ -363,15 +486,14 @@
        ['Fetch', '3D dog party game · playable on this page', '#fetch'],
        ['Trouble Brewing', 'coffee house site + visual CMS', ''],
        ['Dawg House Duel', 'picture-duel game show', 'https://dawghouseduel.com'],
-       ['LeBronify', 'Spotify, but all LeBron parodies', 'https://lebronify.app'],
-       ['FantasyFlicks', 'fantasy football for movies · iOS', ''],
-       ['Top Dawgs', 'pool team stats + live scoring', ''],
-       ['Giddey', 'daily NBA draft puzzle', 'https://github.com/robwizzie/Giddey'],
+       ['LeBronify', 'Spotify, but all LeBron parodies · play it above', '#lebronify'],
+       ['FantasyFlicks', 'fantasy football for movies · iOS, not live yet', ''],
+       ['Top Dawgs', 'pool team stats + live scoring · not live yet', ''],
+       ['Giddey', 'daily NBA draft puzzle · not live yet', 'https://github.com/robwizzie/Giddey'],
        ['Pressed by J&H', 'juice shop with Stripe checkout', 'https://siponpressed.com'],
        ['Traveling Tastebuds', 'food creator site + food map', 'https://travelingtastebuds.org'],
-       ['Pick 5', 'odds-weighted NFL pick\'em', 'https://www.sportspick5.com'],
-       ['The Cabinet', 'arcade cabinet party games', ''],
-       ['Beer Party', 'Mario Party, in real life', 'https://github.com/robwizzie/beer-party'],
+       ['Pick 5', 'odds-weighted NFL pick\'em · not live yet', 'https://github.com/robwizzie/pick-5'],
+       ['Beer Party', 'Mario Party, in real life · not live yet', 'https://github.com/robwizzie/beer-party'],
        ['Unused CSS Detector', 'VS Code extension', 'https://marketplace.visualstudio.com/items?itemName=robwizzie.unused-css-detector']
       ].forEach(function (p) {
         var link = p[2] ? '<a href="' + p[2] + '"' + (p[2].charAt(0) === '#' ? '' : ' target="_blank" rel="noopener"') + '>' + p[0] + '</a>' : p[0];
@@ -417,14 +539,10 @@
     sudo: function () { print('Nice try. But you can run: sudo hire rob', 'warn'); },
     'play fetch': function () { print('Booting Fetch… 🐶 (Esc inside the game goes back a menu)', 'ok'); setTimeout(openFetch, 400); },
     lebron: function () {
-      var t = ["LeHips Don't Lie", 'Lebronifornia Girls', 'Brons Not Brongedies', 'Catch a LeNade For You', 'Thinkin Bout LeBron', 'This is The Bron'];
-      print('▶ Now playing: ' + t[Math.floor(Math.random() * t.length)] + ' <span class="dim">— LeBronify</span>');
-      print('<a href="https://lebronify.app" target="_blank" rel="noopener">→ hear all 49 at lebronify.app</a>');
-    },
-    'roast me': function () {
-      var r = ['Your thumb is more active than you are.', "Main character energy: you're not the main character.", 'The void scrolls back.', "It's " + ((new Date().getHours() % 12) || 12) + " o'clock. Even your phone wants a break."];
-      print('🌀 ' + r[Math.floor(Math.random() * r.length)], 'warn');
-      print('— Spiral, the app that roasts doom scrollers', 'dim');
+      var i = Math.floor(Math.random() * TRACKS.length);
+      print('▶ Now playing: ' + TRACKS[i].title + ' <span class="dim">— ' + TRACKS[i].artist + '</span>', 'ok');
+      print('<a href="#lebronify">→ controls are up in the LeBronify section</a>');
+      lbfLoad(i, true);
     },
     clear: function () { out.innerHTML = ''; }
   };

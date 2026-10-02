@@ -58,6 +58,7 @@
             <ul class="nav-links" id="nav-links">
                 <li><a href="#mile-a-day">Mile A Day</a></li>
                 <li><a href="#fetch">Fetch</a></li>
+                <li><a href="#lebronify">LeBronify</a></li>
                 <li><a href="#work">Projects</a></li>
                 <li><a href="#experience">Experience</a></li>
                 <li><a href="#about">About</a></li>
@@ -122,9 +123,7 @@
                 <span class="marquee-item"><span class="e">🥤</span> Pressed</span>
                 <span class="marquee-item"><span class="e">🌮</span> Traveling Tastebuds</span>
                 <span class="marquee-item"><span class="e">🏈</span> Pick 5</span>
-                <span class="marquee-item"><span class="e">🕹️</span> The Cabinet</span>
                 <span class="marquee-item"><span class="e">🍻</span> Beer Party</span>
-                <span class="marquee-item"><span class="e">🌀</span> Spiral</span>
             </div>
         </div>
 
@@ -246,6 +245,80 @@
             </div>
         </section>
 
+        <!-- ===== LEBRONIFY ===== -->
+        <section class="section" id="lebronify">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Featured · Press play (if you dare)</span>
+                    <h2 class="h-display h2">Spotify, but it's <span class="blue">all LeBron.</span></h2>
+                    <p class="lede">LeBronify is a Spotify-style player where every single song is a LeBron James parody — 49 of them, live on the web with an iOS app behind it. Here are eight. Volume up at your own risk.</p>
+                </div>
+
+                <div class="lbf reveal" id="lbf">
+                    <div class="lbf-player">
+                        <div class="lbf-art-wrap">
+                            <img class="lbf-art" id="lbf-art" src="assets/lebronify/lehips.jpg" alt="" width="300" height="300">
+                            <span class="lbf-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                        </div>
+                        <div class="lbf-meta">
+                            <span class="lbf-kicker" id="lbf-kicker">LeBron's pick of the day</span>
+                            <h3 class="lbf-title" id="lbf-title">LeHips Don't Lie</h3>
+                            <span class="lbf-artist" id="lbf-artist">@ant.jr06</span>
+                        </div>
+                        <div class="lbf-progress" id="lbf-progress" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><span id="lbf-bar"></span></div>
+                        <div class="lbf-times"><span id="lbf-cur">0:00</span><span id="lbf-dur">0:40</span></div>
+                        <div class="lbf-controls">
+                            <button type="button" class="lbf-btn" id="lbf-shuffle" aria-label="Let the King decide (shuffle)" title="Let the King decide"><i class="fas fa-random"></i></button>
+                            <button type="button" class="lbf-btn" id="lbf-prev" aria-label="Previous track"><i class="fas fa-step-backward"></i></button>
+                            <button type="button" class="lbf-play" id="lbf-play" aria-label="Play"><i class="fas fa-play"></i></button>
+                            <button type="button" class="lbf-btn" id="lbf-next" aria-label="Next track"><i class="fas fa-step-forward"></i></button>
+                            <button type="button" class="lbf-btn" id="lbf-taco" aria-label="Taco Tuesday" title="Taco Tuesday"><img src="assets/lebronify/taco.png" alt=""></button>
+                        </div>
+                    </div>
+
+                    <div class="lbf-side">
+                        <div class="lbf-list-head"><img src="assets/lebronify/icon.png" alt="" width="40" height="40"><div><strong>The King's Parody Collection</strong><span>8 of 49 songs · all LeBron</span></div></div>
+                        <ol class="lbf-list" id="lbf-list"></ol>
+                        <div class="lbf-foot">
+                            <div class="chips">
+                                <span class="chip"><i class="fas fa-mobile-alt"></i> Dynamic Island</span>
+                                <span class="chip"><i class="fas fa-car"></i> CarPlay</span>
+                                <span class="chip"><i class="fas fa-th-large"></i> Widgets</span>
+                                <span class="chip">🌮 Taco Tuesday app icon</span>
+                            </div>
+                            <a class="btn btn-ghost btn-sm" href="https://lebronify.app" target="_blank" rel="noopener">All 49 at lebronify.app <i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                        <p class="fine">Parody songs by their original creators, credited by handle. Fan project — not affiliated with LeBron James or the NBA.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AD Break, straight from the real app -->
+            <div class="ad-break" id="ad-break" role="dialog" aria-modal="true" aria-labelledby="ad-title" hidden>
+                <div class="ad-card">
+                    <img src="assets/lebronify/ad.jpg" alt="Anthony Davis in a Lakers jersey" width="360">
+                    <div class="ad-body">
+                        <span class="ad-kicker">AD Break</span>
+                        <h3 id="ad-title">THE BROW KNOWS</h3>
+                        <p>Your music will continue after this brief message from Anthony Davis.</p>
+                        <div class="ad-actions">
+                            <button class="btn btn-primary btn-sm" type="button" data-ad="Traded. Dallas says thanks.">Trade AD to Dallas</button>
+                            <button class="btn btn-ghost btn-sm" type="button" data-ad="Brow waxed. Back to the music.">Wax the Brow</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Floating mini player while a LeBron banger plays elsewhere on the page -->
+        <div class="mini-player" id="mini-player" hidden>
+            <img id="mini-art" src="assets/lebronify/lehips.jpg" alt="" width="44" height="44">
+            <div class="mini-meta"><strong id="mini-title">LeHips Don't Lie</strong><span>LeBronify</span></div>
+            <button type="button" class="lbf-btn" id="mini-toggle" aria-label="Pause"><i class="fas fa-pause"></i></button>
+            <button type="button" class="lbf-btn" id="mini-close" aria-label="Stop music"><i class="fas fa-times"></i></button>
+        </div>
+        <audio id="lbf-audio" preload="none"></audio>
+
         <!-- ===== WORK ===== -->
         <section class="section" id="work">
             <div class="wrap">
@@ -253,13 +326,12 @@
                     <div>
                         <span class="eyebrow">Everything else</span>
                         <h2 class="h-display h2">Side quests &amp; <span class="blue">real clients.</span></h2>
-                        <p class="lede">Sites for local businesses, apps for my friends' group chats, and at least one thing that exists purely because of LeBron James.</p>
+                        <p class="lede">Sites for local businesses, games for game night, and apps for my friends' group chats.</p>
                     </div>
                     <div class="filters" role="group" aria-label="Filter projects">
                         <button class="filter active" data-filter="all" type="button" aria-pressed="true">All</button>
                         <button class="filter" data-filter="client" type="button" aria-pressed="false">Client sites</button>
-                        <button class="filter" data-filter="app" type="button" aria-pressed="false">iOS apps</button>
-                        <button class="filter" data-filter="game" type="button" aria-pressed="false">Games</button>
+                        <button class="filter" data-filter="play" type="button" aria-pressed="false">Games &amp; apps</button>
                         <button class="filter" data-filter="sports" type="button" aria-pressed="false">Sports brain</button>
                     </div>
                 </div>
@@ -267,7 +339,7 @@
                 <div class="work">
 
                     <article class="card big reveal" data-kind="client">
-                        <div class="cover"><img src="assets/work/trouble-brewing.jpg" alt="Trouble Brewing Coffee House homepage with an illustrated gallery wall" loading="lazy"><span class="badge-corner tag gold">Client</span></div>
+                        <div class="cover"><img src="assets/work/trouble-brewing.jpg" alt="Trouble Brewing Coffee House homepage with an illustrated gallery wall" loading="lazy"><span class="badge-corner tag gold">Client · Launching soon</span></div>
                         <div class="card-body">
                             <span class="kind">Coffee house · Haddon Heights, NJ</span>
                             <h3>Trouble Brewing</h3>
@@ -277,18 +349,18 @@
                                 <li>Click-to-edit visual CMS: live preview, autosave drafts, one-click publish, revision history</li>
                                 <li>Zero hosting cost, CI on every change, weekly automated backups</li>
                             </ul>
-                            <div class="card-foot"><span class="tech">React · Vite · Supabase</span><div class="links"><a href="https://robwiscount.org/troubled-brewing/" target="_blank" rel="noopener">Preview <i class="fas fa-arrow-up-right-from-square fa-external-link-alt"></i></a></div></div>
+                            <div class="card-foot"><span class="tech">React · Vite · Supabase</span><div class="links"><a href="https://robwiscount.org/troubled-brewing/" target="_blank" rel="noopener">Preview <i class="fas fa-external-link-alt"></i></a></div></div>
                         </div>
                     </article>
 
-                    <article class="card big reveal" data-kind="game" data-delay="1">
-                        <div class="cover"><img src="assets/work/dawghouse.jpg" alt="Dawg House Duel: two players, two clocks, one picture at a time" loading="lazy"><span class="badge-corner tag green">Live</span></div>
+                    <article class="card big reveal" data-kind="play" data-delay="1">
+                        <div class="cover"><img src="assets/work/dawghouse.jpg" alt="Dawg House Duel home screen: two players, two clocks, one picture at a time" loading="lazy"><span class="badge-corner tag green">Live</span></div>
                         <div class="card-body">
                             <span class="kind">Game show · Web</span>
                             <h3>Dawg House Duel</h3>
                             <p class="bit">I love the duels on <em>The Floor</em>, so I built my own. Two players, two clocks, one picture at a time.</p>
                             <ul class="points">
-                                <li>31 category decks, ~2,900 pictures, plus a daily challenge everyone gets the same</li>
+                                <li>31 category decks, 3,200 pictures, plus a daily challenge everyone gets the same</li>
                                 <li>The judge scores from their phone — paired by room code over a Cloudflare Worker</li>
                                 <li>Every sound effect is synthesized live in the browser. Zero audio files.</li>
                             </ul>
@@ -296,105 +368,74 @@
                         </div>
                     </article>
 
-                    <article class="card reveal" data-kind="app">
-                        <div class="cover"><img src="assets/work/lebronify.jpg" alt="LeBronify web player" loading="lazy"><span class="badge-corner tag green">Live</span></div>
-                        <div class="card-body">
-                            <span class="kind">iOS + Web · Parody</span>
-                            <h3>LeBronify</h3>
-                            <p class="bit">Spotify, except every single song is a LeBron parody. All 49 of them.</p>
-                            <p class="desc">Dynamic Island, CarPlay and widgets on iOS. "AD Break" pop-ups. A Taco Tuesday app icon. Yes, really.</p>
-                            <div class="card-foot"><span class="tech">SwiftUI · Vanilla JS</span><div class="links"><a href="https://lebronify.app" target="_blank" rel="noopener">Listen <i class="fas fa-external-link-alt"></i></a></div></div>
-                        </div>
-                    </article>
-
-                    <article class="card reveal" data-kind="app" data-delay="1">
-                        <div class="cover"><div class="cover-art art-ff"><img class="logo" src="assets/work/ff-logo.png" alt="FantasyFlicks logo: a golden crowned film reel" loading="lazy"></div><span class="badge-corner tag">In development</span></div>
-                        <div class="card-body">
-                            <span class="kind">iOS · Movies</span>
-                            <h3>FantasyFlicks</h3>
-                            <p class="bit">Fantasy football, but you draft movies. Your league wins on box office, Rotten Tomatoes or the Oscars.</p>
-                            <p class="desc">Live draft rooms, trades and waivers. Oscar odds pulled live from prediction markets. A Tinder-style "Movie Night" swipe for picking what to watch.</p>
-                            <div class="card-foot"><span class="tech">SwiftUI · Firebase · TMDB</span></div>
-                        </div>
-                    </article>
-
-                    <article class="card reveal" data-kind="game sports" data-delay="2">
-                        <div class="cover"><img src="assets/work/giddey.jpg" alt="Giddey draft board shaped like a basketball court" loading="lazy"></div>
-                        <div class="card-body">
-                            <span class="kind">Daily puzzle · NBA</span>
-                            <h3>Giddey</h3>
-                            <p class="bit">2K MyTeam meets a daily puzzle. Draft 9 players, build chemistry, chase a perfect 279.</p>
-                            <p class="desc">Afterwards, a solver shows you the optimal lineup — so you know exactly how badly you did.</p>
-                            <div class="card-foot"><span class="tech">Next.js · TypeScript</span><div class="links"><a href="https://github.com/robwizzie/Giddey" target="_blank" rel="noopener">Code <i class="fab fa-github"></i></a></div></div>
-                        </div>
-                    </article>
-
-                    <article class="card big reveal" data-kind="sports">
-                        <div class="cover"><img src="assets/work/top-dawgs.jpg" alt="Top Dawgs pool team website" loading="lazy">
-                            <div class="art-patches" aria-hidden="true"><img src="assets/work/patch-sweep.png" alt=""><img src="assets/work/patch-break-and-run.png" alt=""><img src="assets/work/patch-8-on-break.png" alt=""><img src="assets/work/patch-level-up.png" alt=""></div>
-                        </div>
-                        <div class="card-body">
-                            <span class="kind">APA pool league · South Jersey</span>
-                            <h3>Top Dawgs</h3>
-                            <p class="bit">I play in a pool league. Naturally, my team needed deeper stats than the league gives us.</p>
-                            <ul class="points">
-                                <li>A headless-browser pipeline pulls our match data into a versioned, type-checked cache</li>
-                                <li>"Patch Watch" leaderboard for sweeps and break-and-runs, with confetti</li>
-                                <li>Rack Up: live phone scoring, brackets and a TV scoreboard on Supabase realtime</li>
-                            </ul>
-                            <div class="card-foot"><span class="tech">Next.js · Supabase · Playwright</span></div>
-                        </div>
-                    </article>
-
-                    <article class="card big reveal" data-kind="client" data-delay="1">
-                        <div class="cover"><img src="assets/work/juice.jpg" alt="Pressed by J&amp;H juice website" loading="lazy"><span class="badge-corner tag gold">Client</span></div>
+                    <article class="card reveal" data-kind="client">
+                        <div class="cover"><img src="assets/work/juice.jpg" alt="Pressed by J&amp;H juice website" loading="lazy"><span class="badge-corner tag gold">Client · Live</span></div>
                         <div class="card-body">
                             <span class="kind">Cold-pressed juice · E-commerce</span>
                             <h3>Pressed by J&amp;H</h3>
                             <p class="bit">My proudest design. Juice that pops off the screen — and you can actually order it.</p>
-                            <ul class="points">
-                                <li>Stripe checkout with pickup or local delivery, through serverless functions</li>
-                                <li>Nine flavors, each with its own page, nutrition panel and share image</li>
-                            </ul>
+                            <p class="desc">Stripe checkout with pickup or local delivery, and nine flavors that each get their own page and nutrition panel.</p>
                             <div class="card-foot"><span class="tech">JS · Stripe · Netlify</span><div class="links"><a href="https://siponpressed.com/" target="_blank" rel="noopener">Visit <i class="fas fa-external-link-alt"></i></a></div></div>
                         </div>
                     </article>
 
-                    <article class="card reveal" data-kind="client">
-                        <div class="cover"><img src="assets/work/ttb.jpg" alt="Traveling Tastebuds website" loading="lazy"><span class="badge-corner tag gold">Client</span></div>
+                    <article class="card reveal" data-kind="client" data-delay="1">
+                        <div class="cover"><img src="assets/work/ttb.jpg" alt="Traveling Tastebuds website" loading="lazy"><span class="badge-corner tag gold">Client · Live</span></div>
                         <div class="card-body">
                             <span class="kind">Food creator · NJ &amp; Philly</span>
                             <h3>Traveling Tastebuds</h3>
                             <p class="bit">A food TikToker with 300K followers needed a home base.</p>
-                            <p class="desc">Interactive food map of every review with follower discounts, plus a custom admin that auto-fills TikTok embeds.</p>
+                            <p class="desc">An interactive food map of every review with follower discounts, plus a custom admin that auto-fills TikTok embeds.</p>
                             <div class="card-foot"><span class="tech">JS · Express · MongoDB</span><div class="links"><a href="https://travelingtastebuds.org" target="_blank" rel="noopener">Visit <i class="fas fa-external-link-alt"></i></a></div></div>
                         </div>
                     </article>
 
-                    <article class="card reveal" data-kind="sports" data-delay="1">
-                        <div class="cover"><img src="assets/work/pick5.jpg" alt="Pick 5 NFL pick'em app" loading="lazy"><span class="badge-corner tag green">Live</span></div>
+                    <article class="card reveal" data-kind="play" data-delay="2">
+                        <div class="cover"><div class="cover-art art-ff"><img class="logo" src="assets/work/ff-logo.png" alt="FantasyFlicks logo: a golden crowned film reel" loading="lazy"></div><span class="badge-corner tag amber">Not live yet · iOS</span></div>
+                        <div class="card-body">
+                            <span class="kind">iOS · Movies</span>
+                            <h3>FantasyFlicks</h3>
+                            <p class="bit">Fantasy football, but you draft movies. Your league wins on box office, Rotten Tomatoes or the Oscars.</p>
+                            <p class="desc">Live draft rooms, trades and waivers. Oscar odds pulled from prediction markets. A swipe-to-match "Movie Night" for picking what to watch.</p>
+                            <div class="card-foot"><span class="tech">SwiftUI · Firebase · TMDB</span></div>
+                        </div>
+                    </article>
+
+                    <article class="card reveal" data-kind="sports">
+                        <div class="cover"><img src="assets/work/top-dawgs.jpg" alt="Top Dawgs pool team website" loading="lazy"><span class="badge-corner tag amber">Not live yet</span></div>
+                        <div class="card-body">
+                            <span class="kind">APA pool league · South Jersey</span>
+                            <h3>Top Dawgs</h3>
+                            <p class="bit">I play in a pool league. Naturally, my team needed deeper stats than the league gives us.</p>
+                            <p class="desc">Pulls our match data into a type-checked cache, tracks sweeps on a "Patch Watch" leaderboard, and scores matches live from a phone.</p>
+                            <div class="card-foot"><span class="tech">Next.js · Supabase · Playwright</span></div>
+                        </div>
+                    </article>
+
+                    <article class="card reveal" data-kind="play sports" data-delay="1">
+                        <div class="cover"><img src="assets/work/giddey.jpg" alt="Giddey home screen" loading="lazy"><span class="badge-corner tag amber">Not live yet</span></div>
+                        <div class="card-body">
+                            <span class="kind">Daily puzzle · NBA</span>
+                            <h3>Giddey</h3>
+                            <p class="bit">2K MyTeam meets a daily puzzle. Draft 9 players, build chemistry, chase a perfect 279.</p>
+                            <p class="desc">Afterwards a solver shows you the optimal lineup — so you know exactly how badly you did.</p>
+                            <div class="card-foot"><span class="tech">Next.js · TypeScript</span><div class="links"><a href="https://github.com/robwizzie/Giddey" target="_blank" rel="noopener">Code <i class="fab fa-github"></i></a></div></div>
+                        </div>
+                    </article>
+
+                    <article class="card reveal" data-kind="sports" data-delay="2">
+                        <div class="cover"><img src="assets/work/pick5.jpg" alt="Pick 5 NFL pick'em app" loading="lazy"><span class="badge-corner tag amber">Not live yet</span></div>
                         <div class="card-body">
                             <span class="kind">NFL pick'em</span>
                             <h3>Pick 5</h3>
-                            <p class="bit">A friend's uncle ran our football league on pen and paper. I retired the clipboard.</p>
-                            <p class="desc">Points scale with the odds, so picking the underdog pays. Automatic scoring, email and push reminders.</p>
-                            <div class="card-foot"><span class="tech">Next.js · MongoDB</span><div class="links"><a href="https://www.sportspick5.com/" target="_blank" rel="noopener">Visit <i class="fas fa-external-link-alt"></i></a></div></div>
+                            <p class="bit">A friend's uncle ran our football league on pen and paper. I'm retiring the clipboard.</p>
+                            <p class="desc">Points scale with the betting odds, so picking the underdog pays. Automatic scoring plus email and push reminders.</p>
+                            <div class="card-foot"><span class="tech">Next.js · MongoDB</span><div class="links"><a href="https://github.com/robwizzie/pick-5" target="_blank" rel="noopener">Code <i class="fab fa-github"></i></a></div></div>
                         </div>
                     </article>
 
-                    <article class="card reveal" data-kind="game" data-delay="2">
-                        <div class="cover"><img src="assets/work/cabinet.jpg" alt="The Cabinet: Tug of War game" loading="lazy"></div>
-                        <div class="card-body">
-                            <span class="kind">Arcade cabinet · Party</span>
-                            <h3>The Cabinet</h3>
-                            <p class="bit">Three games for a real arcade cabinet, where the main button is labeled DRINK.</p>
-                            <p class="desc">Tug of War, Auction Blitz and Bloom. Gamepad support, designed to be readable from six feet away.</p>
-                            <div class="card-foot"><span class="tech">Canvas 2D · Gamepad API</span></div>
-                        </div>
-                    </article>
-
-                    <article class="card reveal" data-kind="game">
-                        <div class="cover"><img src="assets/work/beer-party.jpg" alt="Beer Party home screen" loading="lazy"></div>
+                    <article class="card reveal" data-kind="play">
+                        <div class="cover"><img src="assets/work/beer-party.jpg" alt="Beer Party home screen" loading="lazy"><span class="badge-corner tag amber">Not live yet</span></div>
                         <div class="card-body">
                             <span class="kind">Real-life party game</span>
                             <h3>Beer Party</h3>
@@ -404,41 +445,8 @@
                         </div>
                     </article>
 
-                    <article class="card reveal" data-kind="game" data-delay="1">
-                        <div class="cover"><div class="cover-art art-doors" aria-hidden="true"><span class="door">1</span><span class="door">2</span><span class="door">3</span><span class="door">4</span><span class="door">5</span><span class="door">6</span><span class="door">7</span></div></div>
-                        <div class="card-body">
-                            <span class="kind">One-night-only game show</span>
-                            <h3>Bachelor Blowout</h3>
-                            <p class="bit">Why plan a bachelor trip with a PowerPoint? The groom picked his own by opening mystery doors.</p>
-                            <p class="desc">Seven doors, a live per-person cost slider, and a "lock it in" finale with confetti.</p>
-                            <div class="card-foot"><span class="tech">HTML · CSS · JS</span></div>
-                        </div>
-                    </article>
-
-                    <article class="card reveal" data-kind="app" data-delay="2">
-                        <div class="cover"><div class="cover-art art-dialed"><img class="icon" src="assets/work/dialed-icon.png" alt="Dialed app icon" loading="lazy"></div><span class="badge-corner tag">In development</span></div>
-                        <div class="card-body">
-                            <span class="kind">iOS · Health</span>
-                            <h3>Dialed</h3>
-                            <p class="bit">My whole day — sleep, recovery, water, workouts — boiled down to one number.</p>
-                            <p class="desc">Scores you against your own baseline, adapts the plan when you're run down, and logs "16 oz water" by voice.</p>
-                            <div class="card-foot"><span class="tech">SwiftUI · HealthKit</span></div>
-                        </div>
-                    </article>
-
-                    <article class="card reveal" data-kind="app">
-                        <div class="cover"><div class="cover-art art-spiral"><div class="roast"><small>Spiral · 1:12 AM</small>Your thumb is more active than you are.</div></div><span class="badge-corner tag">Prototype</span></div>
-                        <div class="card-body">
-                            <span class="kind">iOS · Screen time</span>
-                            <h3>Spiral</h3>
-                            <p class="bit">Doom scrolling for 25 minutes? Spiral interrupts you with a roast.</p>
-                            <p class="desc">A daily "Doom Score", escalating burns for repeat offenders, and zero preachiness.</p>
-                            <div class="card-foot"><span class="tech">SwiftUI · Screen Time API</span></div>
-                        </div>
-                    </article>
-
                     <article class="card reveal" data-kind="tool" data-delay="1">
-                        <div class="cover"><img src="assets/work/unused-css.jpg" alt="Unused CSS Detector flagging unused classes in VS Code" loading="lazy" style="object-position:left top"><span class="badge-corner tag green">Published</span></div>
+                        <div class="cover"><img src="assets/work/unused-css.jpg" alt="Unused CSS Detector flagging unused classes in VS Code" loading="lazy"><span class="badge-corner tag green">Published</span></div>
                         <div class="card-body">
                             <span class="kind">VS Code extension</span>
                             <h3>Unused CSS Detector</h3>
@@ -449,7 +457,7 @@
                     </article>
 
                     <article class="card reveal" data-kind="client" data-delay="2">
-                        <div class="cover"><img src="assets/foleyprep.jpg" alt="Foley Prep website" loading="lazy"><span class="badge-corner tag">Day job</span></div>
+                        <div class="cover"><img src="assets/work/foley.jpg" alt="Foley Prep website" loading="lazy"><span class="badge-corner tag">Day job</span></div>
                         <div class="card-body">
                             <span class="kind">Education platform</span>
                             <h3>Foley Prep</h3>
@@ -564,7 +572,7 @@
             <div class="wrap">
                 <div class="section-head reveal">
                     <span class="eyebrow">Toolbox</span>
-                    <h2 class="h-display h2">Phone to server. <span class="blue">Browser to arcade.</span></h2>
+                    <h2 class="h-display h2">Phone to server. <span class="blue">Browser to game night.</span></h2>
                 </div>
                 <div class="skills">
                     <div class="skill-group reveal"><h3>Web</h3><p>JavaScript · TypeScript · React · Next.js · Vite · HTML &amp; CSS · Tailwind · Bootstrap</p></div>
@@ -588,12 +596,12 @@
                 <div class="reveal">
                     <span class="eyebrow">Interactive</span>
                     <h2 class="h-display h2">Go ahead, <span class="blue">poke around.</span></h2>
-                    <p class="lede">A tiny shell that knows everything about me. Type <code>help</code> — or try <code>roast me</code>.</p>
+                    <p class="lede">A tiny shell that knows everything about me. Type <code>help</code> — or try <code>lebron</code>.</p>
                     <div class="term-hints">
                         <button type="button" data-cmd="whoami">whoami</button>
                         <button type="button" data-cmd="projects">projects</button>
                         <button type="button" data-cmd="lebron">lebron</button>
-                        <button type="button" data-cmd="roast me">roast me</button>
+                        <button type="button" data-cmd="go birds">go birds</button>
                         <button type="button" data-cmd="play fetch">play fetch</button>
                         <button type="button" data-cmd="hire rob">hire rob</button>
                     </div>
@@ -626,7 +634,7 @@
                     <div class="life-card reveal" data-delay="1"><span class="emoji">🦅</span><h3>Philly through and through</h3><p>Sixers, Phillies, Flyers, Eagles. GO BIRDS. (Yes, a Sixers fan built a LeBron app. It's complicated.)</p></div>
                     <div class="life-card reveal"><span class="emoji">🎱</span><h3>Pool league regular</h3><p>I shoot in an APA league with the Top Dawgs — and built us a stats site, because of course I did.</p></div>
                     <div class="life-card reveal" data-delay="1"><span class="emoji">🎬</span><h3>Movie obsessive</h3><p>Box office numbers, Oscar predictions, Letterboxd logs. Hence FantasyFlicks.</p></div>
-                    <div class="life-card reveal" data-delay="2"><span class="emoji">🎉</span><h3>Designated game-night host</h3><p>Game shows, party games, an arcade cabinet. If friends are coming over, I'm writing code first.</p></div>
+                    <div class="life-card reveal" data-delay="2"><span class="emoji">🎉</span><h3>Designated game-night host</h3><p>Game shows, party games, a dog brawler. If friends are coming over, I'm writing code first.</p></div>
                 </div>
                 <div class="edu">
                     <div class="edu-card reveal"><span class="ico"><i class="fas fa-laptop-code"></i></span><div><h3><a href="Robert Wiscount - Web Completion.pdf" target="_blank" rel="noopener">Web Development Certificate</a></h3><p>Miles Technologies Boot Camp · 2021</p></div></div>
