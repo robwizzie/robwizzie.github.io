@@ -177,25 +177,36 @@
     }, { passive: true });
   }
 
-  /* ---------- Streak toy ---------- */
-  var toyCount = 0, toyBtn = $('#toy-btn'), flame = $('.flame');
-  var toyLines = [
-    'Day one. Every streak starts here.',
-    'Two in a row. Habit loading…',
-    'Three days! Friends get notified.',
-    'You\'re on fire. Literally.',
-    'Five days — a milestone celebration fires in the app.',
-    'Okay, you get it. Download the real thing 👇'
-  ];
-  toyBtn.addEventListener('click', function () {
-    toyCount++;
-    $('#toy-count').textContent = toyCount;
-    $('#toy-meta').textContent = toyLines[Math.min(toyCount, toyLines.length) - 1];
-    var s = Math.min(1 + toyCount * 0.12, 1.8);
-    flame.style.transform = 'scale(' + s + ') rotate(' + (toyCount % 2 ? -8 : 8) + 'deg)';
-    var r = toyBtn.getBoundingClientRect();
-    burst(r.left + r.width / 2, r.top, toyCount === 5 ? 140 : 40);
-  });
+  /* ---------- Live Mile A Day streak ----------
+     Same rule mileaday.run uses: counted from the day the streak began, in the
+     visitor's own calendar. Day 1 was May 13, 2025 (it read 423 on Jul 9, 2026). */
+  (function () {
+    var START = new Date(2025, 4, 13);
+    var MILESTONES = [7, 14, 30, 50, 100, 150, 200, 250, 300, 365, 400, 500, 600, 700, 730, 800, 900, 1000, 1095, 1250, 1500, 2000];
+    var daysEl = $('#ls-days');
+    if (!daysEl) return;
+    function midnight(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+    function render() {
+      var now = new Date(), today = midnight(now);
+      var streak = Math.round((today - START) / 864e5) + 1;
+      daysEl.textContent = streak.toLocaleString();
+      var next = MILESTONES.filter(function (m) { return m > streak; })[0] || Math.ceil((streak + 1) / 500) * 500;
+      var prev = MILESTONES.filter(function (m) { return m <= streak; }).pop() || 0;
+      $('#ls-next').textContent = next.toLocaleString() + ' days';
+      $('#ls-togo').textContent = (next - streak) + ' to go';
+      $('#ls-bar').style.width = Math.round((streak - prev) / (next - prev) * 100) + '%';
+      var labels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'], dow = today.getDay();
+      $('#ls-week').innerHTML = labels.map(function (l, i) {
+        var cls = i < dow ? 'done' : (i === dow ? 'today' : '');
+        var mark = i < dow ? '✓' : (i === dow ? '•' : '');
+        return '<span class="ls-day ' + cls + '"><span class="ls-dot">' + mark + '</span>' + l + '</span>';
+      }).join('');
+      var end = new Date(today.getTime() + 864e5), mins = Math.max(0, Math.round((end - now) / 6e4));
+      $('#ls-today').textContent = 'Today is day ' + streak.toLocaleString() + ' — ' + Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm left to get it in.';
+    }
+    render();
+    setInterval(render, 60000);
+  })();
 
   /* ---------- Timeline fill ---------- */
   var timeline = $('.timeline'), fill = $('.timeline-fill');
@@ -476,9 +487,9 @@
       print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  hire rob    the best command\n  contact     how to reach me\n  clear       wipe the screen', 'dim');
     },
     whoami: function () {
-      print('Rob Wiscount — full-stack developer from South Jersey.');
+      print('Rob Wiscount — front-end developer at heart, full stack by now. South Jersey.');
       print('Builds apps, games and sites — then makes his friends play them.', 'dim');
-      print('Web developer @ Foley Prep. Co-creator of Mile A Day (live on the App Store).', 'dim');
+      print('Software developer @ Foley Prep. Co-founder of Mile A Day (live on the App Store).', 'dim');
       print('Builds websites, web apps and iOS apps people actually use.', 'dim');
     },
     projects: function () {
@@ -501,8 +512,9 @@
       });
     },
     experience: function () {
-      print('2023 → now   Web Developer · Foley Prep', 'ok');
-      print('2021 → 2022  Integrations Developer · XGen\n2020 → 2021  Programming Intern · USLI\n2019         Technology Instructor · Lavner Camps\n2018         Technology Aide · Kingsway Regional', 'dim');
+      print('2023 → now   Software Developer · Foley Prep', 'ok');
+      print('2021 → 2022  Integrations Developer · XGen\n2020 → 2021  Programming Intern · USLI', 'dim');
+      print('education    A.S. Computer Science · Rowan College of South Jersey', 'dim');
     },
     stack: function () {
       print('web      JavaScript · TypeScript · React · Next.js · HTML/CSS · Tailwind');
@@ -524,7 +536,7 @@
     'hire rob': function () {
       print('Checking candidate…', 'dim');
       setTimeout(function () { print('✔ ships real products', 'ok'); }, 250);
-      setTimeout(function () { print('✔ full stack: web, iOS, backend', 'ok'); }, 500);
+      setTimeout(function () { print('✔ front end first, full stack when it counts', 'ok'); }, 500);
       setTimeout(function () { print('✔ fast, curious, AI-native', 'ok'); }, 750);
       setTimeout(function () {
         print('Match found. Opening a line of communication… <a href="#contact">↓ contact</a>');
