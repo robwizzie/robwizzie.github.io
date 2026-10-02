@@ -619,3 +619,15 @@ kbd { font-family: var(--mono); font-size: .74rem; min-width: 24px; text-align: 
   .nav-brand { white-space: nowrap; }
 }
 @media (max-width: 380px) { .nav-brand span { font-size: 1.1rem; } .hire-btn { padding: 8px 12px; } }
+
+/* Mobile hero: a compact photo and real numbers instead of two vague badges */
+.hero-proof { display: none; }
+@media (max-width: 900px) {
+  .hero-visual { max-width: 210px; }
+  .hero-badges { display: none; }
+  .hero-proof { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; list-style: none; padding: 0; margin: 4px 0 22px; }
+  .hero-proof li { border: 1px solid var(--line-strong); border-radius: 14px; padding: 12px 10px; background: rgba(13,17,27,.75); }
+  .hero-proof b { display: block; font-family: var(--display); font-weight: 700; font-size: 1.9rem; line-height: 1; color: var(--blue-hi); }
+  .hero-proof span { display: block; margin-top: 6px; font-size: .74rem; line-height: 1.3; color: var(--muted); }
+}
+@media (max-width: 420px) { .hero-visual { max-width: 180px; } }
