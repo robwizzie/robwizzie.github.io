@@ -26,6 +26,8 @@ main h2:first-child { margin-top: 0; }
 .edu div { margin-bottom: 4px; font-size: 7.6pt; }
 .edu b { color: #fff; font-weight: 600; display: block; }
 .edu span { color: #9aa6c2; }
+.impact { margin: 0 0 7px; padding: 5px 9px; white-space: nowrap; background: #eef3ff; border-radius: 6px; font-size: 8.4pt; color: #2b3447; }
+.impact b { color: #2f5fd0; } .impact i { color: #9aa9cc; font-style: normal; margin: 0 3px; }
 .summary { margin: 0; font-size: 9.1pt; color: #2b3447; }
 .job { margin-bottom: 6px; }
 .job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
@@ -68,29 +70,28 @@ li::marker { color: #5b8ff9; }
 
   <h2>Education</h2>
   <div class="edu">
-    <div><b>Associate's Degree, Computer Science</b><span>Rowan College of South Jersey (RCSJ)</span></div>
-    <div><b>Web Development Certificate</b><span>Miles Technologies Boot Camp · 2021</span></div>
-    <div><b>Database Development Certificate</b><span>Miles Technologies Boot Camp · 2021</span></div>
-    <div><b>High School Diploma</b><span>Kingsway Regional High School · 2019</span></div>
+    <div><b>A.S., Computer Science</b><span>Rowan College of South Jersey · 2026</span></div>
+    <div><b>Web &amp; Database Development Certificates</b><span>Miles Technologies Boot Camp · 2021</span></div>
   </div>
 </aside>
 
 <main>
   <h2>Profile</h2>
-  <p class="summary">Front-end-focused software developer, now working across the full stack, with 5+ years shipping production web and mobile software. At Foley Prep I build the software the company runs on — the Digital SAT practice platform, the shop and Stripe checkout, scheduling, a face-recognition check-in kiosk, and Ad Studio, which ties every ad dollar to the sale it drove. I co-founded <strong>Mile A Day</strong>, a fitness app live on the App Store, and design my own graphics and video.</p>
+  <p class="impact"><b>400+</b> ad-attributed sales in 4 months <i>·</i> <b>2</b> systems built solo <i>·</i> <b>2,400+</b> commits <i>·</i> <b>1</b> App Store app</p>
+  <p class="summary">Front-end-focused software developer, now working across the full stack, with 5+ years shipping production web and mobile software. At Foley Prep, a 7-location tutoring company, I build the software the business runs on: the Digital SAT practice platform, the shop and Stripe checkout, scheduling, a face-recognition check-in kiosk, and Ad Studio, which ties every ad to the sale it drove. I co-founded <strong>Mile A Day</strong>, live on the App Store, and design my own graphics and video.</p>
 
   <h2>Experience</h2>
   <div class="job">
     <div class="job-head"><strong>Software Developer</strong><time>Mar 2023 – Present</time></div>
     <div class="org">Foley Prep · Haddonfield, NJ</div>
     <ul>
-      <li><b>Ad Studio</b> (sole developer): pulls Meta and Google Ads campaigns, spend and creatives and attributes each Stripe purchase to the ad that drove it, including new vs. returning clients.</li>
-      <li>Added an AI content studio (OpenAI) that plans, writes and generates social posts and schedules them to Instagram and Facebook.</li>
+      <li><b>Ad Studio</b> (sole developer): ties Meta and Google Ads clicks to the Stripe purchases they drove; in its first 4 months it attributed <b>400+ sales and 120+ new clients</b> to specific ads.</li>
+      <li>Added an AI content studio (OpenAI) that writes and generates social posts and schedules them to Instagram and Facebook.</li>
       <li>Built conversion tracking end to end: Meta Pixel + Conversions API, Google Ads and Reddit conversions, and lead-source attribution.</li>
       <li><b>Digital SAT platform:</b> helped build the practice-test app and built its adaptive score reports — topic performance, missed/omitted questions, timing, printable and emailed reports.</li>
       <li><b>Front-desk kiosk</b> (sole developer): on-device face-recognition check-in with live camera admin, punctuality reports and automatic late-arrival texts.</li>
       <li>Core developer on staff/client scheduling, PTO and calendar management (approvals, conflict detection), and the shop and Stripe checkout.</li>
-      <li>Own the marketing site and SEO landing pages; 2,700+ commits to the main Node/Express/MongoDB codebase since 2023.</li>
+      <li>Own the marketing site and SEO pages; <b>2,400+ commits</b> to the Node/Express/MongoDB codebase since 2023.</li>
     </ul>
   </div>
   <div class="job">
@@ -112,7 +113,7 @@ li::marker { color: #5b8ff9; }
   </div>
 
   <h2>Projects</h2>
-  <div class="proj"><strong>Mile A Day</strong><span class="tag">Live · App Store</span> — Co-founder &amp; developer: daily mile streaks, competitions, live group walks and a social feed. <span class="tech">SwiftUI · watchOS · TypeScript · PostgreSQL · Next.js</span></div>
+  <div class="proj"><strong>Mile A Day</strong><span class="tag">Live · App Store</span> — Co-founder &amp; developer: daily mile streaks, competitions, live group walks and a social feed. My own streak: 500+ days. <span class="tech">SwiftUI · watchOS · TypeScript · PostgreSQL · Next.js</span></div>
   <div class="proj"><strong>Fetch</strong><span class="tag">Playable on robwiscount.org</span> — 3D local-multiplayer party game with CPU opponents, 8 arenas and power-ups. <span class="tech">Godot · GDScript</span></div>
   <div class="proj"><strong>Client sites</strong> — Trouble Brewing (React + click-to-edit CMS), Pressed by J&amp;H (Stripe checkout), Traveling Tastebuds (food map + admin). <span class="tech">React · Supabase · Stripe · MongoDB</span></div>
   <div class="proj"><strong>LeBronify · Dawg House Duel · Unused CSS Detector</strong> — Parody music player (web + iOS), a game-show web app, and a published VS Code extension. <span class="tech">SwiftUI · JS · Cloudflare Workers · TypeScript</span></div>
