@@ -530,11 +530,11 @@
        ['Dawg House Duel', 'picture-duel game show', 'https://dawghouseduel.com'],
        ['LeBronify', 'Spotify, but all LeBron parodies · play it above', '#lebronify'],
        ['FantasyFlicks', 'fantasy football for movies · iOS, not live yet', ''],
-       ['Top Dawgs', 'pool team stats + live scoring · not live yet', ''],
-       ['Giddey', 'daily NBA draft puzzle · not live yet', 'https://github.com/robwizzie/Giddey'],
+       ['Top Dawgs', 'pool team stats + live scoring', 'https://poolmaxxing.com'],
+       ['Giddey', 'daily NBA draft puzzle', 'https://playgiddey.com'],
        ['Pressed by J&H', 'juice shop with Stripe checkout', 'https://siponpressed.com'],
        ['Traveling Tastebuds', 'food creator site + food map', 'https://travelingtastebuds.org'],
-       ['Pick 5', 'odds-weighted NFL pick\'em · not live yet', 'https://github.com/robwizzie/pick-5'],
+       ['Pick 5', 'odds-weighted NFL pick\'em', 'https://sportspick5.com'],
        ['Beer Party', 'Mario Party, in real life · not live yet', 'https://github.com/robwizzie/beer-party'],
        ['Unused CSS Detector', 'VS Code extension', 'https://marketplace.visualstudio.com/items?itemName=robwizzie.unused-css-detector']
       ].forEach(function (p) {
