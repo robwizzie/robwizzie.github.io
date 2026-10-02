@@ -2,31 +2,32 @@
 <html lang="en"><head><meta charset="utf-8"><title>Robert Wiscount — Resume</title>
 <link href="../assets/fonts.css" rel="stylesheet">
 <style>
+main h2 { margin-top: 0 !important; }
 @page { size: Letter; margin: 0; }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body { width: 8.5in; height: 11in; font-family: Inter, sans-serif; color: #1b2233; font-size: 8.4pt; line-height: 1.3; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 .page { display: grid; grid-template-columns: 2.35in 1fr; height: 11in; }
 aside { background: #0b1220; color: #dfe6f7; padding: .4in .3in .3in .34in; }
-main { padding: .4in .45in .3in .38in; font-size: 9pt; line-height: 1.36; }
-main .job { margin-bottom: 9px; } main .proj { margin-bottom: 6px; }
+main { display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; height: 11in; overflow: hidden; padding: .42in .45in .4in .38in; font-size: var(--fs, 9pt); line-height: var(--lh, 1.36); }
+main .job { margin-bottom: var(--gap, 9px); } main .proj { margin-bottom: calc(var(--gap, 9px) * .7); } main h2 { margin-top: calc(var(--gap, 9px) + 3px) !important; } main h2:first-child { margin-top: 0 !important; } main li { margin-bottom: calc(var(--gap, 9px) * .25); }
 .logo { width: 44px; margin-bottom: 10px; }
 h1 { font-family: 'Saira Extra Condensed', sans-serif; font-weight: 800; font-size: 27pt; line-height: .9; margin: 0; letter-spacing: .01em; text-transform: uppercase; color: #fff; }
 h1 span { color: #5b8ff9; }
 .role { font-family: 'JetBrains Mono', monospace; font-size: 7.6pt; letter-spacing: .14em; text-transform: uppercase; color: #8db2ff; margin: 6px 0 12px; }
 aside h2, main h2 { font-family: 'JetBrains Mono', monospace; font-size: 7.6pt; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; margin: 0 0 7px; }
-aside h2 { color: #8db2ff; margin-top: 13px; }
+aside h2 { color: #8db2ff; margin-top: 20px; }
 main h2 { color: #2f5fd0; border-bottom: 1.5px solid #dbe4fb; padding-bottom: 4px; margin: 11px 0 6px; }
 main h2:first-child { margin-top: 0; }
-.contact div { margin-bottom: 2px; font-size: 7.8pt; word-break: break-word; }
+.contact div { margin-bottom: 4px; font-size: 8pt; word-break: break-word; }
 .contact b { display: block; font-weight: 600; color: #8f9bb8; font-size: 6.8pt; letter-spacing: .08em; text-transform: uppercase; }
 .contact a { color: #fff; text-decoration: none; }
-.skills p { margin: 0 0 4px; font-size: 7.6pt; }
+.skills p { margin: 0 0 7px; font-size: 7.9pt; }
 .skills b { display: block; color: #fff; font-weight: 600; font-size: 8pt; }
-.edu div { margin-bottom: 4px; font-size: 7.6pt; }
+.edu div { margin-bottom: 7px; font-size: 7.9pt; }
 .edu b { color: #fff; font-weight: 600; display: block; }
 .edu span { color: #9aa6c2; }
-.impact { margin: 0 0 7px; padding: 5px 9px; white-space: nowrap; background: #eef3ff; border-radius: 6px; font-size: 8.4pt; color: #2b3447; }
+.impact { margin: 0 0 7px; padding: 5px 9px; white-space: normal; background: #eef3ff; border-radius: 6px; font-size: 8.4pt; color: #2b3447; }
 .impact b { color: #2f5fd0; } .impact i { color: #9aa9cc; font-style: normal; margin: 0 3px; }
 .summary { margin: 0; font-size: 9.1pt; color: #2b3447; }
 .job { margin-bottom: 6px; }
@@ -76,18 +77,19 @@ li::marker { color: #5b8ff9; }
 </aside>
 
 <main>
+<section class="blk">
   <h2>Profile</h2>
-  <p class="impact"><b>400+</b> ad-attributed sales in 4 months <i>·</i> <b>2</b> systems built solo <i>·</i> <b>2,400+</b> commits <i>·</i> <b>200+</b> App Store users</p>
+  <p class="impact"><b>400+</b> ad-attributed sales <i>·</i> <b>2</b> systems built solo <i>·</i> <b>2,400+</b> commits <i>·</i> <b>200+</b> app users</p>
   <p class="summary">Front-end-focused software developer, now working across the full stack, with 5+ years shipping production web and mobile software. At Foley Prep, a 7-location tutoring company, I build the software the business runs on: the Digital SAT practice platform, the shop and Stripe checkout, scheduling, a face-recognition check-in kiosk, and Ad Studio, which ties every ad to the sale it drove. I co-founded <strong>Mile A Day</strong>, live on the App Store, and design my own graphics and video.</p>
 
-  <h2>Experience</h2>
+  </section>
+<section class="blk"><h2>Experience</h2>
   <div class="job">
     <div class="job-head"><strong>Software Developer</strong><time>Mar 2023 – Present</time></div>
     <div class="org">Foley Prep · Haddonfield, NJ</div>
     <ul>
-      <li><b>Ad Studio</b> (sole developer): ties Meta and Google Ads clicks to the Stripe purchases they drove; in its first 4 months it attributed <b>400+ sales and 120+ new clients</b> to specific ads.</li>
+      <li><b>Ad Studio</b> (sole developer): ties Meta and Google Ads clicks to the Stripe purchases they drove, using Meta Pixel + Conversions API and Google Ads conversion tracking; in its first 4 months it attributed <b>400+ sales and 120+ new clients</b> to specific ads.</li>
       <li>Added an AI content studio (OpenAI) that writes and generates social posts and schedules them to Instagram and Facebook.</li>
-      <li>Built conversion tracking end to end: Meta Pixel + Conversions API, Google Ads and Reddit conversions, and lead-source attribution.</li>
       <li><b>Digital SAT platform:</b> helped build the practice-test app and built its adaptive score reports — topic performance, missed/omitted questions, timing, printable and emailed reports.</li>
       <li><b>Front-desk kiosk</b> (sole developer), live at all <b>7 locations</b>: face-recognition check-in with live camera admin, punctuality reports and automatic late-arrival texts.</li>
       <li>Core developer on staff/client scheduling, PTO and calendar management (approvals, conflict detection), and the shop and Stripe checkout.</li>
@@ -112,10 +114,12 @@ li::marker { color: #5b8ff9; }
     </ul>
   </div>
 
-  <h2>Projects</h2>
+  </section>
+<section class="blk"><h2>Projects</h2>
   <div class="proj"><strong>Mile A Day</strong><span class="tag">Live · App Store</span> — Co-founder &amp; developer: daily mile streaks, competitions, live group walks and a social feed. <b>200+ users, 66,000+ miles</b> logged; my own streak is 500+ days. <span class="tech">SwiftUI · watchOS · TypeScript · PostgreSQL · Next.js</span></div>
   <div class="proj"><strong>Fetch</strong><span class="tag">Playable on robwiscount.org</span> — 3D local-multiplayer party game with CPU opponents, 8 arenas and power-ups. <span class="tech">Godot · GDScript</span></div>
   <div class="proj"><strong>Client sites</strong> — Trouble Brewing (React + click-to-edit CMS), Pressed by J&amp;H (Stripe checkout), Traveling Tastebuds (food map + admin). <span class="tech">React · Supabase · Stripe · MongoDB</span></div>
   <div class="proj"><strong>LeBronify · Dawg House Duel · Unused CSS Detector</strong> — Parody music player (web + iOS), a game-show web app, and a published VS Code extension. <span class="tech">SwiftUI · JS · Cloudflare Workers · TypeScript</span></div>
+</section>
 </main>
 </div></body></html>
