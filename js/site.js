@@ -86,7 +86,7 @@
 
   /* ---------- Typed roles ---------- */
   var typed = $('.typed');
-  var roles = ['iOS apps', 'Apple Watch apps', 'web apps', 'AI-powered features', 'payment systems', 'things people use'];
+  var roles = ['web apps', 'iOS apps', 'Apple Watch apps', 'video games', 'my own graphics', 'things people use'];
   if (reduceMotion) {
     typed.textContent = 'things people use';
   } else {
@@ -240,7 +240,37 @@
         c.classList.toggle('is-hidden', !show);
         if (show) c.classList.add('in');
       });
+      layoutCards();
     });
+  });
+
+  /* Fill every row of the 6-column grid: rows of three (span 2), with rows of two
+     (span 3) taking up the remainder. Two-card rows go first when the set leads
+     with a feature card, so it stays wide. A lone card sits centered. */
+  function layoutCards() {
+    var vis = cards.filter(function (c) { return !c.classList.contains('is-hidden'); });
+    var n = vis.length, pairs = n % 3 === 0 ? 0 : n % 3 === 2 ? 1 : 2;
+    cards.forEach(function (c) { c.removeAttribute('data-tablet'); });
+    if (n % 2 === 1) vis[n - 1].setAttribute('data-tablet', 'full');
+    if (n === 1) { vis[0].setAttribute('data-span', 'lone'); return; }
+    if (n === 2) pairs = 1;
+    if (n === 4) pairs = 2;
+    var leadBig = vis[0] && vis[0].classList.contains('big');
+    vis.forEach(function (c, i) {
+      var inPairs = leadBig ? i < pairs * 2 : i >= n - pairs * 2;
+      c.setAttribute('data-span', inPairs ? '3' : '2');
+    });
+  }
+  layoutCards();
+
+  /* Whole card is the link: its first link becomes the card's target. */
+  cards.forEach(function (c) {
+    var a = c.querySelector('.links a');
+    if (!a) return;
+    c.classList.add('linked');
+    a.classList.add('card-link');
+    var label = c.querySelector('h3');
+    if (label && !a.getAttribute('aria-label')) a.setAttribute('aria-label', a.textContent.trim() + ': ' + label.textContent.trim());
   });
 
   /* ---------- Fetch player ---------- */
@@ -489,6 +519,7 @@
     whoami: function () {
       print('Rob Wiscount — front-end developer at heart, full stack by now. South Jersey.');
       print('Builds apps, games and sites — then makes his friends play them.', 'dim');
+      print('Designs his own graphics in Canva and edits video in Final Cut and CapCut.', 'dim');
       print('Software developer @ Foley Prep. Co-founder of Mile A Day (live on the App Store).', 'dim');
       print('Builds websites, web apps and iOS apps people actually use.', 'dim');
     },
@@ -521,6 +552,7 @@
       print('apple    Swift · SwiftUI · watchOS · HealthKit · WidgetKit · MapKit');
       print('backend  Node · Express · PostgreSQL · REST · Stripe');
       print('ai       Claude Code · ChatGPT/OpenAI API · Cursor · Copilot');
+      print('design   Final Cut Pro · CapCut · Canva · Figma');
     },
     mileaday: function () {
       print('🔥 Mile A Day — run or walk one mile, every day.', 'ok');
