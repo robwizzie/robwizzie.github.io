@@ -519,7 +519,7 @@
     whoami: function () {
       print('Rob Wiscount — front-end developer at heart, full stack by now. South Jersey.');
       print('Builds apps, games and sites — then makes his friends play them.', 'dim');
-      print('Designs his own logos, graphics and video, too.', 'dim');
+      print('Designs his own graphics in Canva and edits video in Final Cut and CapCut.', 'dim');
       print('Software developer @ Foley Prep. Co-founder of Mile A Day (live on the App Store).', 'dim');
       print('Builds websites, web apps and iOS apps people actually use.', 'dim');
     },
@@ -552,6 +552,7 @@
       print('apple    Swift · SwiftUI · watchOS · HealthKit · WidgetKit · MapKit');
       print('backend  Node · Express · PostgreSQL · REST · Stripe');
       print('ai       Claude Code · ChatGPT/OpenAI API · Cursor · Copilot');
+      print('design   Final Cut Pro · CapCut · Canva · Figma');
     },
     mileaday: function () {
       print('🔥 Mile A Day — run or walk one mile, every day.', 'ok');
