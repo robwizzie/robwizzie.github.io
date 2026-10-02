@@ -58,15 +58,6 @@
     });
   });
 
-  /* ---------- Cursor spotlight ---------- */
-  var spot = $('.spotlight');
-  if (finePointer && !reduceMotion) {
-    window.addEventListener('pointermove', function (e) {
-      spot.style.left = e.clientX + 'px';
-      spot.style.top = e.clientY + 'px';
-    }, { passive: true });
-  }
-
   /* ---------- Reveal + counters ---------- */
   function countUp(el) {
     var target = +el.getAttribute('data-count');
@@ -159,22 +150,12 @@
     }
   }
 
-  /* ---------- 3D tilt ---------- */
+  /* ---------- Portrait tilt ---------- */
   if (finePointer && !reduceMotion) {
     $$('[data-tilt]').forEach(function (el) {
-      var max = el.classList.contains('portrait') ? 10 : 6;
       el.addEventListener('pointermove', function (e) {
         var r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
-        el.style.transform = 'perspective(900px) rotateX(' + (-y * max) + 'deg) rotateY(' + (x * max) + 'deg)';
-      });
-      el.addEventListener('pointerleave', function () { el.style.transform = ''; });
-    });
-
-    /* Magnetic buttons */
-    $$('.magnetic').forEach(function (el) {
-      el.addEventListener('pointermove', function (e) {
-        var r = el.getBoundingClientRect();
-        el.style.transform = 'translate(' + (e.clientX - r.left - r.width / 2) * 0.18 + 'px,' + (e.clientY - r.top - r.height / 2) * 0.3 + 'px)';
+        el.style.transform = 'perspective(900px) rotateX(' + (-y * 9) + 'deg) rotateY(' + (x * 9) + 'deg)';
       });
       el.addEventListener('pointerleave', function () { el.style.transform = ''; });
     });
@@ -234,22 +215,49 @@
     });
   });
 
-  /* ---------- Project filter ---------- */
-  var filters = $$('.filter'), projects = $$('.project');
+  /* ---------- Project filter (a card can sit in several groups) ---------- */
+  var filters = $$('.filter'), cards = $$('.card');
+  function inGroup(card, kind) { return kind === 'all' || (' ' + card.getAttribute('data-kind') + ' ').indexOf(' ' + kind + ' ') > -1; }
   filters.forEach(function (f) {
     var kind = f.getAttribute('data-filter');
-    var n = kind === 'all' ? projects.length : projects.filter(function (p) { return p.getAttribute('data-kind') === kind; }).length;
-    f.insertAdjacentHTML('beforeend', '<span class="n">' + n + '</span>');
+    f.insertAdjacentHTML('beforeend', '<span class="n">' + cards.filter(function (c) { return inGroup(c, kind); }).length + '</span>');
     f.addEventListener('click', function () {
       filters.forEach(function (x) { x.classList.remove('active'); x.setAttribute('aria-pressed', 'false'); });
       f.classList.add('active'); f.setAttribute('aria-pressed', 'true');
-      projects.forEach(function (p) {
-        var show = kind === 'all' || p.getAttribute('data-kind') === kind;
-        p.classList.toggle('is-hidden', !show);
-        if (show) p.classList.add('in');
+      cards.forEach(function (c) {
+        var show = inGroup(c, kind);
+        c.classList.toggle('is-hidden', !show);
+        if (show) c.classList.add('in');
       });
     });
   });
+
+  /* ---------- Fetch player ---------- */
+  var modal = $('#game-modal'), frame = $('#game-frame'), lastFocus = null;
+  function openFetch() {
+    lastFocus = document.activeElement;
+    modal.classList.add('open'); document.body.classList.add('modal-open');
+    if (!frame.getAttribute('src')) frame.setAttribute('src', 'play/fetch/index.html');
+    setTimeout(function () { frame.focus(); }, 50);
+  }
+  function closeFetch() {
+    if (document.fullscreenElement) document.exitFullscreen().catch(function () {});
+    modal.classList.remove('open'); document.body.classList.remove('modal-open');
+    frame.removeAttribute('src'); // stops the game and its audio
+    if (lastFocus) lastFocus.focus();
+  }
+  $$('[data-play-fetch]').forEach(function (el) {
+    el.addEventListener('click', openFetch);
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFetch(); } });
+  });
+  $('#game-close').addEventListener('click', closeFetch);
+  $('#game-full').addEventListener('click', function () {
+    var el = frame.requestFullscreen ? frame : modal;
+    if (el.requestFullscreen) el.requestFullscreen().catch(function () {});
+    frame.focus();
+  });
+  // Esc belongs to the game while it has focus; this only fires when focus is on the page around it.
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.classList.contains('open')) closeFetch(); });
 
   /* ---------- Copy email / share ---------- */
   function copy(text) {
@@ -342,23 +350,32 @@
   var commands = {
     help: function () {
       print('Available commands:', 'ok');
-      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  hire rob    the best command\n  contact     how to reach me\n  resume      open my resume\n  clear       wipe the screen', 'dim');
+      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      a random LeBronify track\n  roast me    courtesy of Spiral\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  hire rob    the best command\n  contact     how to reach me\n  clear       wipe the screen', 'dim');
     },
     whoami: function () {
       print('Rob Wiscount — full-stack developer from South Jersey.');
+      print('Builds apps, games and sites — then makes his friends play them.', 'dim');
       print('Web developer @ Foley Prep. Co-creator of Mile A Day (live on the App Store).', 'dim');
       print('Builds websites, web apps and iOS apps people actually use.', 'dim');
     },
     projects: function () {
-      [['Mile A Day', 'iOS + watchOS fitness app · live', 'https://apps.apple.com/us/app/mile-a-day/id6746970905'],
-       ['Foley Prep', 'education platform · day job', 'https://foleyprep.com'],
-       ['Sip on Pressed', 'brand website', 'https://siponpressed.com'],
-       ['SportsPick5', 'football pick\'em', 'https://www.sportspick5.com'],
-       ['Rack Up Billiards', 'pool stats tracker', 'https://rackupbilliards.com'],
-       ['Unused CSS Detector', 'VS Code extension', 'https://marketplace.visualstudio.com/items?itemName=robwizzie.unused-css-detector'],
-       ['FantasyFlicks', 'fantasy movies · iOS', ''], ['LeBronify', 'Spotify, but LeBron · iOS', '']
+      [['Mile A Day', 'iOS + watchOS streak app · live', 'https://apps.apple.com/us/app/mile-a-day/id6746970905'],
+       ['Fetch', '3D dog party game · playable on this page', '#fetch'],
+       ['Trouble Brewing', 'coffee house site + visual CMS', ''],
+       ['Dawg House Duel', 'picture-duel game show', 'https://dawghouseduel.com'],
+       ['LeBronify', 'Spotify, but all LeBron parodies', 'https://lebronify.app'],
+       ['FantasyFlicks', 'fantasy football for movies · iOS', ''],
+       ['Top Dawgs', 'pool team stats + live scoring', ''],
+       ['Giddey', 'daily NBA draft puzzle', 'https://github.com/robwizzie/Giddey'],
+       ['Pressed by J&H', 'juice shop with Stripe checkout', 'https://siponpressed.com'],
+       ['Traveling Tastebuds', 'food creator site + food map', 'https://travelingtastebuds.org'],
+       ['Pick 5', 'odds-weighted NFL pick\'em', 'https://www.sportspick5.com'],
+       ['The Cabinet', 'arcade cabinet party games', ''],
+       ['Beer Party', 'Mario Party, in real life', 'https://github.com/robwizzie/beer-party'],
+       ['Unused CSS Detector', 'VS Code extension', 'https://marketplace.visualstudio.com/items?itemName=robwizzie.unused-css-detector']
       ].forEach(function (p) {
-        print('→ ' + (p[2] ? '<a href="' + p[2] + '" target="_blank" rel="noopener">' + p[0] + '</a>' : p[0]) + ' <span class="dim">— ' + p[1] + '</span>');
+        var link = p[2] ? '<a href="' + p[2] + '"' + (p[2].charAt(0) === '#' ? '' : ' target="_blank" rel="noopener"') + '>' + p[0] + '</a>' : p[0];
+        print('→ ' + link + ' <span class="dim">— ' + p[1] + '</span>');
       });
     },
     experience: function () {
@@ -398,11 +415,23 @@
     'cat secrets.txt': function () { print('There are no secrets. Just ship it. 🚀'); },
     'cat about.txt': function () { commands.whoami(); },
     sudo: function () { print('Nice try. But you can run: sudo hire rob', 'warn'); },
+    'play fetch': function () { print('Booting Fetch… 🐶 (Esc inside the game goes back a menu)', 'ok'); setTimeout(openFetch, 400); },
+    lebron: function () {
+      var t = ["LeHips Don't Lie", 'Lebronifornia Girls', 'Brons Not Brongedies', 'Catch a LeNade For You', 'Thinkin Bout LeBron', 'This is The Bron'];
+      print('▶ Now playing: ' + t[Math.floor(Math.random() * t.length)] + ' <span class="dim">— LeBronify</span>');
+      print('<a href="https://lebronify.app" target="_blank" rel="noopener">→ hear all 49 at lebronify.app</a>');
+    },
+    'roast me': function () {
+      var r = ['Your thumb is more active than you are.', "Main character energy: you're not the main character.", 'The void scrolls back.', "It's " + ((new Date().getHours() % 12) || 12) + " o'clock. Even your phone wants a break."];
+      print('🌀 ' + r[Math.floor(Math.random() * r.length)], 'warn');
+      print('— Spiral, the app that roasts doom scrollers', 'dim');
+    },
     clear: function () { out.innerHTML = ''; }
   };
   commands.about = commands.whoami;
   commands.skills = commands.stack;
   commands.hire = commands['hire rob'];
+  commands.fetch = commands.play = commands['play fetch'];
 
   function run(raw) {
     var cmd = raw.trim().toLowerCase().replace(/\s+/g, ' ');
