@@ -1,5 +1,5 @@
 {
-    "name": "Rob Wiscount",
+    "name": "Rob Wiscount — Developer",
     "short_name": "Rob W",
     "icons": [
         {
@@ -13,7 +13,7 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#05070c",
-    "background_color": "#05070c",
+    "theme_color": "#06080d",
+    "background_color": "#06080d",
     "display": "standalone"
 }
