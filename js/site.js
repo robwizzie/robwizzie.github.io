@@ -530,11 +530,11 @@
        ['Dawg House Duel', 'picture-duel game show', 'https://dawghouseduel.com'],
        ['LeBronify', 'Spotify, but all LeBron parodies · play it above', '#lebronify'],
        ['FantasyFlicks', 'fantasy football for movies · iOS, not live yet', ''],
-       ['Top Dawgs', 'pool team stats + live scoring · not live yet', ''],
-       ['Giddey', 'daily NBA draft puzzle · not live yet', 'https://github.com/robwizzie/Giddey'],
+       ['Top Dawgs', 'pool team stats + live scoring', 'https://poolmaxxing.com'],
+       ['Giddey', 'daily NBA draft puzzle', 'https://playgiddey.com'],
        ['Pressed by J&H', 'juice shop with Stripe checkout', 'https://siponpressed.com'],
        ['Traveling Tastebuds', 'food creator site + food map', 'https://travelingtastebuds.org'],
-       ['Pick 5', 'odds-weighted NFL pick\'em · not live yet', 'https://github.com/robwizzie/pick-5'],
+       ['Pick 5', 'odds-weighted NFL pick\'em', 'https://sportspick5.com'],
        ['Beer Party', 'Mario Party, in real life · not live yet', 'https://github.com/robwizzie/beer-party'],
        ['Unused CSS Detector', 'VS Code extension', 'https://marketplace.visualstudio.com/items?itemName=robwizzie.unused-css-detector']
       ].forEach(function (p) {
@@ -619,6 +619,51 @@
     b.addEventListener('click', function () { run(b.getAttribute('data-cmd')); });
   });
   print('Welcome to robOS v2026. Type <span class="p">help</span> to see what I can do.', 'ok');
+
+  /* ---------- Mile A Day live community stats ----------
+     Same read-only public endpoint mileaday.run uses (cached 60 s server-side).
+     The HTML holds a recent snapshot, so the panel is never empty; it counts up when
+     it scrolls into view and then follows the live numbers every minute. */
+  (function () {
+    var box = document.getElementById('mad-live');
+    if (!box) return;
+    var els = $$('[data-stat]', box), latest = {}, shown = {}, seen = false;
+    els.forEach(function (el) { latest[el.getAttribute('data-stat')] = parseFloat(el.textContent.replace(/,/g, '')) || 0; });
+    function fmt(n, d) { return Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+    function paint() {
+      els.forEach(function (el) {
+        var key = el.getAttribute('data-stat'), to = latest[key], from = shown[key] || 0;
+        var d = +(el.getAttribute('data-decimals') || 0), suffix = el.getAttribute('data-suffix') || '';
+        shown[key] = to;
+        if (reduceMotion || from === to) { el.textContent = fmt(to, d) + suffix; return; }
+        var t0 = performance.now();
+        (function tick(now) {
+          var t = Math.min((now - t0) / 1600, 1), e = 1 - Math.pow(1 - t, 3);
+          el.textContent = fmt(from + (to - from) * e, d) + suffix;
+          if (t < 1) requestAnimationFrame(tick);
+        })(t0);
+      });
+    }
+    if ('IntersectionObserver' in window && !reduceMotion) {
+      new IntersectionObserver(function (entries, obs) {
+        if (!entries[0].isIntersecting) return;
+        obs.disconnect(); seen = true; paint();
+      }, { threshold: 0.4 }).observe(box);
+    } else { seen = true; }
+    function load() {
+      if (!window.fetch) return;
+      fetch('https://mad.mindgoblin.tech/public/stats', { cache: 'no-store' })
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .then(function (data) {
+          if (!data || !data.total_users) return;
+          Object.keys(latest).forEach(function (k) { if (typeof data[k] === 'number') latest[k] = data[k]; });
+          if (seen) paint();
+        })
+        .catch(function () {});
+    }
+    load();
+    setInterval(function () { if (!document.hidden) load(); }, 60000);
+  })();
 
   onScroll();
 })();

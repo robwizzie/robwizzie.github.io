@@ -578,3 +578,15 @@ kbd { font-family: var(--mono); font-size: .74rem; min-width: 24px; text-align: 
   .hero-title .line > span { transform: none; }
 }
 .skill-group h3 .fav { color: var(--muted, #8a94ad); font-weight: 500; letter-spacing: .08em; }
+
+/* Mile A Day live community stats (public /public/stats endpoint) */
+.mad-live { margin-top: 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 22px 24px; }
+.mad-live[hidden] { display: none; }
+.mad-live-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-family: var(--mono); font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+.mad-live-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+.ml-stat b { display: block; font-family: var(--display); font-weight: 700; font-size: clamp(1.9rem, 3vw, 2.6rem); line-height: 1; font-variant-numeric: tabular-nums; }
+.ml-stat span { display: block; margin-top: 6px; font-size: .84rem; color: var(--muted); }
+.mad-live-foot { margin: 16px 0 0; font-size: .8rem; color: var(--dim); }
+.mad-live-foot a { color: var(--blue-hi); }
+@media (max-width: 900px) { .mad-live-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 520px) { .mad-live-grid { grid-template-columns: repeat(2, 1fr); } }
