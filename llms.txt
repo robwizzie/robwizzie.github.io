@@ -14,8 +14,8 @@
 
 ## Highlights
 
-- Built Ad Studio solo at Foley Prep: ties Meta and Google Ads clicks to the Stripe purchases they drove. In its first 4 months it attributed 400+ sales and 120+ new clients to specific ads.
-- Built a face-recognition check-in kiosk solo, running at all 7 Foley Prep locations.
+- Led development of Ad Studio at Foley Prep: ties Meta and Google Ads clicks to the Stripe purchases they drove. In its first 4 months it attributed 400+ sales and 120+ new clients to specific ads.
+- Led development of a face-recognition check-in kiosk, running at all 7 Foley Prep locations.
 - 2,400+ commits to Foley Prep's production Node.js / Express / MongoDB codebase since 2023.
 - Co-founded Mile A Day: 200+ users and 66,000+ miles logged. Native SwiftUI iOS and watchOS app with a TypeScript / PostgreSQL backend.
 - Made Fetch, a 3D local-multiplayer party game in Godot, playable in the browser at robwiscount.org.
@@ -34,11 +34,11 @@
 ## Experience
 
 ### Software Developer, Foley Prep (Haddonfield, NJ), Mar 2023 to present
-Tutoring and test-prep company with 7 New Jersey locations. Builds the software the business runs on.
-- Ad Studio (sole developer): Meta + Google Ads attribution to Stripe purchases; AI content studio (OpenAI) that writes and generates social posts and schedules them to Instagram and Facebook.
+Tutoring and test-prep company with 7 New Jersey locations. Member of the dev team that builds the software the business runs on.
+- Ad Studio (led development): Meta + Google Ads attribution to Stripe purchases; AI content studio (OpenAI) that writes and generates social posts and schedules them to Instagram and Facebook.
 - Conversion tracking: Meta Pixel + Conversions API, Google Ads and Reddit conversions, lead-source attribution.
 - Digital SAT practice platform: helped build the practice-test app; built its adaptive score reports (topic performance, missed/omitted questions, timing, printable and emailed reports).
-- Front-desk kiosk (sole developer): on-device face recognition, live camera admin, punctuality reports, automatic late-arrival texts; live at all 7 locations.
+- Front-desk kiosk (led development): on-device face recognition, live camera admin, punctuality reports, automatic late-arrival texts; live at all 7 locations.
 - Staff and client scheduling, PTO and calendar management with conflict detection, shop and Stripe checkout, Twilio calls/texting inbox, marketing site and SEO landing pages.
 
 ### Integrations Developer, XGen AI (Clearwater, FL, remote), Mar 2021 to Jun 2022
