@@ -126,7 +126,17 @@
                 <li><a href="#about">About</a></li>
             </ul>
             <div class="nav-cta">
-                <a class="btn btn-primary btn-sm" href="#contact">Hire me <i class="fas fa-arrow-right"></i></a>
+                <div class="hire">
+                    <button class="btn btn-primary btn-sm hire-btn" id="hire-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="hire-panel">Hire me <i class="fas fa-chevron-down"></i></button>
+                    <div class="hire-panel" id="hire-panel" role="dialog" aria-label="Get in touch with Rob" hidden>
+                        <p class="hire-title">Let's talk</p>
+                        <p class="hire-sub">Open to front-end and full-stack roles. I reply fast.</p>
+                        <a class="hire-opt" href="mailto:robertwiscount@gmail.com?subject=Opportunity%20for%20Rob%20Wiscount"><i class="fas fa-paper-plane"></i><span>Email me<small>robertwiscount@gmail.com</small></span></a>
+                        <a class="hire-opt" href="Robert Wiscount Resume.pdf" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i><span>View my resume<small>One-page PDF</small></span></a>
+                        <a class="hire-opt" href="https://www.linkedin.com/in/rob-wiscount-275a2218a/" target="_blank" rel="noopener"><i class="fab fa-linkedin-in"></i><span>Connect on LinkedIn<small>in/rob-wiscount</small></span></a>
+                        <button class="hire-opt" type="button" id="hire-copy"><i class="fas fa-copy"></i><span>Copy my email<small class="hire-copy-note">Paste it anywhere</small></span></button>
+                    </div>
+                </div>
                 <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links"><span></span></button>
             </div>
         </nav>
