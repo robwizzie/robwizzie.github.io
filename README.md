@@ -1,5 +1,22 @@
 # robwizzie.github.io
-My own personal website
+[![Site checks](https://github.com/robwizzie/robwizzie.github.io/actions/workflows/site-checks.yml/badge.svg)](https://github.com/robwizzie/robwizzie.github.io/actions/workflows/site-checks.yml)
+
+My own personal website, [robwiscount.org](https://robwiscount.org). Plain HTML, CSS and JavaScript with no
+framework or build step; [how-it-works.html](https://robwiscount.org/how-it-works.html) explains how it's put together.
+
+## Tests
+
+Every pull request runs [Playwright](https://playwright.dev) against the real page at desktop and phone sizes,
+with every outside API mocked (`tests/specs/mock.js`), plus a Lighthouse report.
+
+```bash
+cd tests && npm ci && npx playwright install chromium && npm test
+```
+
+## Live mode (`workers/live/`)
+
+Live cursors, the visitor map, the guestbook, visit sources and the Letterboxd card run on a Cloudflare
+Worker. See [workers/live/README.md](workers/live/README.md) to deploy it; the admin page is `/admin.html`.
 
 ## Fetch web build (`play/fetch/`)
 

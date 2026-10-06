@@ -1,0 +1,13 @@
+{
+  "name": "robwiscount-site-tests",
+  "private": true,
+  "description": "Playwright checks for robwiscount.org. Run from this folder: npm ci && npx playwright install chromium && npm test",
+  "scripts": {
+    "test": "playwright test",
+    "serve": "node serve.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "world-atlas": "2.0.2"
+  }
+}
