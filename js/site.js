@@ -28,6 +28,9 @@
     toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2600);
   }
 
+  /* Easter eggs announce themselves; js/eggs.js turns them into achievements. */
+  function egg(id) { document.dispatchEvent(new CustomEvent('rw:egg', { detail: id })); }
+
   /* ---------- Nav: progress, hide on scroll down, active link, mobile menu ---------- */
   var nav = $('.nav'), progress = $('.progress'), lastY = 0;
   var navLinks = $$('.nav-links a');
@@ -280,6 +283,7 @@
     var music = document.getElementById('lbf-audio'); if (music && !music.paused) music.pause();
     modal.classList.add('open'); document.body.classList.add('modal-open');
     if (!frame.getAttribute('src')) frame.setAttribute('src', 'play/fetch/index.html');
+    egg('fetch');
     setTimeout(function () { frame.focus(); }, 50);
   }
   function closeFetch() {
@@ -396,7 +400,7 @@
     cLogo.style.animation = 'none';
     cLogo.style.transform = 'rotate(' + spins * 360 + 'deg) scale(1.1)';
     var r = cLogo.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 70);
-    if (spins === 5) toast('You found the logo spinner. You\'re hired… I mean, I\'m hireable. 😄');
+    if (spins === 5) { toast('You found the logo spinner. You\'re hired… I mean, I\'m hireable. 😄'); egg('logo'); }
   });
 
   /* Konami code */
@@ -404,7 +408,7 @@
   document.addEventListener('keydown', function (e) {
     var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     kpos = k === konami[kpos] ? kpos + 1 : (k === konami[0] ? 1 : 0);
-    if (kpos === konami.length) { kpos = 0; party(); toast('🎮 Cheat code unlocked: +30 lives. Now go hire Rob.'); }
+    if (kpos === konami.length) { kpos = 0; party(); toast('🎮 Cheat code unlocked: +30 lives. Now go hire Rob.'); egg('konami'); }
   });
 
   /* ---------- LeBronify player ---------- */
@@ -450,7 +454,7 @@
   function play() {
     if (!audio.getAttribute('src')) audio.src = 'assets/lebronify/' + TRACKS[cur].id + '.mp3';
     var pr = audio.play(); if (pr && pr.catch) pr.catch(function () {});
-    plays++;
+    plays++; egg('lebron');
     if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({ title: TRACKS[cur].title, artist: TRACKS[cur].artist, album: 'LeBronify', artwork: [{ src: 'assets/lebronify/' + TRACKS[cur].id + '.jpg', sizes: '300x300', type: 'image/jpeg' }] });
     }
@@ -533,7 +537,8 @@
   var commands = {
     help: function () {
       print('Available commands:', 'ok');
-      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  git log     my GitHub squares\n  hire rob    the best command\n  contact     how to reach me\n  clear       wipe the screen', 'dim');
+      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  git log     my GitHub squares\n  hire rob    the best command\n  contact     how to reach me\n  achievements  secrets you\'ve found\n  clear       wipe the screen', 'dim');
+      print('…and a few commands that aren\'t on this list. 👀', 'dim');
     },
     whoami: function () {
       print('Rob Wiscount — front-end developer at heart, full stack by now. South Jersey.');
@@ -623,16 +628,20 @@
   commands.hire = commands['hire rob'];
   commands.fetch = commands.play = commands['play fetch'];
 
+  var termMode = null; // an egg can take over the prompt (vim does)
   function run(raw) {
-    var cmd = raw.trim().toLowerCase().replace(/\s+/g, ' ');
+    var line = raw.trim().replace(/\s+/g, ' '), cmd = line.toLowerCase(), sp = cmd.indexOf(' ');
+    if (termMode) { print(esc(raw), 'dim'); termMode(line); return; }
     print('<span class="p">rob@wiscount:~$</span> ' + esc(raw));
     if (!cmd) return;
     history.push(raw); hpos = history.length;
-    if (commands[cmd]) commands[cmd]();
+    if (commands[cmd]) commands[cmd]('');
+    else if (sp > 0 && commands[cmd.slice(0, sp)]) commands[cmd.slice(0, sp)](line.slice(sp + 1)); // e.g. cowsay <text>
     else print('command not found: ' + esc(cmd) + ' — try <span class="p">help</span>', 'warn');
   }
   input.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') { run(input.value); input.value = ''; }
+    else if (e.key === 'Escape' && termMode) { e.preventDefault(); termMode(null); }
     else if (e.key === 'ArrowUp' && history.length) { hpos = Math.max(0, hpos - 1); input.value = history[hpos]; e.preventDefault(); }
     else if (e.key === 'ArrowDown' && history.length) { hpos = Math.min(history.length, hpos + 1); input.value = history[hpos] || ''; e.preventDefault(); }
     else if (e.key === 'Tab') {
@@ -831,6 +840,7 @@
       var el = e.target;
       if (!el.hasAttribute('data-i')) return;
       showTip(el);
+      egg('ripple');
       if (reduceMotion || rippling) return;
       var all = $$('.gh-c', grid), at = all.indexOf(el), c0 = Math.floor(at / 7), r0 = at % 7;
       rippling = true;
@@ -844,6 +854,16 @@
       if (d && d.level >= 4) { var r = el.getBoundingClientRect(); burst(r.left + r.width / 2, r.top, 40); }
     });
   })();
+
+  /* ---------- Hooks for the easter-egg scripts (js/eggs.js, js/dog.js, js/pool.js, js/live.js) ---------- */
+  window.RW = {
+    $: $, $$: $$, reduceMotion: reduceMotion, finePointer: finePointer,
+    toast: toast, burst: burst, party: party, egg: egg, copy: copy,
+    commands: commands, print: print, esc: esc, run: run,
+    setTermMode: function (fn) { termMode = fn || null; },
+    openFetch: openFetch, playTrack: function (i) { lbfLoad(i, true); }, tracks: TRACKS,
+    openHire: function () { var b = $('#hire-btn'), p = $('#hire-panel'); if (b && p && p.hidden) b.click(); }
+  };
 
   onScroll();
 })();
