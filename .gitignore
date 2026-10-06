@@ -1,2 +1,3 @@
 workers/live/node_modules/
 workers/live/.wrangler/
+.DS_Store
