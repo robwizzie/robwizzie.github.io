@@ -35,7 +35,9 @@
     { id: 'dog', icon: '🦴', title: 'Who Let the Dog Out', desc: 'Whistled for the dog.', hint: 'Type a three-letter word for a good boy.' },
     { id: 'pool', icon: '🎱', title: 'Break Shot', desc: 'Broke the rack on the About cards.', hint: 'Rob plays pool. Ask the terminal to break.' }
   ];
+  ACH.push({ id: 'colophon', icon: '📖', title: 'Read the Manual', desc: 'Found out how this site works.', hint: 'Every good site has a colophon.' });
   if (liveOn) ACH.push({ id: 'live', icon: '🛰️', title: 'Not Alone', desc: 'Saw another visitor\'s cursor.', hint: 'Visit with a friend.' });
+  if (liveOn) ACH.push({ id: 'guestbook', icon: '✍️', title: 'Signed the Guestbook', desc: 'Left a note on the visitor map.', hint: 'Leave your mark on the map.' });
   var KEY = 'rw-eggs', got = store(KEY) || {};
   function count() { return ACH.filter(function (a) { return got[a.id]; }).length; }
 
@@ -161,6 +163,13 @@
     if (l) l.addEventListener('click', function (e) { e.preventDefault(); openPanel(); });
   };
   RW.commands.trophies = RW.commands.achievements;
+  RW.commands.colophon = function () {
+    RW.print('robwiscount.org — plain HTML, CSS and JS. No framework, no build step.', 'ok');
+    RW.print('  page      GitHub Pages · one stylesheet on design tokens · one script per feature\n  live      Cloudflare Worker + Durable Object (SQLite): cursors, visits, guestbook\n  dogs      the real Fetch models → gltf-transform → three.js, ortho camera in CSS px\n  pool      elastic collisions, 14 substeps a frame, cushions, pockets\n  tests     Playwright + Lighthouse on every pull request', 'dim');
+    RW.print('<a href="how-it-works.html">→ read the full write-up</a>');
+    unlock('colophon');
+  };
+  RW.commands['how it works'] = RW.commands.colophon;
   RW.unlock = unlock;
 
   /* ==========================================================================

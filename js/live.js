@@ -21,7 +21,23 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
 
   var me = { id: null, place: null };
-  var peers = {}, here = 0, stats = null;
+  var peers = {}, here = 0, stats = null, notes = [];
+
+  /* Where this visit came from: the referrer (the Worker keeps only its host), a ?r=<tag> Rob puts on
+     links he sends out (e.g. ?r=acme on an application), and any utm_ tags. Read once, then tidied
+     out of the address bar so the tag doesn't travel with a shared link. */
+  var origin = (function () {
+    var q = {}, keys = ['r', 'ref', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+    try { new URLSearchParams(location.search).forEach(function (v, k) { q[k] = v; }); } catch (e) {}
+    if (keys.some(function (k) { return q[k]; }) && window.history && history.replaceState) {
+      try {
+        var u = new URL(location.href);
+        keys.forEach(function (k) { u.searchParams.delete(k); });
+        history.replaceState(history.state, '', u.pathname + u.search + u.hash);
+      } catch (e) {}
+    }
+    return { ref: document.referrer || '', r: q.r || q.ref || '', utm_source: q.utm_source || '', utm_medium: q.utm_medium || '', utm_campaign: q.utm_campaign || '', path: location.pathname };
+  })();
   var wsOpen = false;
 
   /* ---------- Helpers ---------- */
@@ -112,10 +128,13 @@
   /* ---------- Visits: once per browser per day ---------- */
   function visit() {
     var v = load('rw-live') || {}, d = today();
+    if (load('rw-me')) { if (v.you) setYou(v.you); return; } // Rob's own browser (set by admin.html) doesn't count
     if (v.d === d && v.id) { if (v.you) setYou(v.you); return; }
     var id = rid();
     // text/plain keeps it a "simple" request (no CORS preflight)
-    getJSON(BASE + '/visit', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ id: id }) })
+    var body = { id: id };
+    for (var k in origin) body[k] = origin[k];
+    getJSON(BASE + '/visit', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(body) })
       .then(function (s) {
         save('rw-live', { d: d, id: id, you: s.you || null });
         setYou(s.you);
@@ -395,7 +414,7 @@
       cells = {};
       function at(p) {
         var k = cellOf(p), key = k.r * cols + k.c;
-        return cells[key] || (cells[key] = { c: k.c, r: k.r, n: 0, names: [], live: 0, mine: false });
+        return cells[key] || (cells[key] = { c: k.c, r: k.r, n: 0, names: [], live: 0, mine: false, notes: [] });
       }
       var max = 1;
       ((stats && stats.cities) || []).forEach(function (p) {
@@ -410,6 +429,12 @@
         cl.live++;
         if (!cl.names.length) cl.names.push({ name: label(peers[id]), n: 0 });
       }
+      notes.forEach(function (n) {
+        if (!hasGeo(n)) return;
+        var nc = at(n);
+        nc.notes.push(n);
+        if (!nc.names.length) nc.names.push({ name: label(n), n: 0 });
+      });
       if (hasGeo(me.place)) {
         var mc = at(me.place);
         mc.mine = true;
@@ -434,6 +459,9 @@
         sq(g, x, y, s * (cl.lvl === 4 ? 1.55 : cl.lvl === 3 ? 1.3 : 1.1), colors['l' + cl.lvl]);
         g.shadowBlur = 0;
         if (cl.live || cl.mine) sq(g, x, y, s * 1.3, cl.live ? '#fff' : colors.l4);
+        if (cl.notes.length) { // a guestbook note was left from here: a little speech dot on the corner
+          g.fillStyle = '#ffd36b'; g.beginPath(); g.arc(x + s * 0.62, y - s * 0.62, Math.max(1.6, s * 0.36), 0, Math.PI * 2); g.fill();
+        }
       }
       pulses = [];
       for (var k2 in cells) if (cells[k2].live || cells[k2].mine) pulses.push(cells[k2]);
@@ -476,6 +504,8 @@
         .then(function () { if (layout()) paint(); });
     }
 
+    function notesChanged() { if (started && cols) paint(); }
+
     // Tooltip
     function showTip(e) {
       if (!cols) return;
@@ -491,6 +521,7 @@
       if (best.n) txt += ' · ' + best.n.toLocaleString() + ' visit' + (best.n === 1 ? '' : 's');
       if (best.live) txt += ' · ' + best.live + ' here now';
       else if (best.mine) txt += ' · you';
+      if (best.notes.length) txt += ' · 💬 “' + best.notes[0].note.slice(0, 70) + (best.notes[0].note.length > 70 ? '…' : '') + '”';
       tip.textContent = txt;
       var cr = card.getBoundingClientRect();
       var x = br.left - cr.left + (best.c + 0.5) * pitch, half = tip.offsetWidth / 2 + 8;
@@ -517,8 +548,84 @@
       }).observe(box);
     } else onScreen = true;
 
-    return { paint: paint, init: init, visible: function () { return onScreen; } };
+    return { paint: paint, init: init, notesChanged: notesChanged, visible: function () { return onScreen; } };
   })();
+
+  /* ---------- Guestbook: notes wait for Rob's OK before anyone else sees them ---------- */
+  var gb = $('#lv-gb');
+  function stamp(n) { return (n.name ? esc(n.name) + ' · ' : '') + esc(label(n)) + ' · ' + ago(n.t).toLowerCase(); }
+  function paintNotes() {
+    var list = $('#lv-gb-list');
+    if (!list) return;
+    var mine = load('rw-note'), html = '';
+    if (mine && mine.note && !notes.some(function (n) { return n.id === mine.id; })) {
+      html += '<li class="mine"><p>' + esc(mine.note) + '</p><small>' + stamp(mine) + ' · <b>waiting for Rob to approve</b></small></li>';
+    }
+    html += notes.map(function (n) { return '<li><p>' + esc(n.note) + '</p><small>' + stamp(n) + '</small></li>'; }).join('');
+    list.innerHTML = html || '<li class="empty"><p>No notes yet. Be the first.</p></li>';
+  }
+  function loadNotes() {
+    getJSON(BASE + '/guestbook').then(function (d) { notes = (d && d.notes) || []; paintNotes(); map.notesChanged(); }).catch(paintNotes);
+  }
+  if (gb) {
+    var form = $('#lv-gb-form'), msg = $('#lv-gb-msg'), btn = form && form.querySelector('button');
+    if (load('rw-note') && load('rw-note').d === today()) form.classList.add('done');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var note = $('#lv-gb-note').value.trim(), name = $('#lv-gb-name').value.trim();
+      if (note.length < 2) { msg.textContent = 'Say a little more than that.'; return; }
+      var v = load('rw-live') || {};
+      btn.disabled = true; msg.textContent = 'Signing…';
+      fetch(BASE + '/guestbook', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ id: v.id || rid(), name: name, note: note }) })
+        .then(function (r) { return r.json().then(function (d) { if (!r.ok) throw d; return d; }); })
+        .then(function (d) {
+          var n = d.note; n.d = today();
+          save('rw-note', n);
+          form.reset(); form.classList.add('done');
+          msg.textContent = d.status === 'ok' ? 'Signed — thanks! 👋' : 'Thanks! Your note shows up here once Rob approves it. 👋';
+          if (d.status === 'ok') notes.unshift(n);
+          paintNotes(); map.notesChanged();
+          if (RW.egg) RW.egg('guestbook');
+        })
+        .catch(function (err) { msg.textContent = (err && err.error) || 'Couldn\'t reach the guestbook — try again in a minute.'; })
+        .then(function () { btn.disabled = false; });
+    });
+  }
+
+  /* ---------- Letterboxd: the last film Rob logged, on the movie card ---------- */
+  var films = null;
+  function stars(r) { return r ? new Array(Math.floor(r) + 1).join('★') + (r % 1 ? '½' : '') : ''; }
+  function watched(d) {
+    if (!d) return '';
+    var p = d.split('-'), then = new Date(+p[0], p[1] - 1, +p[2]), now = new Date();
+    var days = Math.round((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - then) / 864e5);
+    return days <= 0 ? 'today' : days === 1 ? 'yesterday' : days < 7 ? days + ' days ago' : then.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+  function loadFilms() {
+    var card = Array.prototype.filter.call(document.querySelectorAll('.life-card'), function (c) { return /movie/i.test(c.textContent); })[0];
+    getJSON(BASE + '/letterboxd').then(function (d) {
+      films = (d && d.films) || [];
+      var f = films[0];
+      if (!card || !f) return;
+      var a = document.createElement('a');
+      a.className = 'lb-last'; a.href = f.url; a.target = '_blank'; a.rel = 'noopener';
+      a.innerHTML = (f.poster ? '<img src="' + esc(f.poster) + '" alt="" width="34" height="51" loading="lazy" referrerpolicy="no-referrer">' : '') +
+        '<span><small>Last watched' + (f.watched ? ' · ' + watched(f.watched) : '') + '</small><b>' + esc(f.title) + (f.year ? ' <i>(' + f.year + ')</i>' : '') + '</b>' +
+        (f.rating ? '<em aria-label="' + f.rating + ' out of 5 stars">' + stars(f.rating) + (f.liked ? ' <span aria-label="liked">♥</span>' : '') + '</em>' : '') + '</span>';
+      card.appendChild(a);
+    }).catch(function () {});
+  }
+  if (RW.commands) {
+    RW.commands.movies = RW.commands.letterboxd = function () {
+      if (!films) { RW.print('Checking Letterboxd…', 'dim'); return; }
+      if (!films.length) { RW.print('Letterboxd is quiet right now. <a href="https://letterboxd.com/robwizzie/" target="_blank" rel="noopener">→ letterboxd.com/robwizzie</a>'); return; }
+      RW.print('🎬 Recently on Letterboxd:', 'ok');
+      films.slice(0, 5).forEach(function (f) {
+        RW.print('  ' + esc(f.title) + (f.year ? ' (' + f.year + ')' : '') + '  ' + stars(f.rating) + (f.rewatch ? ' ↻' : '') + (f.watched ? ' <span class="dim">— ' + watched(f.watched) + '</span>' : ''));
+      });
+      RW.print('<a href="https://letterboxd.com/robwizzie/" target="_blank" rel="noopener">→ letterboxd.com/robwizzie</a>');
+    };
+  }
 
   /* ---------- Terminal: who ---------- */
   if (RW.commands) {
@@ -547,6 +654,7 @@
   function start() {
     visit();
     connect();
+    loadFilms();
     if (!section) return;
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (en, obs) {
@@ -554,8 +662,9 @@
         obs.disconnect();
         map.init();
         loadStats();
+        loadNotes();
       }, { rootMargin: '600px 0px' }).observe(section);
-    } else { map.init(); loadStats(); }
+    } else { map.init(); loadStats(); loadNotes(); }
     setInterval(function () { if (!document.hidden && map.visible && map.visible()) loadStats(); }, 60000);
   }
   if (document.readyState === 'complete') setTimeout(start, 800);
