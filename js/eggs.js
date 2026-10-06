@@ -345,7 +345,7 @@
     ['', 'A Rob Wiscount Production'], ['', 'ROBWISCOUNT.ORG'],
     ['Directed by', 'Rob Wiscount'], ['Written by', 'Rob Wiscount'], ['Designed by', 'Rob Wiscount'], ['Front end, back end & everything in between', 'Rob Wiscount'],
     ['Graphics & video', 'Rob Wiscount (Final Cut, CapCut, Canva)'], ['Running coach', 'Mile A Day'], ['Co-founder & original bet', 'David'],
-    ['Stunt dog', 'Fetch'], ['Music', 'LeBronify — all LeBron, all the time'], ['Catering', 'Pressed by J&H'], ['Craft coffee', 'Trouble Brewing'],
+    ['Stunt dog', 'Fetch'], ['Music', 'LeBronify — all LeBron, all the time'], ['Craft coffee', 'Trouble Brewing'],
     ['Pool consultant', 'The Top Dawgs'], ['Box office analysis', 'FantasyFlicks'], ['Moral support', 'The Philadelphia Eagles'],
     ['Filmed on location in', 'South Jersey'], ['Special thanks', 'You, for scrolling this far'],
     ['', 'No LeBrons were harmed in the making of this website.']
