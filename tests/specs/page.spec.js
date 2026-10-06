@@ -43,3 +43,15 @@ test('colophon and admin pages load', async ({ page }) => {
   await expect(page.locator('#adm-app')).toBeHidden();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
 });
+
+test('missing pages get the 404 page, a dog, and a good guess', async ({ page }) => {
+  const res = await page.goto('/old/stuff/resume-2024');
+  expect(res.status()).toBe(404);
+  await expect(page.locator('h1')).toContainText('ran off with this page');
+  await expect(page.locator('#lost-path')).toHaveText('/old/stuff/resume-2024');
+  await expect(page.locator('#lost-guess-link')).toHaveAttribute('href', /Resume/);
+  await expect(page.locator('#lost-stage canvas, #lost-stage.flat')).toHaveCount(1, { timeout: 10000 });
+  await page.click('#lost-drop'); // the dog lets go
+  await page.click('#lost-home');
+  await page.waitForURL('http://localhost:4173/', { timeout: 5000 });
+});

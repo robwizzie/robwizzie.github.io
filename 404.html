@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="robots" content="noindex">
+    <title>Page Not Found · Rob Wiscount</title>
+    <meta name="theme-color" content="#06080d">
+    <!-- GitHub Pages serves this for any missing path, at any depth, so every URL here is absolute. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link href="/assets/fonts.css" rel="stylesheet">
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/css/site.css" rel="stylesheet">
+    <style>
+        body { min-height: 100vh; display: flex; flex-direction: column; }
+        .lost-top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 70px; }
+        .lost-top .nav-brand img { width: 30px; height: 30px; }
+        .lost { flex: 1; padding: clamp(24px, 5vw, 56px) 0 clamp(48px, 7vw, 80px); }
+        .lost h1 { font-size: clamp(2.8rem, 8vw, 5.6rem); margin: 14px 0 14px; }
+        .lost h1 .blue { color: var(--blue); }
+        .lost .lede code { word-break: break-all; }
+        .lost-stage { position: relative; margin-top: clamp(22px, 4vw, 36px); height: clamp(220px, 34vw, 340px); border-radius: var(--radius); border: 1px solid var(--line); overflow: hidden;
+            background: radial-gradient(70% 90% at 50% 100%, rgba(91,143,249,.14), transparent 70%), linear-gradient(180deg, var(--bg-2), var(--surface)); }
+        .lost-stage::after { content: ''; position: absolute; left: 0; right: 0; bottom: 18%; height: 1px; background: linear-gradient(90deg, transparent, var(--line-strong), transparent); }
+        .lost-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+        .lost-404 { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--display); font-weight: 700; font-size: clamp(8rem, 28vw, 17rem); line-height: 1; color: rgba(160,185,255,.05); letter-spacing: .02em; pointer-events: none; user-select: none; }
+        .lost-fallback { position: absolute; inset: 0; display: none; place-items: center; font-size: 4rem; }
+        .lost-stage.flat .lost-fallback { display: grid; }
+        .lost-say { position: absolute; left: 50%; top: 14%; transform: translate(-50%, 6px); padding: 6px 12px; border-radius: 999px; background: #fff; color: #05070c; font-weight: 700; font-size: .86rem; opacity: 0; transition: opacity .25s, transform .25s var(--ease); pointer-events: none; white-space: nowrap; }
+        .lost-say.show { opacity: 1; transform: translate(-50%, 0); }
+        .lost-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+        .lost-guess { margin-top: 22px; padding: 14px 16px; border-radius: var(--radius-sm); border: 1px solid rgba(91,143,249,.35); background: var(--blue-soft); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .lost-guess[hidden] { display: none; }
+        .lost-guess a { color: var(--blue-hi); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+        .lost-links { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 22px; }
+        .lost-links a { display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); transition: border-color .2s, transform .25s var(--ease); }
+        .lost-links a:hover { border-color: var(--blue); transform: translateY(-3px); }
+        .lost-links i { color: var(--blue-hi); font-size: 1.1rem; }
+        .lost-links b { font-size: .95rem; }
+        .lost-links small { color: var(--muted); font-size: .8rem; line-height: 1.4; }
+        @media (max-width: 900px) { .lost-links { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 560px) { .lost-links { grid-template-columns: 1fr 1fr; } .lost-links a:last-child { grid-column: 1 / -1; } }
+    </style>
+</head>
+<body>
+<header class="lost-top">
+    <div class="wrap">
+        <a class="nav-brand" href="/"><img src="/assets/rw-logo.png" alt=""><span>Rob Wiscount</span></a>
+        <a class="btn btn-ghost btn-sm" href="/"><i class="fas fa-home"></i> Home</a>
+    </div>
+</header>
+
+<main class="lost">
+    <div class="wrap">
+        <span class="eyebrow">Error 404 · Page not found</span>
+        <h1 class="h-display"><span id="lost-name">One of the dogs</span> ran off <span class="blue">with this page.</span></h1>
+        <p class="lede">You were looking for <code id="lost-path">this page</code>, but it isn't here. Either it moved, or a very good dog got to it first.</p>
+
+        <div class="lost-stage" id="lost-stage" aria-label="A dog from Fetch trotting in with the missing page in its mouth" role="img">
+            <div class="lost-404" aria-hidden="true">404</div>
+            <div class="lost-fallback" aria-hidden="true">🐕📄</div>
+            <span class="lost-say" id="lost-say" aria-hidden="true"></span>
+        </div>
+
+        <div class="lost-actions">
+            <button class="btn btn-primary" id="lost-drop" type="button"><i class="fas fa-hand-paper"></i> <span>Drop it!</span></button>
+            <a class="btn btn-ghost" id="lost-home" href="/"><i class="fas fa-bone"></i> Fetch the homepage</a>
+        </div>
+
+        <p class="lost-guess" id="lost-guess" hidden><i class="fas fa-lightbulb" aria-hidden="true"></i> <span>Were you looking for <a id="lost-guess-link" href="/"></a>?</span></p>
+
+        <nav class="lost-links" aria-label="Popular pages">
+            <a href="/#work"><i class="fas fa-bolt"></i><b>Projects</b><small>Apps, sites and games I've shipped</small></a>
+            <a href="/#mile-a-day"><i class="fas fa-running"></i><b>Mile A Day</b><small>My App Store app, with my live streak</small></a>
+            <a href="/#fetch"><i class="fas fa-gamepad"></i><b>Play Fetch</b><small>The 3D dog party game these pups are from</small></a>
+            <a href="/Robert%20Wiscount%20Resume.pdf"><i class="fas fa-file-pdf"></i><b>Resume</b><small>One page, always current</small></a>
+            <a href="/how-it-works.html"><i class="fas fa-cogs"></i><b>How it works</b><small>What's under the hood of this site</small></a>
+        </nav>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="wrap"><span><img src="/assets/rw-logo.png" alt="">© <span id="year">2026</span> Rob Wiscount · <a href="/">robwiscount.org</a></span></div>
+</footer>
+
+<script src="/vendor/three/rw-three.min.js" defer></script>
+<script src="/js/lost.js" defer></script>
+</body>
+</html>
