@@ -1,0 +1,56 @@
+name: Resume PDF
+
+# Rebuilds "Robert Wiscount Resume.pdf" (and its old alias Resume.pdf) from resume-src/resume.html,
+# so the PDF on the site can never drift from the source. On pull requests it builds a preview you
+# can download from the run; on master it commits the fresh PDF.
+on:
+  pull_request:
+    paths: ['resume-src/**', 'assets/fonts/**', 'assets/fonts.css', 'assets/rw-logo.png', 'tests/build-resume.js']
+  push:
+    branches: [master]
+    paths: ['resume-src/**', 'assets/fonts/**', 'assets/fonts.css', 'assets/rw-logo.png', 'tests/build-resume.js']
+  workflow_dispatch:
+
+concurrency:
+  group: resume-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+      - run: npm ci
+        working-directory: tests
+      - run: npx playwright install --with-deps chromium
+        working-directory: tests
+
+      - name: Build preview (pull request)
+        if: github.event_name == 'pull_request'
+        working-directory: tests
+        run: node build-resume.js --check --out ../resume-preview.pdf
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'pull_request'
+        with:
+          name: resume-preview
+          path: resume-preview.pdf
+          retention-days: 14
+
+      - name: Build and commit (master)
+        if: github.event_name != 'pull_request'
+        run: |
+          cd tests && node build-resume.js && cd ..
+          if git diff --quiet -- "Robert Wiscount Resume.pdf" Resume.pdf; then echo "PDF already up to date"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "Robert Wiscount Resume.pdf" Resume.pdf
+          git commit -m "Rebuild resume PDF from resume-src/resume.html"
+          git push
