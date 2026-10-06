@@ -843,3 +843,16 @@ body:has(.mini-player:not([hidden])) .lv-pill { bottom: 88px; }
 .pool-canvas { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity .3s ease; }
 .pool-canvas.on { opacity: 1; }
 .life-card.pool-card:hover .emoji { transform: translateX(6px) rotate(200deg); transition-duration: .7s; }
+
+/* ---------- Easter egg: the Fetch dog (js/dog.js) ---------- */
+.dog-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 450; }
+.dog-home { position: fixed; right: 16px; bottom: 16px; z-index: 452; display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 999px; background: rgba(13,17,27,.88); border: 1px solid rgba(242,163,58,.35); color: var(--muted); font-family: var(--mono); font-size: .72rem; letter-spacing: .02em; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 10px 24px -12px #000; animation: dogPill .4s var(--ease) both; transition: color .2s, border-color .2s; }
+.dog-home span { color: var(--fetch); }
+.dog-home i { font-style: normal; }
+.dog-home:hover { color: var(--text); border-color: var(--fetch); }
+.dog-home[hidden] { display: none; }
+@keyframes dogPill { from { opacity: 0; transform: translateY(10px); } }
+.dog-bone { display: inline-block; margin-left: 8px; padding: 0 2px; font-size: .78rem; line-height: 1; vertical-align: middle; opacity: .28; filter: grayscale(1); transition: opacity .25s, filter .25s, transform .3s var(--ease); }
+.dog-bone:hover, .dog-bone:focus-visible, .dog-bone[aria-pressed="true"] { opacity: 1; filter: none; transform: rotate(-20deg) scale(1.2); }
+@media (max-width: 480px) { .dog-home i { display: none; } }
+@media (prefers-reduced-motion: reduce) { .dog-home { animation: none; } .dog-bone { transition: none; } }
