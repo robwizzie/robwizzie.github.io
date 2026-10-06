@@ -37,6 +37,8 @@
     <link rel="manifest" href="/site.webmanifest">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5b8ff9">
     <meta name="theme-color" content="#06080d">
+    <!-- Live cursors + visitor map: set to the deployed Worker URL (see workers/live/README.md). Empty = off. -->
+    <meta name="rw-live" content="">
 
     <link rel="preload" href="assets/fonts/saira-extra-condensed-3.woff2" as="font" type="font/woff2" crossorigin>
     <link href="assets/fonts.css" rel="stylesheet">
@@ -705,6 +707,38 @@
             </div>
         </section>
 
+        <!-- ===== LIVE VISITORS (js/live.js; stays hidden unless <meta name="rw-live"> is set) ===== -->
+        <section class="section" id="visitors" hidden>
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Live · Visitors</span>
+                    <h2 class="h-display h2" id="lv-title">Hey, <span class="blue">wherever you are.</span></h2>
+                    <p class="lede">Every lit square is a city someone has opened this site from. The pulsing ones are people here right now — and if you move your mouse, they can see your little hexagon too.</p>
+                </div>
+                <div class="gh-card lv-card reveal" id="lv">
+                    <div class="gh-head">
+                        <span class="lv-live"><i aria-hidden="true"></i> <span id="lv-live-n">Just you here now</span></span>
+                        <span class="gh-total"><b id="lv-total">—</b> visits and counting</span>
+                    </div>
+                    <div class="lv-map" id="lv-map">
+                        <canvas id="lv-canvas" role="img" aria-label="Map of where visitors to this site are from"></canvas>
+                    </div>
+                    <div class="gh-foot">
+                        <span class="lv-recent" id="lv-recent">Checking who's been by…</span>
+                        <span class="gh-legend lv-legend" aria-hidden="true">Fewer <i class="l2"></i><i class="l3"></i><i class="l4"></i> More <i class="lv-k-you"></i> You <i class="lv-k-live"></i> Here now</span>
+                    </div>
+                    <div class="gh-stats">
+                        <div class="gh-stat"><b id="lv-countries">—</b><span>Countries</span></div>
+                        <div class="gh-stat"><b id="lv-cities">—</b><span>Cities</span></div>
+                        <div class="gh-stat"><b id="lv-now">—</b><span>Here right now</span></div>
+                        <div class="gh-stat"><b id="lv-top" class="lv-top">—</b><span id="lv-top-label">Top city</span></div>
+                    </div>
+                    <p class="lv-privacy">Coarse city-level location from Cloudflare. No IPs, no cookies.</p>
+                    <div class="gh-tip" id="lv-tip" aria-hidden="true"></div>
+                </div>
+            </div>
+        </section>
+
         <!-- ===== ABOUT ===== -->
         <section class="section" id="about">
             <div class="wrap">
@@ -808,5 +842,6 @@
     <div class="toast" role="status" aria-live="polite"></div>
     <script src="js/site.js"></script>
     <script src="js/eggs.js"></script>
+    <script src="js/live.js"></script>
 </body>
 </html>
