@@ -780,3 +780,56 @@ kbd { font-family: var(--mono); font-size: .74rem; min-width: 24px; text-align: 
 html.gameday .nav { border-color: color-mix(in srgb, var(--team) 55%, transparent); box-shadow: 0 0 30px -10px var(--team); }
 html.gameday .progress { background: var(--team); }
 @media (max-width: 560px) { .gd-pill { margin: 8px 0 0; } }
+
+/* ==========================================================================
+   LIVE — visitor map + other visitors' cursors (js/live.js, workers/live)
+   Rides on the .gh-card / .gh-stats / .gh-tip styles above.
+   ========================================================================== */
+.lv-live { display: inline-flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: .86rem; color: var(--text); padding: 7px 14px; border: 1px solid var(--line-strong); border-radius: 999px; }
+.lv-live > i, .lv-pill > i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(61, 220, 132, .55); animation: lvBeat 2s ease-out infinite; }
+@keyframes lvBeat { 0% { box-shadow: 0 0 0 0 rgba(61, 220, 132, .55); } 70%, 100% { box-shadow: 0 0 0 8px rgba(61, 220, 132, 0); } }
+
+.lv-card { --lv-land: rgba(160, 185, 255, .12); }
+.lv-map { position: relative; aspect-ratio: 360 / 138; margin: 4px 0 2px; }
+.lv-map canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 1s var(--ease); }
+.lv-map.ready canvas { opacity: 1; }
+
+.lv-recent { display: inline-flex; flex-wrap: wrap; gap: 2px 8px; min-width: 0; }
+.lv-recent b { color: var(--muted); font-weight: 600; }
+.lv-recent i { font-style: normal; color: var(--line-strong); }
+.lv-recent span:nth-of-type(n+5), .lv-recent i:nth-of-type(n+4) { display: none; }
+@media (max-width: 700px) { .lv-recent span:nth-of-type(n+3), .lv-recent i:nth-of-type(n+2) { display: none; } }
+.lv-legend .lv-k-you, .lv-legend .lv-k-live { margin-left: 8px; border-radius: 50%; background: transparent; }
+.lv-legend .lv-k-you { box-shadow: inset 0 0 0 2px var(--blue-hi); }
+.lv-legend .lv-k-live { background: #fff; box-shadow: 0 0 0 2px rgba(255, 255, 255, .25); }
+
+.lv-card .gh-stats { grid-template-columns: repeat(4, 1fr); }
+.lv-top { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lv-privacy { margin: 14px 0 0; font-size: .76rem; color: var(--dim); }
+
+/* Other people's cursors: a fixed layer, so it never adds scroll */
+.lv-layer { position: fixed; inset: 0; z-index: 105; pointer-events: none; overflow: hidden; }
+.lv-cur { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity .35s; will-change: transform; }
+.lv-cur.on { opacity: 1; }
+.lv-cur.on.idle { opacity: .35; }
+.lv-cur svg { display: block; width: 18px; height: 20px; margin: -10px 0 0 -9px; filter: drop-shadow(0 0 8px rgba(91, 143, 249, .7)); }
+.lv-cur span { position: absolute; left: 10px; top: 9px; white-space: nowrap; padding: 3px 9px; border-radius: 999px; background: var(--blue); color: #fff; font: 600 .7rem/1.35 var(--mono); letter-spacing: .02em; box-shadow: 0 8px 20px -8px #000; opacity: 0; transform: translateY(-3px); transition: opacity .5s, transform .5s var(--ease); }
+.lv-cur.talk span { opacity: 1; transform: none; }
+
+/* "3 people here now" */
+.lv-pill { position: fixed; left: 16px; bottom: 16px; z-index: 290; display: inline-flex; align-items: center; gap: 9px; padding: 9px 15px; border-radius: 999px; background: rgba(10, 15, 22, .92); border: 1px solid var(--line-strong); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); font-size: .84rem; font-weight: 600; box-shadow: var(--shadow);
+  opacity: 0; visibility: hidden; transform: translateY(140%); transition: transform .45s var(--ease), opacity .45s, visibility .45s, border-color .2s; }
+.lv-pill.show:not(.away) { opacity: 1; visibility: visible; transform: none; }
+.lv-pill:hover { border-color: var(--blue); }
+body:has(.mini-player:not([hidden])) .lv-pill { bottom: 88px; }
+
+@media (max-width: 700px) {
+  .lv-card .gh-stats { grid-template-columns: 1fr 1fr; }
+  .lv-card .gh-stats .gh-stat:last-child { grid-column: auto; }
+  .lv-legend { flex-wrap: wrap; }
+  .lv-map { margin-left: calc(-1 * clamp(18px, 3vw, 30px) + 6px); margin-right: calc(-1 * clamp(18px, 3vw, 30px) + 6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lv-live > i, .lv-pill > i { animation: none; }
+  .lv-cur, .lv-cur span, .lv-pill, .lv-map canvas { transition: none; }
+}
