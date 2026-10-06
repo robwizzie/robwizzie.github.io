@@ -689,3 +689,94 @@ kbd { font-family: var(--mono); font-size: .74rem; min-width: 24px; text-align: 
 @media (max-width: 520px) { .gh-stats { grid-template-columns: 1fr 1fr; } .gh-stats .gh-stat:last-child { grid-column: 1 / -1; } }
 @media (prefers-reduced-motion: reduce) { .gh-c { opacity: 1; transform: none; } .gh-c.today, .gh-c.ping { animation: none; } }
 .gh-off .gh-stats, .gh-off .gh-total { display: none; }
+
+/* ==========================================================================
+   EASTER EGGS (js/eggs.js)
+   ========================================================================== */
+/* Achievement popup — bottom-left so it never fights the toast */
+.ach-pop { position: fixed; left: 16px; bottom: 20px; z-index: 520; display: flex; align-items: center; gap: 12px; padding: 8px 18px 8px 8px; border-radius: 999px;
+  background: rgba(13,17,27,.94); border: 1px solid var(--line-strong); box-shadow: 0 20px 40px -14px #000, 0 0 0 1px rgba(91,143,249,.08);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); max-width: calc(100% - 32px);
+  transform: translateX(calc(-100% - 30px)); visibility: hidden; transition: transform .5s var(--ease), visibility .5s; }
+.ach-pop.show { transform: none; visibility: visible; }
+.ach-pop .ach-ico { width: 42px; height: 42px; flex: none; display: grid; place-items: center; font-size: 1.3rem; background: var(--blue);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+.ach-pop.show .ach-ico { animation: achSpin .9s var(--ease) .15s both; }
+@keyframes achSpin { from { transform: rotate(-180deg) scale(.4); } to { transform: none; } }
+.ach-txt { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.ach-txt small { font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--blue-hi); }
+.ach-txt b { font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.ach-foot { color: var(--muted); font-size: .86rem; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; transition: border-color .2s, color .2s; }
+.ach-foot:hover { border-color: var(--blue); color: var(--blue-hi); }
+.ach-foot b { color: var(--text); font-variant-numeric: tabular-nums; }
+
+.ach-panel { position: fixed; inset: 0; z-index: 480; display: grid; place-items: center; padding: 16px; background: rgba(4,6,10,.72);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); opacity: 0; transition: opacity .25s; }
+.ach-panel.open { opacity: 1; }
+.ach-panel[hidden] { display: none; }
+.ach-box { position: relative; width: 100%; max-width: 760px; max-height: calc(100vh - 32px); overflow-y: auto; overscroll-behavior: contain;
+  background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: clamp(22px, 4vw, 36px); box-shadow: var(--shadow);
+  transform: translateY(16px) scale(.98); transition: transform .35s var(--ease); }
+.ach-panel.open .ach-box { transform: none; }
+.ach-close { position: absolute; top: 14px; right: 14px; }
+.ach-h { font-size: clamp(2.2rem, 5vw, 3.4rem); margin: 12px 0 16px; }
+.ach-h .blue { color: var(--blue); }
+.ach-bar { height: 6px; border-radius: 6px; background: var(--line); overflow: hidden; margin-bottom: 20px; }
+.ach-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--blue), var(--blue-hi)); border-radius: inherit; transition: width .6s var(--ease); }
+.ach-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ach-grid li { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.015); }
+.ach-grid li.on { border-color: rgba(91,143,249,.35); background: var(--blue-soft); }
+.ach-grid .ach-ico { width: 36px; height: 36px; flex: none; display: grid; place-items: center; font-size: 1.05rem; background: var(--surface-2);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); filter: grayscale(1); opacity: .6; }
+.ach-grid li.on .ach-ico { background: var(--blue); filter: none; opacity: 1; }
+.ach-grid b { display: block; font-size: .92rem; }
+.ach-grid small { display: block; color: var(--muted); font-size: .8rem; line-height: 1.4; }
+.ach-note { margin: 18px 0 0; color: var(--dim); font-size: .82rem; }
+.ach-wall { margin-top: 20px; }
+@media (max-width: 600px) { .ach-grid { grid-template-columns: 1fr; } }
+
+/* Mile A Day mode: a runner on the scroll progress bar */
+.mile-runner { position: fixed; top: 0; left: 0; z-index: 121; width: 30px; height: 30px; pointer-events: none; opacity: 0; transition: opacity .3s; will-change: transform; }
+.mile-runner.show { opacity: 1; }
+.mile-runner span { display: block; font-size: 20px; line-height: 1; transform: scaleX(-1); margin-top: 3px; }
+.mile-runner.running span { animation: mileBob .28s ease-in-out infinite alternate; }
+.mile-runner.done span::after { content: '🏁'; position: absolute; left: -16px; top: 0; transform: scaleX(-1); font-size: 14px; }
+@keyframes mileBob { from { transform: scaleX(-1) translateY(0); } to { transform: scaleX(-1) translateY(-3px); } }
+
+/* Matrix rain flash */
+.matrix-rain { position: fixed; inset: 0; z-index: 470; pointer-events: none; }
+
+/* End credits */
+.credits { position: fixed; inset: 0; z-index: 490; background: #000; color: var(--blue-hi); overflow: hidden; opacity: 0; transition: opacity .6s; display: grid; place-items: center; }
+.credits.open { opacity: 1; }
+.credits-stage { position: absolute; inset: 0; overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 18%, #000 82%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 18%, #000 82%, transparent 100%); }
+.credits-roll { position: absolute; left: 50%; top: 0; width: min(640px, 92vw); text-align: center;
+  animation: crawl 30s linear forwards; font-family: var(--display); text-transform: uppercase; }
+.credits-roll p { margin: 0 0 2.4em; }
+.credits-roll p:nth-child(-n+2) b { font-size: clamp(2.4rem, 7vw, 4.4rem); color: #fff; }
+.credits-roll small { display: block; font-family: var(--mono); font-size: clamp(.7rem, 1.6vw, .85rem); letter-spacing: .2em; color: var(--muted); margin-bottom: .4em; }
+.credits-roll b { font-size: clamp(1.6rem, 4.4vw, 2.6rem); letter-spacing: .03em; }
+.credits-roll p:last-child b { font-size: clamp(1.1rem, 3vw, 1.5rem); color: var(--muted); }
+@keyframes crawl { from { transform: translate(-50%, 100vh); } to { transform: translate(-50%, -100%); } }
+.credits-end { text-align: center; padding: 24px; animation: fadeUp .8s var(--ease) both; }
+.credits-end[hidden], .credits-stage[hidden], .credits-skip[hidden] { display: none; }
+.credits-end .stars { display: block; font-size: clamp(2.6rem, 9vw, 4.4rem); color: #ffb52e; letter-spacing: .06em; }
+.credits-end p { font-family: var(--display); font-size: clamp(1.8rem, 5vw, 2.8rem); text-transform: uppercase; color: #fff; margin: 10px 0 6px; line-height: 1; }
+.credits-end small { display: block; color: var(--muted); margin-bottom: 24px; }
+.credits-skip { position: absolute; right: 18px; bottom: 18px; color: var(--dim); font-family: var(--mono); font-size: .8rem; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; }
+.credits-skip:hover { color: var(--text); border-color: var(--line-strong); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+/* Gameday pill + nav accent while a Philly team is live */
+.gd-pill { --team: var(--blue); display: inline-flex; align-items: center; gap: 9px; margin: 0 0 0 8px; padding: 7px 15px 7px 12px; border-radius: 999px; font-size: .86rem; font-weight: 600;
+  color: #fff; background: color-mix(in srgb, var(--team) 14%, transparent); border: 1px solid color-mix(in srgb, var(--team) 45%, transparent); vertical-align: middle;
+  animation: fadeUp .6s var(--ease) both; }
+.gd-pill:hover { background: color-mix(in srgb, var(--team) 24%, transparent); }
+.gd-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--team); flex: none; }
+.gd-pill.in .gd-dot { animation: gdBlink 1.2s ease-in-out infinite; box-shadow: 0 0 0 0 var(--team); }
+@keyframes gdBlink { 50% { opacity: .3; } }
+html.gameday .nav { border-color: color-mix(in srgb, var(--team) 55%, transparent); box-shadow: 0 0 30px -10px var(--team); }
+html.gameday .progress { background: var(--team); }
+@media (max-width: 560px) { .gd-pill { margin: 8px 0 0; } }
