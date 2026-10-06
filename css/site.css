@@ -833,3 +833,13 @@ body:has(.mini-player:not([hidden])) .lv-pill { bottom: 88px; }
   .lv-live > i, .lv-pill > i { animation: none; }
   .lv-cur, .lv-cur span, .lv-pill, .lv-map canvas { transition: none; }
 }
+
+/* ==========================================================================
+   POOL — `break` turns the About cards into a table (js/pool.js)
+   ========================================================================== */
+.life.pooling { position: relative; }
+.life.pooling > .life-card { transition: opacity .4s var(--ease) var(--pd, 0s), transform .6s cubic-bezier(.34, 1.56, .64, 1) var(--pd, 0s); }
+.life.pooling > .life-card.pool-hide { opacity: 0; transform: scale(.6); pointer-events: none; transition: opacity .35s ease var(--pd, 0s), transform .45s var(--ease) var(--pd, 0s); }
+.pool-canvas { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity .3s ease; }
+.pool-canvas.on { opacity: 1; }
+.life-card.pool-card:hover .emoji { transform: translateX(6px) rotate(200deg); transition-duration: .7s; }
