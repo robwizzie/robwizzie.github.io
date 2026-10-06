@@ -6,6 +6,11 @@ Tiny Cloudflare Worker + one Durable Object behind the live bits of robwiscount.
 - **`POST /visit`** `{"id": "<random per-day id>"}`: counts a visit at most once per browser per day, tallied by city (lat/lon rounded to 0.1°). Returns the same body as `/stats` plus `you`.
 - **`GET /stats`**: `{ total, countries, cityCount, cities: [{city, region, country, lat, lon, n}] (top 150), recent: [{city, region, country, t}] (last 25), now }`. Cached 5 s in memory.
 
+- **`POST /visit`** also takes where the visit came from: `ref` (only the referrer's host is kept, never the full URL), `r` (a tag Rob puts on links he sends, e.g. `?r=acme`), `utm_source` / `utm_medium` / `utm_campaign`, and `path`. Kept for 120 days.
+- **`GET /letterboxd`**: the latest diary entries from `letterboxd.com/robwizzie/rss/` as JSON, cached 30 minutes.
+- **`GET /guestbook`** / **`POST /guestbook`** `{"id", "name", "note"}`: plain-text notes (120 chars, no links), one per browser per day, max 30 an hour. New notes are `pending` until approved, unless `AUTO_APPROVE` is set.
+- **`/admin/summary`**, **`POST /admin/note`** `{"id", "action": "approve" | "hide" | "delete"}`: need `Authorization: Bearer <ADMIN_TOKEN>`. Used by `/admin.html`.
+
 CORS / WebSocket origins: `https://robwiscount.org`, `https://www.robwiscount.org`, `https://robwizzie.github.io`, `http://localhost:*`.
 
 ## Privacy
@@ -20,6 +25,14 @@ npm install
 npx wrangler login
 npx wrangler deploy
 ```
+
+Set the admin token once (any long random string; you'll paste it into `/admin.html`):
+
+```sh
+npx wrangler secret put ADMIN_TOKEN
+```
+
+After pulling new Worker code, run `npx wrangler deploy` again. Existing data is kept; new tables are created automatically.
 
 Then put the printed URL (e.g. `https://rw-live.<you>.workers.dev`) in the site's `<head>`:
 
