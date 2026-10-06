@@ -533,7 +533,7 @@
   var commands = {
     help: function () {
       print('Available commands:', 'ok');
-      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  hire rob    the best command\n  contact     how to reach me\n  clear       wipe the screen', 'dim');
+      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  git log     my GitHub squares\n  hire rob    the best command\n  contact     how to reach me\n  clear       wipe the screen', 'dim');
     },
     whoami: function () {
       print('Rob Wiscount — front-end developer at heart, full stack by now. South Jersey.');
@@ -609,6 +609,15 @@
     },
     clear: function () { out.innerHTML = ''; }
   };
+  commands['git log'] = function () {
+    var t = $('#gh-total'), s = $('#gh-streak'), l = $('#gh-longest');
+    if (t && /\d/.test(t.textContent)) {
+      print(t.textContent + ' contributions in the last year', 'ok');
+      print('current streak ' + s.textContent + ' days · longest ' + l.textContent + ' days', 'dim');
+    } else print('Fetching squares from GitHub…', 'dim');
+    print('<a href="#commits">→ see the graph</a> · <a href="https://github.com/robwizzie" target="_blank" rel="noopener">github.com/robwizzie</a>');
+  };
+  commands.github = commands.git = commands.commits = commands['git log'];
   commands.about = commands.whoami;
   commands.skills = commands.stack;
   commands.hire = commands['hire rob'];
@@ -682,6 +691,158 @@
     }
     load();
     setInterval(function () { if (!document.hidden) load(); }, 60000);
+  })();
+
+  /* ---------- GitHub contributions ----------
+     GitHub has no CORS-friendly endpoint for the contribution calendar, so this reads
+     the public github-contributions-api (it mirrors the graph on github.com/robwizzie).
+     Cached for the session; if it can't be reached the section points to GitHub instead. */
+  (function () {
+    var card = document.getElementById('gh');
+    if (!card) return;
+    var grid = $('#gh-grid'), months = $('#gh-months'), tip = $('#gh-tip'), scroller = $('#gh-scroll'), note = $('#gh-note');
+    var API = 'https://github-contributions-api.jogruber.de/v4/robwizzie?y=last', KEY = 'gh-contrib-v1';
+    var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var DAYS = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
+    var cells = [];
+
+    function parse(s) { var p = s.split('-'); return new Date(+p[0], p[1] - 1, +p[2]); }
+    function nice(d) { return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }); }
+    function plural(n, w) { return n.toLocaleString() + ' ' + w + (n === 1 ? '' : 's'); }
+
+    function countTo(el, to) {
+      if (reduceMotion) { el.textContent = to.toLocaleString(); return; }
+      var t0 = performance.now();
+      (function tick(now) {
+        var t = Math.min((now - t0) / 1400, 1), e = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(to * e).toLocaleString();
+        if (t < 1) requestAnimationFrame(tick);
+      })(t0);
+    }
+
+    function render(days) {
+      days = days.filter(function (d) { return d && d.date; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+      var todayStr = (function (n) { return n.getFullYear() + '-' + ('0' + (n.getMonth() + 1)).slice(-2) + '-' + ('0' + n.getDate()).slice(-2); })(new Date());
+      days = days.filter(function (d) { return d.date <= todayStr; }).slice(-371);
+      if (!days.length) throw new Error('empty');
+
+      // Pad the first week so every column starts on Sunday, like GitHub.
+      var lead = parse(days[0].date).getDay(), weeks = Math.ceil((lead + days.length) / 7);
+      card.style.setProperty('--weeks', weeks);
+      $('.gh-graph', card).style.setProperty('--weeks', weeks);
+      var html = '', mhtml = '', lastMonth = -1;
+      for (var i = 0; i < lead; i++) html += '<i class="gh-c pad"></i>';
+      days.forEach(function (d, i) {
+        var idx = i + lead, col = Math.floor(idx / 7), row = idx % 7, dt = parse(d.date);
+        var lvl = Math.max(0, Math.min(4, d.level || 0));
+        html += '<i class="gh-c l' + lvl + (d.date === todayStr ? ' today' : '') + '" data-i="' + i + '" style="--d:' + (col * 9 + row * 14) + 'ms"></i>';
+        if (row === 0 || i === 0) {
+          var m = dt.getMonth();
+          if (m !== lastMonth && (dt.getDate() <= 7 || i === 0) && col < weeks - 2) {
+            mhtml += '<span style="grid-column:' + (col + 1) + ' / span 3">' + MONTHS[m] + '</span>';
+            lastMonth = m;
+          }
+        }
+      });
+      grid.innerHTML = html;
+      months.innerHTML = mhtml;
+      cells = days;
+
+      // Stats
+      var total = 0, active = 0, longest = 0, run = 0, best = days[0], perDow = [0, 0, 0, 0, 0, 0, 0];
+      days.forEach(function (d) {
+        var c = d.count || 0;
+        total += c; perDow[parse(d.date).getDay()] += c;
+        if (c > 0) { active++; run++; longest = Math.max(longest, run); } else run = 0;
+        if (c > (best.count || 0)) best = d;
+      });
+      // Today isn't over yet, so a quiet today doesn't break the current streak.
+      var streak = 0, j = days.length - 1;
+      if (days[j].date === todayStr && !days[j].count) j--;
+      for (; j >= 0 && days[j].count > 0; j--) streak++;
+      var fav = perDow.indexOf(Math.max.apply(null, perDow));
+
+      var stats = { total: total, streak: streak, longest: longest, active: active, best: best.count || 0 };
+      function paint() {
+        countTo($('#gh-total'), stats.total);
+        countTo($('#gh-streak'), stats.streak);
+        countTo($('#gh-longest'), stats.longest);
+        countTo($('#gh-active'), stats.active);
+        countTo($('#gh-best'), stats.best);
+      }
+      $('#gh-best-label').textContent = 'Busiest day · ' + parse(best.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      $('#gh-dow').textContent = DAYS[fav];
+      note.innerHTML = 'Contributions to public and private repos · <a href="https://github.com/robwizzie" target="_blank" rel="noopener">see it on GitHub</a>';
+      grid.setAttribute('aria-label', 'GitHub contribution graph: ' + plural(total, 'contribution') + ' in the last year, a ' + plural(longest, 'day') + ' longest streak.');
+
+      requestAnimationFrame(function () {
+        scroller.scrollLeft = scroller.scrollWidth; // narrow screens: start on the most recent weeks
+        grid.classList.add('lit');
+      });
+      if (card.classList.contains('in') || !('IntersectionObserver' in window)) paint();
+      else new IntersectionObserver(function (en, obs) { if (en[0].isIntersecting) { obs.disconnect(); paint(); } }, { threshold: 0.3 }).observe(card);
+    }
+
+    function fail() {
+      var html = '';
+      for (var i = 0; i < 371; i++) html += '<i class="gh-c l0" style="--d:' + (Math.floor(i / 7) * 9) + 'ms"></i>';
+      grid.innerHTML = html; grid.classList.add('lit'); card.classList.add('gh-off');
+      note.innerHTML = 'GitHub didn\'t answer just now — <a href="https://github.com/robwizzie" target="_blank" rel="noopener">see the real squares on GitHub</a>';
+    }
+
+    var cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem(KEY)); } catch (e) {}
+    function load() {
+      if (cached && cached.contributions) { try { render(cached.contributions); return; } catch (e) {} }
+      if (!window.fetch) return fail();
+      fetch(API)
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .then(function (data) {
+          render(data.contributions || []);
+          try { sessionStorage.setItem(KEY, JSON.stringify({ contributions: data.contributions })); } catch (e) {}
+        })
+        .catch(fail);
+    }
+    // Don't spend a request until someone scrolls near the section.
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (en, obs) { if (en[0].isIntersecting) { obs.disconnect(); load(); } }, { rootMargin: '600px 0px' }).observe(card);
+    } else load();
+
+    // Tooltip (hover on desktop, tap on touch)
+    function showTip(el) {
+      var d = cells[el.getAttribute('data-i')];
+      if (!d) return;
+      var c = d.count || 0;
+      tip.textContent = (c ? plural(c, 'contribution') : 'No contributions') + ' on ' + nice(parse(d.date));
+      var cr = card.getBoundingClientRect(), er = el.getBoundingClientRect();
+      var x = er.left - cr.left + er.width / 2, half = tip.offsetWidth / 2 + 8;
+      tip.style.left = Math.max(half, Math.min(cr.width - half, x)) + 'px';
+      tip.style.top = (er.top - cr.top) + 'px';
+      tip.classList.add('show');
+    }
+    function hideTip() { tip.classList.remove('show'); }
+    grid.addEventListener('mouseover', function (e) { if (e.target.hasAttribute('data-i')) showTip(e.target); });
+    grid.addEventListener('mouseleave', hideTip);
+    scroller.addEventListener('scroll', hideTip, { passive: true });
+
+    // Click a square: a ripple rolls out across the year. Big days get confetti.
+    var rippling = false;
+    grid.addEventListener('click', function (e) {
+      var el = e.target;
+      if (!el.hasAttribute('data-i')) return;
+      showTip(el);
+      if (reduceMotion || rippling) return;
+      var all = $$('.gh-c', grid), at = all.indexOf(el), c0 = Math.floor(at / 7), r0 = at % 7;
+      rippling = true;
+      all.forEach(function (c, i) {
+        var dist = Math.sqrt(Math.pow(Math.floor(i / 7) - c0, 2) + Math.pow(i % 7 - r0, 2));
+        c.style.setProperty('--pd', Math.round(dist * 22) + 'ms');
+        c.classList.remove('ping'); void c.offsetWidth; c.classList.add('ping');
+      });
+      setTimeout(function () { all.forEach(function (c) { c.classList.remove('ping'); }); rippling = false; }, 1900);
+      var d = cells[el.getAttribute('data-i')];
+      if (d && d.level >= 4) { var r = el.getBoundingClientRect(); burst(r.left + r.width / 2, r.top, 40); }
+    });
   })();
 
   onScroll();
