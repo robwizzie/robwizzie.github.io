@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>How This Site Works · Rob Wiscount</title>
+    <meta name="description" content="The colophon for robwiscount.org: plain HTML, CSS and JavaScript with no framework, a Cloudflare Worker for live cursors and the visitor map, real 3D dogs from my game, and a pile of easter eggs.">
+    <link rel="canonical" href="https://robwiscount.org/how-it-works.html">
+    <meta property="og:title" content="How robwiscount.org works">
+    <meta property="og:description" content="No framework, no build step: how the live cursors, visitor map, 3D dogs, pool physics and easter eggs are built.">
+    <meta property="og:image" content="https://robwiscount.org/assets/og-image.png">
+    <meta name="theme-color" content="#06080d">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link href="assets/fonts.css" rel="stylesheet">
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="css/site.css" rel="stylesheet">
+    <style>
+        .co-top { position: sticky; top: 0; z-index: 10; background: rgba(6,8,13,.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+        .co-top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 62px; }
+        .co-top .nav-brand img { width: 30px; height: 30px; }
+        .co-hero { padding: clamp(56px, 9vw, 110px) 0 10px; }
+        .co-hero h1 { font-size: clamp(3rem, 9vw, 6.4rem); margin: 16px 0 18px; }
+        .co-hero h1 .blue { color: var(--blue); }
+        .co-toc { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 26px; }
+        .co-toc a { font-family: var(--mono); font-size: .76rem; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+        .co-toc a:hover { border-color: var(--blue); color: var(--blue-hi); }
+        .co { padding-top: clamp(56px, 8vw, 96px); }
+        .co h2 { font-size: clamp(2.2rem, 5vw, 3.4rem); margin: 12px 0 14px; }
+        .co h2 .blue { color: var(--blue); }
+        .co h3 { font-size: 1.05rem; margin: 0 0 6px; }
+        .co p, .co li { color: var(--muted); }
+        .co p strong, .co li strong { color: var(--text); font-weight: 600; }
+        .co-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 28px; }
+        .co-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 22px; }
+        .co-card .ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--blue-soft); color: var(--blue-hi); margin-bottom: 14px; }
+        .co-card p { margin: 0; font-size: .94rem; }
+        .co-files { width: 100%; border-collapse: collapse; margin-top: 24px; font-size: .92rem; }
+        .co-files td { padding: 10px 12px 10px 0; border-top: 1px solid var(--line); color: var(--muted); vertical-align: top; }
+        .co-files td:first-child { font-family: var(--mono); color: var(--blue-hi); white-space: nowrap; font-size: .84rem; }
+        .co-files td.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--dim); }
+        .co-diagram { margin-top: 28px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: clamp(14px, 3vw, 28px); overflow-x: auto; }
+        .co-diagram svg { display: block; width: 100%; min-width: 640px; height: auto; }
+        .co-steps { counter-reset: s; list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 10px; }
+        .co-steps li { counter-increment: s; position: relative; padding: 14px 16px 14px 56px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+        .co-steps li::before { content: counter(s); position: absolute; left: 16px; top: 13px; width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-family: var(--mono); font-size: .8rem; background: var(--blue); color: #fff; }
+        .co pre { margin: 18px 0 0; padding: 16px 18px; border-radius: var(--radius-sm); background: #070a12; border: 1px solid var(--line-strong); overflow-x: auto; font-family: var(--mono); font-size: .82rem; line-height: 1.6; color: #c9d2ea; }
+        .co pre .c { color: var(--dim); } .co pre .k { color: var(--blue-hi); } .co pre .s { color: #8ef0b8; }
+        .co-eggs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 22px; }
+        .co-eggs div { padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--line); font-size: .9rem; color: var(--muted); }
+        .co-eggs b { color: var(--text); }
+        .co-end { padding: clamp(64px, 9vw, 110px) 0; text-align: center; }
+        @media (max-width: 900px) { .co-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 600px) { .co-grid, .co-eggs { grid-template-columns: 1fr; } .co-files td.n { display: none; } }
+    </style>
+</head>
+<body>
+<header class="co-top">
+    <div class="wrap">
+        <a class="nav-brand" href="/"><img src="assets/rw-logo.png" alt=""><span>Rob Wiscount</span></a>
+        <a class="btn btn-ghost btn-sm" href="/"><i class="fas fa-arrow-left"></i> Back to the site</a>
+    </div>
+</header>
+
+<main>
+    <section class="co-hero">
+        <div class="wrap">
+            <span class="eyebrow">Colophon</span>
+            <h1 class="h-display">How this site <span class="blue">works.</span></h1>
+            <p class="lede">No framework, no build step, no bundler for the page itself. It's plain HTML, CSS and JavaScript on GitHub Pages, plus one small Cloudflare Worker for the live bits. Here's what's under the hood, for the curious.</p>
+            <nav class="co-toc" aria-label="On this page">
+                <a href="#stack">The stack</a><a href="#map">How it fits together</a><a href="#live">Live mode</a><a href="#dogs">The 3D dogs</a><a href="#pool">Pool physics</a><a href="#eggs">Easter eggs</a><a href="#perf">Performance</a><a href="#tests">Tests</a><a href="#privacy">Privacy</a>
+            </nav>
+        </div>
+    </section>
+
+    <section class="co" id="stack">
+        <div class="wrap">
+            <span class="eyebrow">The stack</span>
+            <h2 class="h-display">Boring tech, <span class="blue">on purpose.</span></h2>
+            <p class="lede">Every page is a static file. The JavaScript is ES5-style, one file per feature, each wrapped in its own scope. They talk through a tiny <code>window.RW</code> API (toast, confetti, terminal commands, an <code>egg()</code> event), so a feature can be added or deleted without touching the others.</p>
+            <table class="co-files">
+                <tr><td>index.html</td><td>The whole page, hand-written and semantic, with JSON-LD for search engines and an <code>llms.txt</code> for AI agents.</td><td class="n">~860 lines</td></tr>
+                <tr><td>css/site.css</td><td>One stylesheet built on design tokens (<code>--blue</code>, <code>--surface</code>…). The terminal's <code>theme</code> command re-skins everything by swapping four of them.</td><td class="n">~16 KB gz</td></tr>
+                <tr><td>js/site.js</td><td>Nav, reveals, the typed hero, the GitHub squares, LeBronify, the Fetch player, the terminal, confetti, and the <code>RW</code> API the others use.</td><td class="n">~16 KB gz</td></tr>
+                <tr><td>js/eggs.js</td><td>Achievements and the trophy case, terminal tricks, end credits, Mile A Day mode, Gameday scores, the console note.</td><td class="n">~11 KB gz</td></tr>
+                <tr><td>js/live.js</td><td>Live cursors, the dot-matrix visitor map, the guestbook and the Letterboxd card.</td><td class="n">~10 KB gz</td></tr>
+                <tr><td>js/dog.js</td><td>The fetch game: a 3D dog from my game, a thrown logo, and physics.</td><td class="n">~8 KB gz</td></tr>
+                <tr><td>js/pool.js</td><td>Turns the About cards into a pool rack and breaks it.</td><td class="n">~9 KB gz</td></tr>
+                <tr><td>workers/live/</td><td>A Cloudflare Worker and one SQLite-backed Durable Object: WebSockets, visit counts, the guestbook, a Letterboxd proxy.</td><td class="n">~420 lines</td></tr>
+            </table>
+        </div>
+    </section>
+
+    <section class="co" id="map">
+        <div class="wrap">
+            <span class="eyebrow">How it fits together</span>
+            <h2 class="h-display">Static page, <span class="blue">live edges.</span></h2>
+            <p class="lede">The page itself is static. Each live feature is a layer on top that fails quietly: if an API is down, you get the static version (a counted-up streak, an empty map, a link to GitHub) instead of an error.</p>
+            <div class="co-diagram">
+                <svg viewBox="0 0 900 380" role="img" aria-label="Diagram: the browser loads static files from GitHub Pages, opens a WebSocket and makes requests to a Cloudflare Worker with a Durable Object, and reads public APIs from Mile A Day, GitHub contributions and ESPN directly.">
+                    <defs>
+                        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8db2ff"/></marker>
+                    </defs>
+                    <g font-family="Inter, system-ui, sans-serif" font-size="13" fill="#98a3bd">
+                        <rect x="330" y="20" width="240" height="120" rx="16" fill="#121826" stroke="#5b8ff9" stroke-width="1.5"/>
+                        <text x="450" y="50" text-anchor="middle" fill="#eef2fb" font-weight="700" font-size="16">Your browser</text>
+                        <text x="450" y="74" text-anchor="middle">index.html · site.css · site.js</text>
+                        <text x="450" y="94" text-anchor="middle">eggs.js · live.js · dog.js · pool.js</text>
+                        <text x="450" y="118" text-anchor="middle" fill="#626d88">three.js + dog model load on demand</text>
+
+                        <rect x="20" y="200" width="230" height="150" rx="16" fill="#0d111b" stroke="rgba(160,185,255,.25)"/>
+                        <text x="135" y="230" text-anchor="middle" fill="#eef2fb" font-weight="700" font-size="15">GitHub Pages</text>
+                        <text x="135" y="256" text-anchor="middle">static files, cached at the edge</text>
+                        <text x="135" y="280" text-anchor="middle">HTML · CSS · JS · fonts</text>
+                        <text x="135" y="300" text-anchor="middle">3D dogs · Fetch (WebAssembly)</text>
+
+                        <rect x="335" y="200" width="230" height="150" rx="16" fill="#0d111b" stroke="#5b8ff9" stroke-dasharray="5 4"/>
+                        <text x="450" y="230" text-anchor="middle" fill="#eef2fb" font-weight="700" font-size="15">Cloudflare Worker</text>
+                        <text x="450" y="254" text-anchor="middle">+ one Durable Object (SQLite)</text>
+                        <text x="450" y="280" text-anchor="middle">WebSocket: live cursors</text>
+                        <text x="450" y="300" text-anchor="middle">visits · guestbook · sources</text>
+                        <text x="450" y="320" text-anchor="middle">Letterboxd RSS → JSON (cached)</text>
+
+                        <rect x="650" y="200" width="230" height="150" rx="16" fill="#0d111b" stroke="rgba(160,185,255,.25)"/>
+                        <text x="765" y="230" text-anchor="middle" fill="#eef2fb" font-weight="700" font-size="15">Public APIs</text>
+                        <text x="765" y="256" text-anchor="middle">Mile A Day: my streak + stats</text>
+                        <text x="765" y="280" text-anchor="middle">GitHub contributions</text>
+                        <text x="765" y="304" text-anchor="middle">ESPN scoreboards (Gameday)</text>
+                        <text x="765" y="328" text-anchor="middle">world-atlas map outline</text>
+
+                        <path d="M380 140 L190 198" stroke="#8db2ff" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+                        <path d="M450 140 L450 198" stroke="#8db2ff" stroke-width="1.5" fill="none" marker-end="url(#ar)" marker-start="url(#ar)"/>
+                        <path d="M520 140 L710 198" stroke="#8db2ff" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+                        <text x="262" y="160" fill="#626d88" font-size="12">GET</text>
+                        <text x="460" y="176" fill="#626d88" font-size="12">wss + fetch</text>
+                        <text x="610" y="160" fill="#626d88" font-size="12">fetch (CORS)</text>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section class="co" id="live">
+        <div class="wrap">
+            <span class="eyebrow">Live mode</span>
+            <h2 class="h-display">One Durable Object, <span class="blue">everyone's cursor.</span></h2>
+            <p class="lede">Every visitor connects to the same Durable Object called "global". It uses Cloudflare's hibernation API, so an idle room costs nothing, and pings are answered without waking it up.</p>
+            <ul class="co-steps">
+                <li><strong>Cursors</strong> go up about 15 times a second as fractions of the page, so they land in the right spot on any screen size. The server clamps, size-limits (200 bytes) and rate-limits (30/s) every message before relaying it, and the client smooths each one between updates.</li>
+                <li><strong>Location</strong> comes from Cloudflare's <code>request.cf</code>: city, region and country, with latitude and longitude rounded to a tenth of a degree. No IP is ever stored or sent to anyone.</li>
+                <li><strong>Visits</strong> are counted once per browser per day. The browser makes up a random id, and the server stores only a hash of that id plus the date, so it's useless by tomorrow.</li>
+                <li><strong>The map</strong> is <code>world-atlas</code> land shapes, rasterized at 3× onto a hidden canvas, then sampled into a grid of rounded squares, the same visual language as the GitHub squares.</li>
+                <li><strong>The guestbook</strong> takes plain text only (no links), one note per browser per day. Every note waits in a queue until I approve it.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="co" id="dogs">
+        <div class="wrap">
+            <span class="eyebrow">The 3D dogs</span>
+            <h2 class="h-display">Straight out of <span class="blue">my game.</span></h2>
+            <p class="lede">Type <code>dog</code> and one of the five dogs from <a href="https://github.com/robwizzie/fetch" target="_blank" rel="noopener">Fetch</a> runs onto the page. They're the game's own rigged models, put through a small pipeline to make them web-sized:</p>
+<pre><span class="c"># 5–6 MB each → 300–700 KB: 512px WebP textures, quantized vertices</span>
+<span class="k">gltf-transform</span> optimize luna.glb assets/dogs/luna.glb \
+  --texture-compress <span class="s">webp</span> --texture-size <span class="s">512</span> --compress <span class="s">quantize</span>
+
+<span class="c"># just the parts of three.js the dog needs, as one script (~145 KB gzipped)</span>
+<span class="k">esbuild</span> entry.js --bundle --minify --format=<span class="s">iife</span> --global-name=<span class="s">RWThree</span></pre>
+            <div class="co-grid">
+                <div class="co-card"><div class="ico"><i class="fas fa-ruler-combined"></i></div><h3>A camera in CSS pixels</h3><p>An orthographic camera maps the WebGL strip 1:1 to the page, so the 2D fetch physics (gravity, bounces, the throw arc) didn't change at all. Only the drawing did.</p></div>
+                <div class="co-card"><div class="ico"><i class="fas fa-running"></i></div><h3>The game's walk cycle</h3><p>The rig's own animation blends in with speed and plays as fast as the dog is really moving. A procedural tail wag and a head that follows the ball sit on top.</p></div>
+                <div class="co-card"><div class="ico"><i class="fas fa-bone"></i></div><h3>A mouth socket</h3><p>The logo rides an empty object parented to the head bone, placed using each dog's <code>mouth_grip</code> from the game's data, so it stays in their teeth mid-leap.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="co" id="pool">
+        <div class="wrap">
+            <span class="eyebrow">Pool physics</span>
+            <h2 class="h-display">The About cards <span class="blue">break.</span></h2>
+            <p class="lede">Type <code>break</code> (I shoot in an APA league, so this one's personal). The cards fly into a 15-ball rack on a canvas felt, and the physics is real: equal-mass elastic collisions with overlap correction, 14 sub-steps per frame so fast balls don't tunnel through each other, cushions that bounce with damping, rolling friction and pocket mouths. Each ball is shaded by hand and its stripe rolls with it. When it settles, every card glides back to exactly where it was.</p>
+        </div>
+    </section>
+
+    <section class="co" id="eggs">
+        <div class="wrap">
+            <span class="eyebrow">Easter eggs</span>
+            <h2 class="h-display">Every egg is <span class="blue">an event.</span></h2>
+            <p class="lede">Features call <code>RW.egg('pool')</code> and know nothing about achievements. <code>eggs.js</code> listens for <code>rw:egg</code> events, shows the Xbox-style popup and saves progress in <code>localStorage</code>. Finding all of them unlocks a phone wallpaper drawn on a canvas. Some of them:</p>
+            <div class="co-eggs">
+                <div><b>Terminal</b> — a little shell with a command parser and a way for one feature to take over the prompt. That's how <code>vim</code> traps you until you press Esc and type <code>:wq</code>.</div>
+                <div><b>rm -rf /</b> — everything on screen falls with the Web Animations API, then plays in reverse as "git" restores it.</div>
+                <div><b>Mile A Day mode</b> — a runner rides the scroll bar. My own streak card reads the real number from the Mile A Day API, in Eastern time.</div>
+                <div><b>Gameday</b> — when a Philly team is playing, ESPN's scoreboard turns into a live score pill and the nav takes the team's color.</div>
+                <div><b>Tab away</b> — the Page Visibility API swaps the title, and the favicon becomes a spinning canvas hexagon.</div>
+                <div><b>Console</b> — open DevTools. There's a <code>rob</code> object waiting for you.</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="co" id="perf">
+        <div class="wrap">
+            <span class="eyebrow">Performance</span>
+            <h2 class="h-display">Heavy stuff <span class="blue">waits its turn.</span></h2>
+            <div class="co-grid">
+                <div class="co-card"><div class="ico"><i class="fas fa-hourglass-half"></i></div><h3>Load on demand</h3><p>three.js and a dog model download only on the first whistle. The Fetch game (Godot, WebAssembly) loads only when you press Play. The map waits until it's near the screen.</p></div>
+                <div class="co-card"><div class="ico"><i class="fas fa-pause"></i></div><h3>No idle loops</h3><p>Every canvas animation (dog, pool, confetti, map pulses) stops its <code>requestAnimationFrame</code> loop when nothing's happening. An untouched page isn't redrawing anything.</p></div>
+                <div class="co-card"><div class="ico"><i class="fas fa-universal-access"></i></div><h3>Reduced motion</h3><p>With <code>prefers-reduced-motion</code> on, the physics, confetti, pulses and wave effects step aside, and every egg still unlocks.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="co" id="tests">
+        <div class="wrap">
+            <span class="eyebrow">Tests</span>
+            <h2 class="h-display">Green before <span class="blue">it ships.</span></h2>
+            <p class="lede">With this much going on, a small change can quietly break something three sections away. Every pull request runs a <a href="https://github.com/robwizzie/robwizzie.github.io/actions" target="_blank" rel="noopener">GitHub Actions</a> job: Playwright drives the real page in Chromium at desktop and phone sizes, with every outside API mocked. It checks for script errors, sideways scrolling, terminal commands, achievements, the pool break and the dog cleaning up after themselves, and the live features. A Lighthouse run keeps an eye on performance and accessibility.</p>
+        </div>
+    </section>
+
+    <section class="co" id="privacy">
+        <div class="wrap">
+            <span class="eyebrow">Privacy</span>
+            <h2 class="h-display">Curious, <span class="blue">not creepy.</span></h2>
+            <p class="lede">No cookies, no ad trackers, no analytics scripts. The Worker keeps visit counts by city, the site that linked you here (just the domain, never the full address), and tags I add to links I send out, like <code>?r=acme</code> on an application, so I know which ones got opened. Then it tidies that tag out of your address bar. Everything else lives in your own browser's storage.</p>
+        </div>
+    </section>
+
+    <section class="co-end">
+        <div class="wrap">
+            <span class="eyebrow">Built with</span>
+            <p class="lede" style="margin: 14px auto 26px">Claude Code, GitHub Pages, Cloudflare Workers, three.js, gltf-transform, Playwright, Font Awesome, and Saira, Inter and JetBrains Mono. Designed and built in South Jersey.</p>
+            <a class="btn btn-primary" href="/"><i class="fas fa-arrow-left"></i> Back to the site</a>
+            <a class="btn btn-ghost" href="https://github.com/robwizzie/robwizzie.github.io" target="_blank" rel="noopener"><i class="fab fa-github"></i> Read the source</a>
+        </div>
+    </section>
+</main>
+<script>
+  // Reading the manual counts as an achievement on the main page.
+  try { var g = JSON.parse(localStorage.getItem('rw-eggs')) || {}; if (!g.colophon) { g.colophon = Date.now(); localStorage.setItem('rw-eggs', JSON.stringify(g)); } } catch (e) {}
+</script>
+</body>
+</html>

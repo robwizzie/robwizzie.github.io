@@ -181,34 +181,57 @@
   }
 
   /* ---------- Live Mile A Day streak ----------
-     Same rule mileaday.run uses: counted from the day the streak began, in the
-     visitor's own calendar. Day 1 was May 13, 2025 (it read 423 on Jul 9, 2026). */
+     The real number comes from the app's public profile endpoint (same API mileaday.run uses).
+     Until it answers, it's counted from the day the streak began. Days are Rob's days, in Eastern
+     time: if the app's streak is a day behind the calendar, today's mile just isn't in yet. */
   (function () {
-    var START = new Date(2025, 4, 13);
+    var START = Date.UTC(2025, 4, 13), API = 'https://mad.mindgoblin.tech/public/users/rob';
     var MILESTONES = [7, 14, 30, 50, 100, 150, 200, 250, 300, 365, 400, 500, 600, 700, 730, 800, 900, 1000, 1095, 1250, 1500, 2000];
-    var daysEl = $('#ls-days');
+    var daysEl = $('#ls-days'), real = null;
     if (!daysEl) return;
-    function midnight(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+    function eastern() {
+      var p = {};
+      try {
+        new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
+          .formatToParts(new Date()).forEach(function (x) { p[x.type] = +x.value; });
+      } catch (e) { var d = new Date(); p = { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate(), hour: d.getHours(), minute: d.getMinutes() }; }
+      return p;
+    }
     function render() {
-      var now = new Date(), today = midnight(now);
-      var streak = Math.round((today - START) / 864e5) + 1;
+      var et = eastern(), today = Date.UTC(et.year, et.month - 1, et.day);
+      var calendar = Math.round((today - START) / 864e5) + 1;
+      // The app counts today once the mile is logged. A day behind = not yet; anything else = trust the app.
+      var ran = real === null ? null : real >= calendar ? true : real === calendar - 1 ? false : null;
+      var streak = real === null ? calendar : real;
       daysEl.textContent = streak.toLocaleString();
       var next = MILESTONES.filter(function (m) { return m > streak; })[0] || Math.ceil((streak + 1) / 500) * 500;
       var prev = MILESTONES.filter(function (m) { return m <= streak; }).pop() || 0;
       $('#ls-next').textContent = next.toLocaleString() + ' days';
       $('#ls-togo').textContent = (next - streak) + ' to go';
       $('#ls-bar').style.width = Math.round((streak - prev) / (next - prev) * 100) + '%';
-      var labels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'], dow = today.getDay();
+      var labels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'], dow = new Date(today).getUTCDay();
       $('#ls-week').innerHTML = labels.map(function (l, i) {
-        var cls = i < dow ? 'done' : (i === dow ? 'today' : '');
-        var mark = i < dow ? '✓' : (i === dow ? '•' : '');
-        return '<span class="ls-day ' + cls + '"><span class="ls-dot">' + mark + '</span>' + l + '</span>';
+        var done = i < dow || (i === dow && ran === true);
+        var cls = done ? 'done' : (i === dow ? 'today' : '');
+        return '<span class="ls-day ' + cls + '"><span class="ls-dot">' + (done ? '✓' : i === dow ? '•' : '') + '</span>' + l + '</span>';
       }).join('');
-      var end = new Date(today.getTime() + 864e5), mins = Math.max(0, Math.round((end - now) / 6e4));
-      $('#ls-today').textContent = 'Today is day ' + streak.toLocaleString() + ' — ' + Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm left to get it in.';
+      var mins = Math.max(0, (24 - et.hour) * 60 - et.minute), left = Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm';
+      var line = ran === true ? '✓ Today\'s mile is done — day ' + streak.toLocaleString() + ' is in the books.'
+        : ran === false ? 'Day ' + (streak + 1).toLocaleString() + ' isn\'t logged yet — ' + left + ' left to get it in.'
+        : 'Today is day ' + streak.toLocaleString() + ' — ' + left + ' left to get it in.';
+      $('#ls-today').textContent = line;
+      $('#ls-today').classList.toggle('ls-done', ran === true);
     }
-    render();
+    function load() {
+      if (!window.fetch) return;
+      fetch(API, { cache: 'no-store' })
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .then(function (u) { if (typeof u.current_streak === 'number' && u.current_streak > 0) { real = u.current_streak; render(); } })
+        .catch(function () {});
+    }
+    render(); load();
     setInterval(render, 60000);
+    setInterval(function () { if (!document.hidden) load(); }, 300000);
   })();
 
   /* ---------- Timeline fill ---------- */
@@ -537,7 +560,7 @@
   var commands = {
     help: function () {
       print('Available commands:', 'ok');
-      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  git log     my GitHub squares\n  hire rob    the best command\n  contact     how to reach me\n  achievements  secrets you\'ve found\n  clear       wipe the screen', 'dim');
+      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  git log     my GitHub squares\n  hire rob    the best command\n  contact     how to reach me\n  achievements  secrets you\'ve found\n  colophon    how this site is built\n  clear       wipe the screen', 'dim');
       print('…and a few commands that aren\'t on this list. 👀', 'dim');
     },
     whoami: function () {

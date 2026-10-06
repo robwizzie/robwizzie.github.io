@@ -733,7 +733,17 @@
                         <div class="gh-stat"><b id="lv-now">—</b><span>Here right now</span></div>
                         <div class="gh-stat"><b id="lv-top" class="lv-top">—</b><span id="lv-top-label">Top city</span></div>
                     </div>
-                    <p class="lv-privacy">Coarse city-level location from Cloudflare. No IPs, no cookies.</p>
+                    <div class="lv-gb" id="lv-gb">
+                        <div class="lv-gb-head"><h3>Guestbook</h3><span>Leave a note — once I approve it, your city gets a little <i class="lv-k-note" aria-hidden="true"></i> on the map.</span></div>
+                        <form class="lv-gb-form" id="lv-gb-form">
+                            <input id="lv-gb-name" type="text" maxlength="24" placeholder="Name (optional)" aria-label="Your name (optional)" autocomplete="nickname">
+                            <input id="lv-gb-note" type="text" maxlength="120" required placeholder="Say hi, leave a tip, roast my code…" aria-label="Your note">
+                            <button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-feather-alt"></i> Sign</button>
+                        </form>
+                        <p class="lv-gb-msg" id="lv-gb-msg" role="status" aria-live="polite"></p>
+                        <ul class="lv-gb-list" id="lv-gb-list"><li class="empty"><p>Loading notes…</p></li></ul>
+                    </div>
+                    <p class="lv-privacy">Coarse city-level location from Cloudflare. No IPs, no cookies. Guestbook notes are approved by hand.</p>
                     <div class="gh-tip" id="lv-tip" aria-hidden="true"></div>
                 </div>
             </div>
@@ -816,7 +826,7 @@
 
     <footer class="footer">
         <div class="wrap">
-            <span><img src="assets/rw-logo.png" alt="">© <span id="year">2026</span> Rob Wiscount · Designed &amp; built in South Jersey · <a href="resume.md">Plain-text resume</a> · <a href="llms.txt">For AI agents</a></span>
+            <span><img src="assets/rw-logo.png" alt="">© <span id="year">2026</span> Rob Wiscount · Designed &amp; built in South Jersey · <a href="how-it-works.html">How this site works</a> · <a href="resume.md">Plain-text resume</a> · <a href="llms.txt">For AI agents</a></span>
             <span>Psst — try <kbd>↑</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><kbd>←</kbd><kbd>→</kbd><kbd>B</kbd><kbd>A</kbd></span>
         </div>
     </footer>
