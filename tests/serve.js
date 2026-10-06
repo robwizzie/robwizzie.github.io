@@ -8,7 +8,9 @@ http.createServer((req, res) => {
   if (!p.startsWith(root)) { res.writeHead(403); return res.end(); }
   if (p.endsWith(path.sep) || p === root) p = path.join(p, 'index.html');
   fs.readFile(p, (err, data) => {
-    if (err) { res.writeHead(404); return res.end('not found'); }
+    if (err) { // like GitHub Pages: anything missing gets the site's 404 page
+      return fs.readFile(path.join(root, '404.html'), (e2, page) => { res.writeHead(404, { 'Content-Type': types['.html'] }); res.end(e2 ? 'not found' : page); });
+    }
     res.writeHead(200, { 'Content-Type': types[path.extname(p)] || 'application/octet-stream' });
     res.end(data);
   });
