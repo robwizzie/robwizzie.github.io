@@ -1,0 +1,6 @@
+workers/live/node_modules/
+workers/live/.wrangler/
+.DS_Store
+tests/node_modules/
+tests/test-results/
+tests/playwright-report/

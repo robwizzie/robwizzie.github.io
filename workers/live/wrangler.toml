@@ -1,0 +1,17 @@
+name = "rw-live"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+[[durable_objects.bindings]]
+name = "LIVE"
+class_name = "Live"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Live"]
+
+# Set ALLOW_DEV_OVERRIDE to "1" (e.g. `npm run dev`) to fake a location with ?dev_city=…&dev_country=…&dev_lat=…&dev_lon=…
+[vars]
+ALLOW_DEV_OVERRIDE = ""
+# Set to "1" to publish guestbook notes without approval. Empty = notes wait for you on /admin.html.
+AUTO_APPROVE = ""
