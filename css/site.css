@@ -822,7 +822,6 @@ html.gameday .progress { background: var(--team); }
 .lv-layer { position: fixed; inset: 0; z-index: 105; pointer-events: none; overflow: hidden; }
 .lv-cur { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity .35s; will-change: transform; }
 .lv-cur.on { opacity: 1; }
-.lv-cur.on.idle { opacity: .35; }
 .lv-cur svg { display: block; width: 18px; height: 20px; margin: -10px 0 0 -9px; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--blue) 70%, transparent)); }
 .lv-cur span { position: absolute; left: 10px; top: 9px; white-space: nowrap; padding: 3px 9px; border-radius: 999px; background: var(--blue); color: #fff; font: 600 .7rem/1.35 var(--mono); letter-spacing: .02em; box-shadow: 0 8px 20px -8px #000; opacity: 0; transform: translateY(-3px); transition: opacity .5s, transform .5s var(--ease); }
 .lv-cur.talk span { opacity: 1; transform: none; }
@@ -843,6 +842,92 @@ body:has(.mini-player:not([hidden])) .lv-pill { bottom: 88px; }
 @media (prefers-reduced-motion: reduce) {
   .lv-live > i, .lv-pill > i { animation: none; }
   .lv-cur, .lv-cur span, .lv-pill, .lv-map canvas { transition: none; }
+}
+
+/* ---------- LIVE — presence: pill, "Here now" panel, join notes, calmer cursors (js/live.js) ---------- */
+/* Cursors follow the theme tokens; labels only on first appearance or when you hover near one */
+.lv-cur svg { filter: drop-shadow(0 0 7px var(--blue-glow)); transition: transform .3s var(--ease); }
+.lv-cur.hover span { opacity: 1; transform: none; }
+.lv-layer.calm .lv-cur svg { transform: scale(.7); }
+.lv-layer.calm .lv-cur.on { opacity: .5; }
+.lv-layer.calm .lv-cur span { display: none; }
+
+/* The pill and the map card's chip are both buttons that open the panel */
+.lv-chev { width: 12px; height: 12px; flex: none; color: var(--muted); transition: transform .25s var(--ease), color .2s; }
+.lv-pill:hover .lv-chev, .lv-live-btn:hover .lv-chev { color: var(--blue-hi); }
+.lv-pill[aria-expanded="true"], .lv-live-btn[aria-expanded="true"] { border-color: var(--blue); }
+.lv-pill[aria-expanded="true"] .lv-chev, .lv-live-btn[aria-expanded="true"] .lv-chev { transform: rotate(180deg); color: var(--blue-hi); }
+.lv-live-btn { transition: border-color .2s, background .2s; }
+.lv-live-btn:hover { border-color: var(--blue); background: var(--blue-soft); }
+
+/* "Here now" */
+.lv-here { position: fixed; left: 16px; bottom: 70px; z-index: 510; width: min(340px, calc(100vw - 32px)); max-height: min(520px, calc(100vh - 100px)); overflow-y: auto; overscroll-behavior: contain;
+  padding: 16px 16px 14px; border-radius: 20px; background: rgba(13, 17, 27, .97); border: 1px solid var(--line-strong);
+  box-shadow: 0 30px 60px -20px #000, 0 0 0 1px var(--blue-soft); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  opacity: 0; transform: translateY(8px) scale(.98); transition: opacity .2s, transform .3s var(--ease); }
+.lv-here.open { opacity: 1; transform: none; }
+.lv-here[hidden] { display: none; }
+.lv-here:focus { outline: none; }
+.lv-here:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 2px; }
+.lv-here-hd { display: flex; align-items: center; gap: 9px; }
+.lv-here-hd > i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(61, 220, 132, .55); animation: lvBeat 2s ease-out infinite; }
+.lv-here-hd b { font-size: .98rem; }
+.lv-here-n { font-family: var(--mono); font-size: .74rem; color: var(--muted); padding: 2px 8px; border-radius: 999px; background: var(--blue-soft); }
+.lv-here-x { margin-left: auto; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 1.25rem; line-height: 1; color: var(--muted); transition: background .2s, color .2s; }
+.lv-here-x:hover { background: var(--blue-soft); color: var(--text); }
+.lv-here-what { margin: 8px 0 12px; font-size: .8rem; line-height: 1.5; color: var(--muted); }
+.lv-here-what b { color: var(--blue-hi); font-weight: 600; }
+.lv-here-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.lv-here-list li { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 12px; min-width: 0; }
+.lv-here-list li:nth-child(odd) { background: rgba(160, 185, 255, .035); }
+.lv-here-list svg { width: 15px; height: 17px; flex: none; filter: drop-shadow(0 0 5px var(--blue-glow)); }
+.lv-here-list li.me svg polygon { fill: transparent !important; stroke: var(--blue-hi); }
+.lv-here-list span { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+.lv-here-list b { font-size: .86rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lv-here-list small { font-size: .74rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lv-here-list li.me b { color: var(--blue-hi); }
+.lv-here-list em { margin-left: auto; font-style: normal; font: 600 .72rem/1 var(--mono); color: var(--blue-hi); padding: 4px 7px; border-radius: 999px; background: var(--blue-soft); }
+.lv-here-list li.more { justify-content: center; font: 600 .76rem/1.4 var(--mono); color: var(--blue-hi); background: none; }
+.lv-here-list li.solo { font-size: .8rem; color: var(--muted); background: none; line-height: 1.45; }
+.lv-here-sw { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.lv-here-sw > span { display: flex; flex-direction: column; min-width: 0; line-height: 1.35; }
+.lv-here-sw b { font-size: .86rem; font-weight: 600; }
+.lv-here-sw small { font-size: .74rem; color: var(--muted); }
+.lv-sw { margin-left: auto; flex: none; position: relative; width: 42px; height: 24px; border-radius: 999px; background: rgba(160, 185, 255, .16); transition: background .2s; }
+.lv-sw i { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .4); transition: transform .25s var(--ease); }
+.lv-sw[aria-checked="true"] { background: var(--blue); }
+.lv-sw[aria-checked="true"] i { transform: translateX(18px); }
+.lv-here-gb { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 12px; padding: 9px 12px; border-radius: 999px; border: 1px solid var(--line-strong); font-size: .84rem; font-weight: 600; color: var(--blue-hi); transition: border-color .2s, background .2s; }
+.lv-here-gb:hover { border-color: var(--blue); background: var(--blue-soft); }
+
+/* "Someone in Austin, TX just joined you" — sits just above the pill */
+.lv-hello { position: fixed; left: 16px; bottom: 80px; z-index: 505; display: flex; align-items: center; gap: 10px; max-width: min(540px, calc(100vw - 32px));
+  padding: 8px 8px 8px 12px; border-radius: 18px; background: rgba(13, 17, 27, .96); border: 1px solid var(--line-strong);
+  box-shadow: 0 24px 50px -18px #000, 0 0 30px -12px var(--blue-glow); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  opacity: 0; visibility: hidden; transform: translateY(14px); transition: opacity .35s, transform .45s var(--ease), visibility .45s; }
+.lv-hello.show { opacity: 1; visibility: visible; transform: none; }
+.lv-hello-ico { flex: none; width: 34px; height: 34px; display: grid; place-items: center; font-size: 1.05rem; background: var(--blue); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+.lv-hello.show .lv-hello-ico { animation: lvWave 1.2s var(--ease) .2s both; }
+@keyframes lvWave { 0% { transform: scale(.5) rotate(-20deg); } 40% { transform: scale(1.08) rotate(10deg); } 70% { transform: rotate(-6deg); } 100% { transform: none; } }
+.lv-hello p { margin: 0; font-size: .84rem; line-height: 1.4; color: var(--muted); min-width: 0; }
+.lv-hello p b { color: var(--text); font-weight: 600; }
+.lv-hello-go { flex: none; padding: 7px 12px; border-radius: 999px; background: var(--blue); color: #fff; font-size: .78rem; font-weight: 700; white-space: nowrap; transition: filter .2s; }
+.lv-hello-go:hover { filter: brightness(1.12); }
+.lv-hello-x { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 1.15rem; line-height: 1; color: var(--dim); }
+.lv-hello-x:hover { color: var(--text); background: var(--blue-soft); }
+body:has(.mini-player:not([hidden])) .lv-hello { bottom: 148px; }
+
+@media (max-width: 560px) {
+  .lv-hello { right: 16px; display: grid; grid-template-columns: auto 1fr auto; gap: 8px 10px; padding: 10px 8px 12px 12px; }
+  .lv-hello-ico { grid-row: 1 / 3; align-self: start; }
+  .lv-hello p { grid-column: 2; grid-row: 1; }
+  .lv-hello-go { grid-column: 2; grid-row: 2; justify-self: start; }
+  .lv-hello-x { grid-column: 3; grid-row: 1; align-self: start; margin-top: -4px; }
+  .lv-here { max-height: calc(100vh - 120px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lv-cur svg, .lv-chev, .lv-here, .lv-hello, .lv-sw, .lv-sw i { transition: none; }
+  .lv-here-hd > i, .lv-hello.show .lv-hello-ico { animation: none; }
 }
 
 /* ==========================================================================
@@ -950,3 +1035,169 @@ body.has-ribbon .dog-home { bottom: 40px; }
 @keyframes glitch { 0%, 86%, 100% { text-shadow: none; transform: none; } 88% { text-shadow: 3px 0 #22e36b, -3px 0 #0f5; transform: translateX(2px); } 92% { text-shadow: -2px 0 #22e36b, 2px 0 #fff; transform: translateX(-2px) skewX(-4deg); } }
 @media (prefers-reduced-motion: reduce) { .fx-float, .theme-ribbon-track, [data-theme="matrix"] .hero-title .outline { animation: none !important; } }
 @media (max-width: 600px) { .theme-ribbon { height: 26px; font-size: .86rem; } .fx-flyby { font-size: 46px; } }
+
+/* ==========================================================================
+   Celebration — every achievement found (js/celebrate.js)
+   ========================================================================== */
+body.celebrating .toast { z-index: 590; }
+body.celebrating .ach-pop { z-index: 585; }
+.cele { position: fixed; inset: 0; z-index: 560; color: var(--text); opacity: 0; transition: opacity .5s var(--ease);
+  background: radial-gradient(70% 55% at 50% 28%, var(--blue-soft), transparent 70%), rgba(3, 5, 10, .86);
+  backdrop-filter: blur(12px) saturate(1.2); -webkit-backdrop-filter: blur(12px) saturate(1.2); }
+.cele.open { opacity: 1; }
+.cele:focus { outline: none; }
+.cele-fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.cele-x { position: absolute; top: 16px; right: 16px; z-index: 2; background: rgba(13, 17, 27, .6); }
+.cele-stage { position: absolute; inset: 0; z-index: 1; display: flex; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 40px 16px 32px; }
+.cele-inner { margin: auto; width: 100%; max-width: 820px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+/* The trophy: the RW hex, framed, with light rays turning behind it */
+.cele-trophy { position: relative; width: clamp(118px, 19vh, 176px); aspect-ratio: 240 / 263; margin-bottom: clamp(18px, 3.4vh, 34px); perspective: 700px;
+  animation: celeDrop 1.25s cubic-bezier(.2, 1.25, .35, 1) .15s both; }
+.cele-rays { position: absolute; left: 50%; top: 50%; width: 360%; aspect-ratio: 1; translate: -50% -50%; pointer-events: none; border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, var(--blue-glow) 0deg 5deg, transparent 5deg 18deg);
+  -webkit-mask: radial-gradient(closest-side, #000 12%, rgba(0, 0, 0, .5) 38%, transparent 100%); mask: radial-gradient(closest-side, #000 12%, rgba(0, 0, 0, .5) 38%, transparent 100%);
+  opacity: 0; animation: celeRaysIn 1.2s ease .9s both, celeSpin 40s linear infinite; }
+.cele-rays::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: repeating-conic-gradient(from 9deg, rgba(255, 255, 255, .07) 0deg 2deg, transparent 2deg 24deg);
+  animation: celeSpin 60s linear infinite reverse; }
+.cele-flash { position: absolute; left: 50%; top: 50%; width: 100%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, #fff, var(--blue-hi) 40%, transparent 72%); opacity: 0; animation: celeFlash 1s ease-out 1.05s both; }
+.cele-frame { position: absolute; left: 50%; top: 50%; width: 132%; height: 132%; translate: -50% -50%; overflow: visible; pointer-events: none;
+  animation: celeFrameIn .9s var(--ease) 1.1s both, celeSpin 30s linear 2s infinite; }
+.cele-frame path { fill: none; stroke: var(--blue-hi); stroke-width: 1.2; stroke-dasharray: 3 5; vector-effect: non-scaling-stroke; opacity: .7; }
+.cele-frame-2 { width: 164%; height: 164%; animation: celeFrameIn .9s var(--ease) 1.25s both, celeSpin 46s linear 2s infinite reverse; }
+.cele-frame-2 path { stroke: var(--blue); stroke-dasharray: none; stroke-width: 1; opacity: .35; }
+.cele-logo { position: absolute; inset: 0; display: block; filter: drop-shadow(0 0 18px var(--blue-glow)) drop-shadow(0 0 46px var(--blue-glow));
+  animation: celeFloat 4.5s ease-in-out 2.2s infinite; }
+.cele-logo img { width: 100%; height: 100%; }
+.cele-shine { position: absolute; inset: 0; pointer-events: none; -webkit-mask: url(../assets/rw-logo.png) center / 100% 100% no-repeat; mask: url(../assets/rw-logo.png) center / 100% 100% no-repeat;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .85) 48%, rgba(255, 255, 255, .15) 54%, transparent 62%) 0 0 / 300% 100% no-repeat;
+  background-position: 120% 0; animation: celeShine 4.5s ease-in-out 1.6s infinite; }
+
+/* Headline */
+.cele-kicker { display: inline-flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: .76rem; letter-spacing: .28em; text-transform: uppercase; color: var(--blue-hi);
+  animation: celeUp .7s var(--ease) 1.15s both; }
+.cele-kicker::before, .cele-kicker::after { content: ''; width: 28px; height: 1px; background: linear-gradient(90deg, transparent, currentColor); }
+.cele-kicker::after { transform: scaleX(-1); }
+.cele-h { font-family: var(--display); font-weight: 700; text-transform: uppercase; line-height: .9; letter-spacing: .01em; margin: 10px 0 12px;
+  font-size: clamp(3rem, min(10.5vw, 10vh), 6.6rem); color: #fff; text-shadow: 0 4px 30px rgba(0, 0, 0, .5); }
+.cele-h span { display: inline-block; animation: celeSlam .55s cubic-bezier(.2, 1.3, .4, 1) both; }
+.cele-h span:nth-child(1) { animation-delay: 1.3s; }
+.cele-h span:nth-child(2) { animation-delay: 1.48s; }
+.cele-h span:nth-child(3) { animation-delay: 1.66s; }
+.cele-h .blue { color: var(--blue); text-shadow: 0 0 34px var(--blue-glow), 0 0 2px var(--blue-hi); }
+.cele-sub { margin: 0; color: var(--muted); font-size: clamp(.95rem, 2.4vw, 1.1rem); animation: celeUp .7s var(--ease) 1.85s both; }
+.cele-sub b { color: var(--text); font-variant-numeric: tabular-nums; }
+.cele-dot { color: var(--dim); margin: 0 4px; }
+.cele-took { color: var(--blue-hi); }
+.cele-bar { width: min(340px, 80%); height: 4px; margin: 16px 0 clamp(18px, 3.4vh, 30px); border-radius: 4px; background: var(--line); overflow: hidden; animation: celeUp .7s var(--ease) 1.85s both; }
+.cele-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--blue), var(--blue-hi), #fff); box-shadow: 0 0 14px var(--blue);
+  transform-origin: 0 50%; animation: celeFill 1.1s cubic-bezier(.6, 0, .2, 1) 1.5s both; }
+
+/* Badges: they fly out of the trophy and land in rows */
+.cele-badges { list-style: none; margin: 0 0 clamp(22px, 4vh, 34px); padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 8px; max-width: calc(var(--cols, 9) * 66px); }
+.cele-badges li { position: relative; width: 58px; height: 64px; cursor: default; outline: none; filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .5));
+  animation: celeFly .9s cubic-bezier(.2, .9, .25, 1.15) calc(2s + var(--i) * 70ms) both; }
+.cele-badges li > span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 1.45rem; isolation: isolate; transition: transform .25s var(--ease);
+  background: linear-gradient(160deg, #fff, var(--blue-hi) 30%, var(--blue) 70%); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  animation: celeLand .7s ease-out calc(2.75s + var(--i) * 70ms) backwards; }
+.cele-badges li > span::before { content: ''; position: absolute; inset: 2.5px; z-index: -1; clip-path: inherit;
+  background: radial-gradient(90% 70% at 50% 18%, color-mix(in srgb, var(--blue) 55%, #0b1430), #070b16 80%); }
+.cele-badges li.off > span { background: var(--line-strong); filter: grayscale(1); opacity: .55; }
+.cele-badges li::after { content: attr(data-t); position: absolute; left: 50%; bottom: calc(100% + 8px); translate: -50% 4px; z-index: 3; pointer-events: none;
+  padding: 6px 10px; border-radius: 8px; background: #fff; color: #05070c; font-size: .78rem; font-weight: 700; white-space: nowrap;
+  box-shadow: 0 10px 24px -8px #000; opacity: 0; transition: opacity .18s, translate .18s; }
+.cele-badges li:hover::after, .cele-badges li:focus-visible::after, .cele-badges li.tip::after { opacity: 1; translate: -50% 0; }
+.cele-badges li:hover > span, .cele-badges li:focus-visible > span, .cele-badges li.tip > span { transform: translateY(-3px) scale(1.1); }
+.cele-badges li:focus-visible > span { background: #fff; }
+
+.cele-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; animation: celeUp .7s var(--ease) calc(2.4s + var(--n, 17) * 70ms) both; }
+.cele-actions .btn-ghost { background: rgba(13, 17, 27, .55); }
+
+@keyframes celeSpin { to { rotate: 360deg; } }
+@keyframes celeDrop {
+  0% { opacity: 0; transform: scale(.1) rotateY(-900deg); }
+  55% { opacity: 1; }
+  100% { opacity: 1; transform: none; } }
+@keyframes celeRaysIn { from { opacity: 0; scale: .4; } to { opacity: 1; scale: 1; } }
+@keyframes celeFlash { 0% { opacity: .95; scale: .3; } 100% { opacity: 0; scale: 3.2; } }
+@keyframes celeFrameIn { from { opacity: 0; scale: .6; } to { opacity: 1; scale: 1; } }
+@keyframes celeFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes celeShine { 0% { background-position: 120% 0; } 30%, 100% { background-position: -20% 0; } }
+@keyframes celeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes celeSlam { 0% { opacity: 0; transform: scale(2.2); filter: blur(10px); } 60% { opacity: 1; filter: blur(0); } 100% { opacity: 1; transform: none; filter: none; } }
+@keyframes celeFill { from { transform: scaleX(0); } to { transform: none; } }
+@keyframes celeFly {
+  0% { opacity: 0; transform: translate(var(--fx, 0), var(--fy, -120px)) scale(.2) rotate(-240deg); }
+  15% { opacity: 1; }
+  100% { opacity: 1; transform: none; } }
+@keyframes celeLand { 0% { filter: brightness(2.6) saturate(.4); } 100% { filter: none; } }
+
+/* Reduced motion: the same moment, just a calm fade */
+.cele.calm .cele-stage * { animation: none !important; }
+.cele.calm .cele-inner { animation: celeFade .8s ease both; }
+.cele.calm .cele-rays { opacity: .8; }
+.cele.calm .cele-flash { display: none; }
+@keyframes celeFade { from { opacity: 0; } to { opacity: 1; } }
+
+@media (max-width: 560px) {
+  .cele-stage { padding: 52px 16px 20px; }
+  .cele-trophy { width: clamp(100px, 30vw, 128px); }
+  .cele-h { margin: 8px 0 10px; }
+  .cele-badges { gap: 8px 6px; max-width: min(100%, calc(var(--cols-sm, 6) * 54px)); }
+  .cele-badges li { width: 48px; height: 53px; }
+  .cele-badges li > span { font-size: 1.2rem; }
+  .cele-actions { flex-direction: column; align-items: stretch; width: 100%; max-width: 340px; gap: 10px; }
+  .cele-actions .btn { white-space: normal; padding: 12px 20px; }
+  .cele-kicker { font-size: .68rem; letter-spacing: .22em; }
+}
+.ach-done-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; } .ach-done-actions .ach-wall { margin-top: 0; }
+
+/* Theme bar: which theme is on, hop to another, or go back to normal (js/eggs.js) */
+.theme-bar { position: fixed; right: 16px; bottom: 44px; z-index: 61; display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 999px;
+  background: rgba(13,17,27,.92); border: 1px solid color-mix(in srgb, var(--blue) 45%, transparent); box-shadow: 0 16px 36px -14px #000, 0 0 24px -10px var(--blue-glow);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); font-size: .84rem; max-width: calc(100% - 32px);
+  opacity: 0; transform: translateY(14px); transition: opacity .3s, transform .35s var(--ease); }
+.theme-bar.show { opacity: 1; transform: none; }
+.theme-bar[hidden] { display: none; }
+.tb-now { white-space: nowrap; }
+.tb-now b { font-weight: 600; }
+.tb-picks { display: flex; gap: 4px; padding-left: 10px; border-left: 1px solid var(--line-strong); }
+.tb-pick { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: .95rem; background: color-mix(in srgb, var(--sw) 22%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sw) 55%, transparent); transition: transform .2s var(--ease), background .2s; }
+.tb-pick:hover, .tb-pick:focus-visible { transform: translateY(-3px) scale(1.08); background: color-mix(in srgb, var(--sw) 40%, transparent); }
+.tb-off { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px; background: var(--blue); color: #fff; font-weight: 600; white-space: nowrap; transition: background .2s; }
+.tb-off:hover { background: var(--blue-hi); color: #05070c; }
+body.has-ribbon .dog-home { bottom: 96px; }
+@media (max-width: 640px) {
+  .theme-bar { left: 12px; right: 12px; justify-content: space-between; gap: 6px; padding: 5px 5px 5px 10px; }
+  .tb-now b { display: none; }
+  .tb-picks { padding-left: 6px; gap: 3px; }
+  .tb-pick { width: 30px; height: 30px; font-size: .85rem; }
+  .tb-off { padding: 8px 11px; font-size: .8rem; }
+  .tb-off span { display: none; }
+  body.has-ribbon .ach-pop { bottom: 92px; }
+}
+
+/* Cameo: the mascot / Keanu / LeBron peeks up from the bottom-left corner */
+.fx-cameo { position: fixed; left: 2vw; bottom: 28px; z-index: 59; width: clamp(120px, 15vw, 220px); height: auto; pointer-events: none;
+  filter: drop-shadow(0 18px 30px rgba(0,0,0,.6)); animation: cameoUp 1s var(--ease) .4s both, cameoBob 3.2s ease-in-out 1.4s infinite alternate; transform-origin: 50% 100%; }
+@keyframes cameoUp { from { transform: translateY(110%) rotate(-8deg); } }
+@keyframes cameoBob { from { transform: rotate(-3deg); } to { transform: rotate(3deg) translateY(-6px); } }
+@media (max-width: 640px) { .fx-cameo { width: 96px; bottom: 80px; opacity: .9; } }
+
+/* Swapped-in portrait (LeBron mode): a head or cutout sits nicely in the hexagon */
+.portrait-hex img.swapped-in { width: auto; height: 80%; max-width: 74%; object-fit: contain; object-position: 50% 100%; bottom: 3%;
+  animation: portraitIn .7s var(--ease) both; filter: drop-shadow(0 10px 24px rgba(0,0,0,.55)); }
+/* ...and when the theme ends, my photo bounces back */
+.portrait-hex img.back-in { animation: portraitIn .7s var(--ease) both; }
+@keyframes portraitIn { 0% { opacity: 0; transform: translateX(-50%) translateY(18%) scale(.7) rotate(-6deg); } 60% { opacity: 1; transform: translateX(-50%) translateY(-3%) scale(1.04) rotate(2deg); } 100% { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .portrait-hex img.swapped-in, .portrait-hex img.back-in { animation: none; } }
+
+/* Theme switch fallback (no View Transitions / reduced motion): a quick veil */
+.theme-veil { position: fixed; inset: 0; z-index: 900; pointer-events: none; background: var(--bg); animation: veil .45s ease both; }
+@keyframes veil { 0% { opacity: 0; } 35% { opacity: .9; } 100% { opacity: 0; } }
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-old(root) { z-index: 1; } ::view-transition-new(root) { z-index: 2; }
+html:not([data-theme]) ::view-transition-old(root) { z-index: 2; } html:not([data-theme]) ::view-transition-new(root) { z-index: 1; }
+@media (prefers-reduced-motion: reduce) { .fx-cameo { animation: none; } }
