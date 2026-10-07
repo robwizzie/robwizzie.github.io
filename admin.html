@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="rw-live" content="https://rw-live.robertwiscount.workers.dev">
+    <title>Site Admin · Rob Wiscount</title>
+    <meta name="theme-color" content="#06080d">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link href="assets/fonts.css" rel="stylesheet">
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="css/site.css" rel="stylesheet">
+    <style>
+        body { padding: 28px 0 60px; }
+        .adm-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
+        .adm-top a { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 1.3rem; text-transform: uppercase; letter-spacing: .04em; }
+        .adm-top img { width: 30px; }
+        .adm-h { font-size: clamp(2.4rem, 6vw, 3.6rem); margin: 10px 0 8px; }
+        .adm-h .blue { color: var(--blue); }
+        .adm-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: clamp(18px, 3vw, 26px); margin-top: 16px; }
+        .adm-card h2 { font-family: var(--mono); font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--blue-hi); margin: 0 0 14px; font-weight: 600; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .adm-card h2 small { color: var(--dim); letter-spacing: .06em; text-transform: none; font-family: var(--body); font-size: .8rem; font-weight: 400; }
+        .adm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .adm-grid > .adm-card { margin-top: 0; }
+        .adm-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .adm-in { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line-strong); border-radius: 12px; padding: 10px 14px; min-width: 0; flex: 1; }
+        .adm-in:focus { outline: none; border-color: var(--blue); }
+        select.adm-in { flex: none; }
+        .adm-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; }
+        .adm-kpi { background: var(--surface); padding: 14px 16px; }
+        .adm-kpi b { display: block; font-family: var(--display); font-size: 2.2rem; line-height: 1; }
+        .adm-kpi span { color: var(--muted); font-size: .82rem; }
+        .adm-spark { display: flex; align-items: flex-end; gap: 3px; height: 70px; margin-top: 16px; }
+        .adm-spark i { flex: 1; background: var(--blue); border-radius: 3px 3px 0 0; min-height: 2px; opacity: .85; position: relative; }
+        .adm-spark i:hover { opacity: 1; background: var(--blue-hi); }
+        .adm-bars { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+        .adm-bars li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; font-size: .9rem; }
+        .adm-bars li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .adm-bars li b { font-variant-numeric: tabular-nums; }
+        .adm-bars li i { grid-column: 1 / -1; height: 5px; border-radius: 5px; background: linear-gradient(90deg, var(--blue), var(--blue-hi)); }
+        .adm-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+        .adm-table th { text-align: left; color: var(--dim); font-weight: 500; font-size: .76rem; text-transform: uppercase; letter-spacing: .08em; padding: 0 8px 8px 0; }
+        .adm-table td { padding: 8px 8px 8px 0; border-top: 1px solid var(--line); vertical-align: top; }
+        .adm-table td.n { font-variant-numeric: tabular-nums; }
+        .adm-wrap { overflow-x: auto; }
+        .adm-tag { font-family: var(--mono); color: #ffd36b; }
+        .adm-empty { color: var(--dim); font-size: .9rem; margin: 0; }
+        .adm-notes { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+        .adm-notes li { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); }
+        .adm-notes p { margin: 0 0 4px; overflow-wrap: anywhere; }
+        .adm-notes small { color: var(--dim); }
+        .adm-notes .adm-row { flex: none; }
+        .adm-btn { font-size: .8rem; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-strong); }
+        .adm-btn:hover { border-color: var(--blue); color: var(--blue-hi); }
+        .adm-btn.ok { background: var(--blue); border-color: var(--blue); color: #fff; }
+        .adm-btn.bad:hover { border-color: #e0475f; color: #ff8a96; }
+        .adm-msg { color: var(--muted); font-size: .86rem; min-height: 1.2em; margin: 10px 0 0; }
+        .adm-copy { font-family: var(--mono); font-size: .84rem; color: var(--blue-hi); word-break: break-all; }
+        [hidden] { display: none !important; }
+        @media (max-width: 800px) { .adm-grid { grid-template-columns: 1fr; } .adm-kpis { grid-template-columns: 1fr 1fr; } }
+    </style>
+</head>
+<body>
+<main class="wrap">
+    <div class="adm-top">
+        <a href="/"><img src="assets/rw-logo.png" alt="">Rob Wiscount</a>
+        <button class="btn btn-ghost btn-sm" id="adm-lock" type="button" hidden><i class="fas fa-lock"></i> Lock</button>
+    </div>
+    <span class="eyebrow">Private · Site admin</span>
+    <h1 class="h-display adm-h">Who's <span class="blue">been by.</span></h1>
+    <p class="lede">Where visitors came from and which tagged links got clicked, plus the guestbook approval queue. Data comes from your Worker; nothing here is public. Once unlocked, this browser's own visits aren't counted.</p>
+
+    <section class="adm-card" id="adm-gate">
+        <h2>Unlock</h2>
+        <form class="adm-row" id="adm-gate-form">
+            <input class="adm-in" id="adm-token" type="password" placeholder="Admin token (the one you set with wrangler secret put ADMIN_TOKEN)" autocomplete="current-password" aria-label="Admin token">
+            <button class="btn btn-primary btn-sm" type="submit">Unlock</button>
+        </form>
+        <p class="adm-msg" id="adm-gate-msg"></p>
+    </section>
+
+    <div id="adm-app" hidden>
+        <section class="adm-card">
+            <h2>Tagged link maker <small>Put a tag on every link you send out, so you can see who clicked.</small></h2>
+            <div class="adm-row">
+                <input class="adm-in" id="adm-mk" type="text" placeholder="Company or place, e.g. Stripe, LinkedIn post, Career fair" aria-label="Tag name">
+                <button class="btn btn-primary btn-sm" id="adm-mk-copy" type="button"><i class="fas fa-copy"></i> Copy link</button>
+            </div>
+            <p class="adm-msg"><span class="adm-copy" id="adm-mk-out">https://robwiscount.org/?r=…</span></p>
+        </section>
+
+        <section class="adm-card">
+            <h2>Overview <span class="adm-row"><select class="adm-in" id="adm-days" aria-label="Range"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select></span></h2>
+            <div class="adm-kpis">
+                <div class="adm-kpi"><b id="k-visits">—</b><span>Visitors (unique per day)</span></div>
+                <div class="adm-kpi"><b id="k-tagged">—</b><span>From tagged links</span></div>
+                <div class="adm-kpi"><b id="k-sources">—</b><span>Different sources</span></div>
+                <div class="adm-kpi"><b id="k-pending">—</b><span>Notes waiting</span></div>
+            </div>
+            <div class="adm-spark" id="adm-spark" aria-label="Visitors per day"></div>
+        </section>
+
+        <div class="adm-grid">
+            <section class="adm-card"><h2>Where they came from</h2><ul class="adm-bars" id="adm-sources"></ul></section>
+            <section class="adm-card"><h2>Tagged links <small>?r= tags, newest first</small></h2><div class="adm-wrap"><table class="adm-table" id="adm-tags"></table></div></section>
+            <section class="adm-card"><h2>Referring sites</h2><ul class="adm-bars" id="adm-hosts"></ul></section>
+            <section class="adm-card"><h2>Campaigns <small>utm_campaign</small></h2><div class="adm-wrap"><table class="adm-table" id="adm-campaigns"></table></div></section>
+        </div>
+
+        <section class="adm-card" id="adm-gb">
+            <h2>Guestbook <small>Waiting notes are only visible here and to the person who wrote them.</small></h2>
+            <ul class="adm-notes" id="adm-pending"></ul>
+            <h2 style="margin-top:22px">Published</h2>
+            <ul class="adm-notes" id="adm-approved"></ul>
+        </section>
+
+        <section class="adm-card">
+            <h2>Recent visitors</h2>
+            <div class="adm-wrap"><table class="adm-table" id="adm-recent"></table></div>
+        </section>
+    </div>
+</main>
+<script>
+(function () {
+  'use strict';
+  var BASE = (document.querySelector('meta[name="rw-live"]') || {}).content || '';
+  BASE = BASE.replace(/\/+$/, '');
+  var KEY = 'rw-admin-token', token = '';
+  try { token = localStorage.getItem(KEY) || ''; } catch (e) {}
+  function $(s) { return document.querySelector(s); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function place(v) { return v.city ? v.city + ', ' + (v.country === 'US' && v.region ? v.region : v.country) : (v.country || '—'); }
+  function when(t) {
+    var s = (Date.now() - t) / 1000;
+    if (s < 3600) return Math.max(1, Math.round(s / 60)) + 'm ago';
+    if (s < 86400) return Math.round(s / 3600) + 'h ago';
+    if (s < 604800) return Math.round(s / 86400) + 'd ago';
+    return new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+  function api(path, opts) {
+    opts = opts || {};
+    opts.headers = { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' };
+    return fetch(BASE + path, opts).then(function (r) { return r.json().then(function (d) { if (!r.ok) throw d; return d; }); });
+  }
+  function bars(el, rows, key) {
+    var max = Math.max.apply(null, rows.map(function (r) { return r.n; }).concat(1));
+    el.innerHTML = rows.length ? rows.map(function (r) { return '<li><span>' + esc(r[key]) + '</span><b>' + r.n + '</b><i style="width:' + Math.max(2, r.n / max * 100) + '%"></i></li>'; }).join('') : '<li class="adm-empty">Nothing yet.</li>';
+  }
+  function table(el, head, rows) {
+    el.innerHTML = rows.length ? '<tr>' + head.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>' + rows.join('') : '<tr><td class="adm-empty">Nothing yet.</td></tr>';
+  }
+  function note(n, published) {
+    return '<li data-id="' + n.id + '"><div><p>' + esc(n.note) + '</p><small>' + (n.name ? esc(n.name) + ' · ' : '') + esc(place(n)) + ' · ' + when(n.t) + '</small></div><span class="adm-row">' +
+      (published ? '<button class="adm-btn" data-act="hide" type="button">Unpublish</button>' : '<button class="adm-btn ok" data-act="approve" type="button">Approve</button>') +
+      '<button class="adm-btn bad" data-act="delete" type="button">Delete</button></span></li>';
+  }
+
+  function load() {
+    return api('/admin/summary?days=' + $('#adm-days').value).then(function (d) {
+      $('#adm-gate').hidden = true; $('#adm-app').hidden = false; $('#adm-lock').hidden = false;
+      var tagged = d.tags.reduce(function (a, r) { return a + r.n; }, 0);
+      $('#k-visits').textContent = d.visits.toLocaleString();
+      $('#k-tagged').textContent = tagged.toLocaleString();
+      $('#k-sources').textContent = d.sources.length;
+      $('#k-pending').textContent = d.pending.length;
+      // one bar per day across the range, zero-filled
+      var byDay = {}; d.daily.forEach(function (r) { byDay[r.day] = r.n; });
+      var days = [], max = 1;
+      for (var i = d.days - 1; i >= 0; i--) { var k = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10); days.push([k, byDay[k] || 0]); max = Math.max(max, byDay[k] || 0); }
+      $('#adm-spark').innerHTML = days.map(function (x) { return '<i style="height:' + Math.max(3, x[1] / max * 100) + '%" title="' + x[0] + ': ' + x[1] + '"></i>'; }).join('');
+      bars($('#adm-sources'), d.sources, 'source');
+      bars($('#adm-hosts'), d.hosts, 'host');
+      table($('#adm-tags'), ['Tag', 'Visits', 'Last', 'From'], d.tags.map(function (r) { return '<tr><td class="adm-tag">' + esc(r.tag) + '</td><td class="n">' + r.n + '</td><td>' + when(r.last) + '</td><td>' + esc(r.city || '—') + '</td></tr>'; }));
+      table($('#adm-campaigns'), ['Campaign', 'Medium', 'Visits'], d.campaigns.map(function (r) { return '<tr><td>' + esc(r.campaign) + '</td><td>' + esc(r.medium || '—') + '</td><td class="n">' + r.n + '</td></tr>'; }));
+      table($('#adm-recent'), ['When', 'From', 'Source', 'Tag', 'Page'], d.recent.map(function (r) {
+        return '<tr><td>' + when(r.t) + '</td><td>' + esc(place(r)) + '</td><td>' + esc(r.source) + (r.host && r.host !== r.source ? ' <small class="adm-empty">' + esc(r.host) + '</small>' : '') + '</td><td class="adm-tag">' + esc(r.tag || r.campaign || '') + '</td><td>' + esc(r.page || '/') + '</td></tr>';
+      }));
+      $('#adm-pending').innerHTML = d.pending.length ? d.pending.map(function (n) { return note(n, false); }).join('') : '<li class="adm-empty">Nothing waiting. 🎉</li>';
+      $('#adm-approved').innerHTML = d.approved.length ? d.approved.map(function (n) { return note(n, true); }).join('') : '<li class="adm-empty">No published notes yet.</li>';
+    });
+  }
+
+  function unlock(e) {
+    if (e) e.preventDefault();
+    var t = $('#adm-token').value.trim() || token;
+    if (!t) return;
+    token = t;
+    $('#adm-gate-msg').textContent = 'Checking…';
+    // Unlocking here also marks this browser as Rob's, so his own visits stop counting (js/live.js checks rw-me).
+    load().then(function () { try { localStorage.setItem(KEY, token); localStorage.setItem('rw-me', '1'); } catch (x) {} $('#adm-gate-msg').textContent = ''; })
+      .catch(function (err) { token = ''; $('#adm-gate').hidden = false; $('#adm-app').hidden = true; $('#adm-gate-msg').textContent = (err && err.error) || 'Couldn\'t reach the Worker.'; });
+  }
+  $('#adm-gate-form').addEventListener('submit', unlock);
+  $('#adm-lock').addEventListener('click', function () { try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); });
+  $('#adm-days').addEventListener('change', function () { load().catch(function () {}); });
+  $('#adm-gb').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var li = b.closest('li'), act = b.getAttribute('data-act');
+    if (act === 'delete' && !confirm('Delete this note for good?')) return;
+    b.disabled = true;
+    api('/admin/note', { method: 'POST', body: JSON.stringify({ id: +li.getAttribute('data-id'), action: act }) }).then(load).catch(function () { b.disabled = false; });
+  });
+
+  // Tagged link maker
+  function slug(s) { return s.toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40); }
+  function link() { var t = slug($('#adm-mk').value); return 'https://robwiscount.org/' + (t ? '?r=' + t : ''); }
+  $('#adm-mk').addEventListener('input', function () { $('#adm-mk-out').textContent = link(); });
+  $('#adm-mk-copy').addEventListener('click', function () {
+    var l = link(), btn = this;
+    (navigator.clipboard ? navigator.clipboard.writeText(l) : Promise.reject()).then(function () {
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied'; setTimeout(function () { btn.innerHTML = '<i class="fas fa-copy"></i> Copy link'; }, 1600);
+    }, function () { prompt('Copy this link:', l); });
+  });
+
+  if (token) unlock();
+})();
+</script>
+</body>
+</html>

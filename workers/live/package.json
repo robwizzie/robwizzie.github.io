@@ -1,0 +1,15 @@
+{
+  "name": "rw-live",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Live cursors + visitor map backend for robwiscount.org (Cloudflare Worker + Durable Object)",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --local --var ALLOW_DEV_OVERRIDE:1",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

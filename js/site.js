@@ -28,6 +28,9 @@
     toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2600);
   }
 
+  /* Easter eggs announce themselves; js/eggs.js turns them into achievements. */
+  function egg(id) { document.dispatchEvent(new CustomEvent('rw:egg', { detail: id })); }
+
   /* ---------- Nav: progress, hide on scroll down, active link, mobile menu ---------- */
   var nav = $('.nav'), progress = $('.progress'), lastY = 0;
   var navLinks = $$('.nav-links a');
@@ -178,34 +181,57 @@
   }
 
   /* ---------- Live Mile A Day streak ----------
-     Same rule mileaday.run uses: counted from the day the streak began, in the
-     visitor's own calendar. Day 1 was May 13, 2025 (it read 423 on Jul 9, 2026). */
+     The real number comes from the app's public profile endpoint (same API mileaday.run uses).
+     Until it answers, it's counted from the day the streak began. Days are Rob's days, in Eastern
+     time: if the app's streak is a day behind the calendar, today's mile just isn't in yet. */
   (function () {
-    var START = new Date(2025, 4, 13);
+    var START = Date.UTC(2025, 4, 13), API = 'https://mad.mindgoblin.tech/public/users/rob';
     var MILESTONES = [7, 14, 30, 50, 100, 150, 200, 250, 300, 365, 400, 500, 600, 700, 730, 800, 900, 1000, 1095, 1250, 1500, 2000];
-    var daysEl = $('#ls-days');
+    var daysEl = $('#ls-days'), real = null;
     if (!daysEl) return;
-    function midnight(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+    function eastern() {
+      var p = {};
+      try {
+        new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
+          .formatToParts(new Date()).forEach(function (x) { p[x.type] = +x.value; });
+      } catch (e) { var d = new Date(); p = { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate(), hour: d.getHours(), minute: d.getMinutes() }; }
+      return p;
+    }
     function render() {
-      var now = new Date(), today = midnight(now);
-      var streak = Math.round((today - START) / 864e5) + 1;
+      var et = eastern(), today = Date.UTC(et.year, et.month - 1, et.day);
+      var calendar = Math.round((today - START) / 864e5) + 1;
+      // The app counts today once the mile is logged. A day behind = not yet; anything else = trust the app.
+      var ran = real === null ? null : real >= calendar ? true : real === calendar - 1 ? false : null;
+      var streak = real === null ? calendar : real;
       daysEl.textContent = streak.toLocaleString();
       var next = MILESTONES.filter(function (m) { return m > streak; })[0] || Math.ceil((streak + 1) / 500) * 500;
       var prev = MILESTONES.filter(function (m) { return m <= streak; }).pop() || 0;
       $('#ls-next').textContent = next.toLocaleString() + ' days';
       $('#ls-togo').textContent = (next - streak) + ' to go';
       $('#ls-bar').style.width = Math.round((streak - prev) / (next - prev) * 100) + '%';
-      var labels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'], dow = today.getDay();
+      var labels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'], dow = new Date(today).getUTCDay();
       $('#ls-week').innerHTML = labels.map(function (l, i) {
-        var cls = i < dow ? 'done' : (i === dow ? 'today' : '');
-        var mark = i < dow ? '✓' : (i === dow ? '•' : '');
-        return '<span class="ls-day ' + cls + '"><span class="ls-dot">' + mark + '</span>' + l + '</span>';
+        var done = i < dow || (i === dow && ran === true);
+        var cls = done ? 'done' : (i === dow ? 'today' : '');
+        return '<span class="ls-day ' + cls + '"><span class="ls-dot">' + (done ? '✓' : i === dow ? '•' : '') + '</span>' + l + '</span>';
       }).join('');
-      var end = new Date(today.getTime() + 864e5), mins = Math.max(0, Math.round((end - now) / 6e4));
-      $('#ls-today').textContent = 'Today is day ' + streak.toLocaleString() + ' — ' + Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm left to get it in.';
+      var mins = Math.max(0, (24 - et.hour) * 60 - et.minute), left = Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm';
+      var line = ran === true ? '✓ Today\'s mile is done — day ' + streak.toLocaleString() + ' is in the books.'
+        : ran === false ? 'Day ' + (streak + 1).toLocaleString() + ' isn\'t logged yet — ' + left + ' left to get it in.'
+        : 'Today is day ' + streak.toLocaleString() + ' — ' + left + ' left to get it in.';
+      $('#ls-today').textContent = line;
+      $('#ls-today').classList.toggle('ls-done', ran === true);
     }
-    render();
+    function load() {
+      if (!window.fetch) return;
+      fetch(API, { cache: 'no-store' })
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .then(function (u) { if (typeof u.current_streak === 'number' && u.current_streak > 0) { real = u.current_streak; render(); } })
+        .catch(function () {});
+    }
+    render(); load();
     setInterval(render, 60000);
+    setInterval(function () { if (!document.hidden) load(); }, 300000);
   })();
 
   /* ---------- Timeline fill ---------- */
@@ -280,6 +306,7 @@
     var music = document.getElementById('lbf-audio'); if (music && !music.paused) music.pause();
     modal.classList.add('open'); document.body.classList.add('modal-open');
     if (!frame.getAttribute('src')) frame.setAttribute('src', 'play/fetch/index.html');
+    egg('fetch');
     setTimeout(function () { frame.focus(); }, 50);
   }
   function closeFetch() {
@@ -396,7 +423,7 @@
     cLogo.style.animation = 'none';
     cLogo.style.transform = 'rotate(' + spins * 360 + 'deg) scale(1.1)';
     var r = cLogo.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 70);
-    if (spins === 5) toast('You found the logo spinner. You\'re hired… I mean, I\'m hireable. 😄');
+    if (spins === 5) { toast('You found the logo spinner. You\'re hired… I mean, I\'m hireable. 😄'); egg('logo'); }
   });
 
   /* Konami code */
@@ -404,7 +431,7 @@
   document.addEventListener('keydown', function (e) {
     var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     kpos = k === konami[kpos] ? kpos + 1 : (k === konami[0] ? 1 : 0);
-    if (kpos === konami.length) { kpos = 0; party(); toast('🎮 Cheat code unlocked: +30 lives. Now go hire Rob.'); }
+    if (kpos === konami.length) { kpos = 0; party(); toast('🎮 Cheat code unlocked: +30 lives. Now go hire Rob.'); egg('konami'); }
   });
 
   /* ---------- LeBronify player ---------- */
@@ -450,7 +477,7 @@
   function play() {
     if (!audio.getAttribute('src')) audio.src = 'assets/lebronify/' + TRACKS[cur].id + '.mp3';
     var pr = audio.play(); if (pr && pr.catch) pr.catch(function () {});
-    plays++;
+    plays++; egg('lebron');
     if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({ title: TRACKS[cur].title, artist: TRACKS[cur].artist, album: 'LeBronify', artwork: [{ src: 'assets/lebronify/' + TRACKS[cur].id + '.jpg', sizes: '300x300', type: 'image/jpeg' }] });
     }
@@ -533,7 +560,8 @@
   var commands = {
     help: function () {
       print('Available commands:', 'ok');
-      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  hire rob    the best command\n  contact     how to reach me\n  clear       wipe the screen', 'dim');
+      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  git log     my GitHub squares\n  hire rob    the best command\n  contact     how to reach me\n  achievements  secrets you\'ve found\n  colophon    how this site is built\n  clear       wipe the screen', 'dim');
+      print('…and a few commands that aren\'t on this list. 👀', 'dim');
     },
     whoami: function () {
       print('Rob Wiscount — front-end developer at heart, full stack by now. South Jersey.');
@@ -609,21 +637,34 @@
     },
     clear: function () { out.innerHTML = ''; }
   };
+  commands['git log'] = function () {
+    var t = $('#gh-total'), s = $('#gh-streak'), l = $('#gh-longest');
+    if (t && /\d/.test(t.textContent)) {
+      print(t.textContent + ' contributions in the last year', 'ok');
+      print('current streak ' + s.textContent + ' days · longest ' + l.textContent + ' days', 'dim');
+    } else print('Fetching squares from GitHub…', 'dim');
+    print('<a href="#commits">→ see the graph</a> · <a href="https://github.com/robwizzie" target="_blank" rel="noopener">github.com/robwizzie</a>');
+  };
+  commands.github = commands.git = commands.commits = commands['git log'];
   commands.about = commands.whoami;
   commands.skills = commands.stack;
   commands.hire = commands['hire rob'];
   commands.fetch = commands.play = commands['play fetch'];
 
+  var termMode = null; // an egg can take over the prompt (vim does)
   function run(raw) {
-    var cmd = raw.trim().toLowerCase().replace(/\s+/g, ' ');
+    var line = raw.trim().replace(/\s+/g, ' '), cmd = line.toLowerCase(), sp = cmd.indexOf(' ');
+    if (termMode) { print(esc(raw), 'dim'); termMode(line); return; }
     print('<span class="p">rob@wiscount:~$</span> ' + esc(raw));
     if (!cmd) return;
     history.push(raw); hpos = history.length;
-    if (commands[cmd]) commands[cmd]();
+    if (commands[cmd]) commands[cmd]('');
+    else if (sp > 0 && commands[cmd.slice(0, sp)]) commands[cmd.slice(0, sp)](line.slice(sp + 1)); // e.g. cowsay <text>
     else print('command not found: ' + esc(cmd) + ' — try <span class="p">help</span>', 'warn');
   }
   input.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') { run(input.value); input.value = ''; }
+    else if (e.key === 'Escape' && termMode) { e.preventDefault(); termMode(null); }
     else if (e.key === 'ArrowUp' && history.length) { hpos = Math.max(0, hpos - 1); input.value = history[hpos]; e.preventDefault(); }
     else if (e.key === 'ArrowDown' && history.length) { hpos = Math.min(history.length, hpos + 1); input.value = history[hpos] || ''; e.preventDefault(); }
     else if (e.key === 'Tab') {
@@ -683,6 +724,169 @@
     load();
     setInterval(function () { if (!document.hidden) load(); }, 60000);
   })();
+
+  /* ---------- GitHub contributions ----------
+     GitHub has no CORS-friendly endpoint for the contribution calendar, so this reads
+     the public github-contributions-api (it mirrors the graph on github.com/robwizzie).
+     Cached for the session; if it can't be reached the section points to GitHub instead. */
+  (function () {
+    var card = document.getElementById('gh');
+    if (!card) return;
+    var grid = $('#gh-grid'), months = $('#gh-months'), tip = $('#gh-tip'), scroller = $('#gh-scroll'), note = $('#gh-note');
+    var API = 'https://github-contributions-api.jogruber.de/v4/robwizzie?y=last', KEY = 'gh-contrib-v1';
+    var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var DAYS = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
+    var cells = [];
+
+    function parse(s) { var p = s.split('-'); return new Date(+p[0], p[1] - 1, +p[2]); }
+    function nice(d) { return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }); }
+    function plural(n, w) { return n.toLocaleString() + ' ' + w + (n === 1 ? '' : 's'); }
+
+    function countTo(el, to) {
+      if (reduceMotion) { el.textContent = to.toLocaleString(); return; }
+      var t0 = performance.now();
+      (function tick(now) {
+        var t = Math.min((now - t0) / 1400, 1), e = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(to * e).toLocaleString();
+        if (t < 1) requestAnimationFrame(tick);
+      })(t0);
+    }
+
+    function render(days) {
+      days = days.filter(function (d) { return d && d.date; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+      var todayStr = (function (n) { return n.getFullYear() + '-' + ('0' + (n.getMonth() + 1)).slice(-2) + '-' + ('0' + n.getDate()).slice(-2); })(new Date());
+      days = days.filter(function (d) { return d.date <= todayStr; }).slice(-371);
+      if (!days.length) throw new Error('empty');
+
+      // Pad the first week so every column starts on Sunday, like GitHub.
+      var lead = parse(days[0].date).getDay(), weeks = Math.ceil((lead + days.length) / 7);
+      card.style.setProperty('--weeks', weeks);
+      $('.gh-graph', card).style.setProperty('--weeks', weeks);
+      var html = '', mhtml = '', lastMonth = -1;
+      for (var i = 0; i < lead; i++) html += '<i class="gh-c pad"></i>';
+      days.forEach(function (d, i) {
+        var idx = i + lead, col = Math.floor(idx / 7), row = idx % 7, dt = parse(d.date);
+        var lvl = Math.max(0, Math.min(4, d.level || 0));
+        html += '<i class="gh-c l' + lvl + (d.date === todayStr ? ' today' : '') + '" data-i="' + i + '" style="--d:' + (col * 9 + row * 14) + 'ms"></i>';
+        if (row === 0 || i === 0) {
+          var m = dt.getMonth();
+          if (m !== lastMonth && (dt.getDate() <= 7 || i === 0) && col < weeks - 2) {
+            mhtml += '<span style="grid-column:' + (col + 1) + ' / span 3">' + MONTHS[m] + '</span>';
+            lastMonth = m;
+          }
+        }
+      });
+      grid.innerHTML = html;
+      months.innerHTML = mhtml;
+      cells = days;
+
+      // Stats
+      var total = 0, active = 0, longest = 0, run = 0, best = days[0], perDow = [0, 0, 0, 0, 0, 0, 0];
+      days.forEach(function (d) {
+        var c = d.count || 0;
+        total += c; perDow[parse(d.date).getDay()] += c;
+        if (c > 0) { active++; run++; longest = Math.max(longest, run); } else run = 0;
+        if (c > (best.count || 0)) best = d;
+      });
+      // Today isn't over yet, so a quiet today doesn't break the current streak.
+      var streak = 0, j = days.length - 1;
+      if (days[j].date === todayStr && !days[j].count) j--;
+      for (; j >= 0 && days[j].count > 0; j--) streak++;
+      var fav = perDow.indexOf(Math.max.apply(null, perDow));
+
+      var stats = { total: total, streak: streak, longest: longest, active: active, best: best.count || 0 };
+      function paint() {
+        countTo($('#gh-total'), stats.total);
+        countTo($('#gh-streak'), stats.streak);
+        countTo($('#gh-longest'), stats.longest);
+        countTo($('#gh-active'), stats.active);
+        countTo($('#gh-best'), stats.best);
+      }
+      $('#gh-best-label').textContent = 'Busiest day · ' + parse(best.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      $('#gh-dow').textContent = DAYS[fav];
+      note.innerHTML = 'Contributions to public and private repos · <a href="https://github.com/robwizzie" target="_blank" rel="noopener">see it on GitHub</a>';
+      grid.setAttribute('aria-label', 'GitHub contribution graph: ' + plural(total, 'contribution') + ' in the last year, a ' + plural(longest, 'day') + ' longest streak.');
+
+      requestAnimationFrame(function () {
+        scroller.scrollLeft = scroller.scrollWidth; // narrow screens: start on the most recent weeks
+        grid.classList.add('lit');
+      });
+      if (card.classList.contains('in') || !('IntersectionObserver' in window)) paint();
+      else new IntersectionObserver(function (en, obs) { if (en[0].isIntersecting) { obs.disconnect(); paint(); } }, { threshold: 0.3 }).observe(card);
+    }
+
+    function fail() {
+      var html = '';
+      for (var i = 0; i < 371; i++) html += '<i class="gh-c l0" style="--d:' + (Math.floor(i / 7) * 9) + 'ms"></i>';
+      grid.innerHTML = html; grid.classList.add('lit'); card.classList.add('gh-off');
+      note.innerHTML = 'GitHub didn\'t answer just now — <a href="https://github.com/robwizzie" target="_blank" rel="noopener">see the real squares on GitHub</a>';
+    }
+
+    var cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem(KEY)); } catch (e) {}
+    function load() {
+      if (cached && cached.contributions) { try { render(cached.contributions); return; } catch (e) {} }
+      if (!window.fetch) return fail();
+      fetch(API)
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .then(function (data) {
+          render(data.contributions || []);
+          try { sessionStorage.setItem(KEY, JSON.stringify({ contributions: data.contributions })); } catch (e) {}
+        })
+        .catch(fail);
+    }
+    // Don't spend a request until someone scrolls near the section.
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (en, obs) { if (en[0].isIntersecting) { obs.disconnect(); load(); } }, { rootMargin: '600px 0px' }).observe(card);
+    } else load();
+
+    // Tooltip (hover on desktop, tap on touch)
+    function showTip(el) {
+      var d = cells[el.getAttribute('data-i')];
+      if (!d) return;
+      var c = d.count || 0;
+      tip.textContent = (c ? plural(c, 'contribution') : 'No contributions') + ' on ' + nice(parse(d.date));
+      var cr = card.getBoundingClientRect(), er = el.getBoundingClientRect();
+      var x = er.left - cr.left + er.width / 2, half = tip.offsetWidth / 2 + 8;
+      tip.style.left = Math.max(half, Math.min(cr.width - half, x)) + 'px';
+      tip.style.top = (er.top - cr.top) + 'px';
+      tip.classList.add('show');
+    }
+    function hideTip() { tip.classList.remove('show'); }
+    grid.addEventListener('mouseover', function (e) { if (e.target.hasAttribute('data-i')) showTip(e.target); });
+    grid.addEventListener('mouseleave', hideTip);
+    scroller.addEventListener('scroll', hideTip, { passive: true });
+
+    // Click a square: a ripple rolls out across the year. Big days get confetti.
+    var rippling = false;
+    grid.addEventListener('click', function (e) {
+      var el = e.target;
+      if (!el.hasAttribute('data-i')) return;
+      showTip(el);
+      egg('ripple');
+      if (reduceMotion || rippling) return;
+      var all = $$('.gh-c', grid), at = all.indexOf(el), c0 = Math.floor(at / 7), r0 = at % 7;
+      rippling = true;
+      all.forEach(function (c, i) {
+        var dist = Math.sqrt(Math.pow(Math.floor(i / 7) - c0, 2) + Math.pow(i % 7 - r0, 2));
+        c.style.setProperty('--pd', Math.round(dist * 22) + 'ms');
+        c.classList.remove('ping'); void c.offsetWidth; c.classList.add('ping');
+      });
+      setTimeout(function () { all.forEach(function (c) { c.classList.remove('ping'); }); rippling = false; }, 1900);
+      var d = cells[el.getAttribute('data-i')];
+      if (d && d.level >= 4) { var r = el.getBoundingClientRect(); burst(r.left + r.width / 2, r.top, 40); }
+    });
+  })();
+
+  /* ---------- Hooks for the easter-egg scripts (js/eggs.js, js/dog.js, js/pool.js, js/live.js) ---------- */
+  window.RW = {
+    $: $, $$: $$, reduceMotion: reduceMotion, finePointer: finePointer,
+    toast: toast, burst: burst, party: party, egg: egg, copy: copy,
+    commands: commands, print: print, esc: esc, run: run,
+    setTermMode: function (fn) { termMode = fn || null; },
+    openFetch: openFetch, playTrack: function (i) { lbfLoad(i, true); }, tracks: TRACKS,
+    openHire: function () { var b = $('#hire-btn'), p = $('#hire-panel'); if (b && p && p.hidden) b.click(); }
+  };
 
   onScroll();
 })();

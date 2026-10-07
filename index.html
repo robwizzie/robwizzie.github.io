@@ -37,6 +37,8 @@
     <link rel="manifest" href="/site.webmanifest">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5b8ff9">
     <meta name="theme-color" content="#06080d">
+    <!-- Live cursors + visitor map: set to the deployed Worker URL (see workers/live/README.md). Empty = off. -->
+    <meta name="rw-live" content="https://rw-live.robertwiscount.workers.dev">
 
     <link rel="preload" href="assets/fonts/saira-extra-condensed-3.woff2" as="font" type="font/woff2" crossorigin>
     <link href="assets/fonts.css" rel="stylesheet">
@@ -669,6 +671,84 @@
             </div>
         </section>
 
+        <!-- ===== GITHUB CONTRIBUTIONS ===== -->
+        <section class="section" id="commits">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Commit log · live from GitHub</span>
+                    <h2 class="h-display h2">Green squares, <span class="blue">but make them blue.</span></h2>
+                    <p class="lede">I run a mile every day. Turns out I commit like it, too. This is my last year on GitHub, pulled live — hover a square for the day, or click one and watch it ripple.</p>
+                </div>
+                <div class="gh-card reveal" id="gh">
+                    <div class="gh-head">
+                        <a class="gh-user" href="https://github.com/robwizzie" target="_blank" rel="noopener"><i class="fab fa-github"></i> @robwizzie</a>
+                        <span class="gh-total"><b id="gh-total">—</b> contributions in the last year</span>
+                    </div>
+                    <div class="gh-scroll" id="gh-scroll">
+                        <div class="gh-graph">
+                            <div class="gh-months" id="gh-months" aria-hidden="true"></div>
+                            <div class="gh-days" aria-hidden="true"><span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span></div>
+                            <div class="gh-grid" id="gh-grid" role="img" aria-label="GitHub contribution graph for the last year"></div>
+                        </div>
+                    </div>
+                    <div class="gh-foot">
+                        <span class="gh-note" id="gh-note">Loading squares…</span>
+                        <span class="gh-legend" aria-hidden="true">Less <i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> More</span>
+                    </div>
+                    <div class="gh-stats">
+                        <div class="gh-stat"><b id="gh-streak">—</b><span>Day streak right now</span></div>
+                        <div class="gh-stat"><b id="gh-longest">—</b><span>Day longest streak this year</span></div>
+                        <div class="gh-stat"><b id="gh-active">—</b><span>Days I pushed something</span></div>
+                        <div class="gh-stat"><b id="gh-best">—</b><span id="gh-best-label">Busiest day</span></div>
+                        <div class="gh-stat"><b id="gh-dow">—</b><span>My favorite day to push</span></div>
+                    </div>
+                    <div class="gh-tip" id="gh-tip" aria-hidden="true"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== LIVE VISITORS (js/live.js; stays hidden unless <meta name="rw-live"> is set) ===== -->
+        <section class="section" id="visitors" hidden>
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Live · Visitors</span>
+                    <h2 class="h-display h2" id="lv-title">Hey, <span class="blue">wherever you are.</span></h2>
+                    <p class="lede">Every lit square is a city someone has opened this site from. The pulsing ones are people here right now — and if you move your mouse, they can see your little hexagon too.</p>
+                </div>
+                <div class="gh-card lv-card reveal" id="lv">
+                    <div class="gh-head">
+                        <span class="lv-live"><i aria-hidden="true"></i> <span id="lv-live-n">Just you here now</span></span>
+                        <span class="gh-total"><b id="lv-total">—</b> visits and counting</span>
+                    </div>
+                    <div class="lv-map" id="lv-map">
+                        <canvas id="lv-canvas" role="img" aria-label="Map of where visitors to this site are from"></canvas>
+                    </div>
+                    <div class="gh-foot">
+                        <span class="lv-recent" id="lv-recent">Checking who's been by…</span>
+                        <span class="gh-legend lv-legend" aria-hidden="true">Fewer <i class="l2"></i><i class="l3"></i><i class="l4"></i> More <i class="lv-k-you"></i> You <i class="lv-k-live"></i> Here now</span>
+                    </div>
+                    <div class="gh-stats">
+                        <div class="gh-stat"><b id="lv-countries">—</b><span>Countries</span></div>
+                        <div class="gh-stat"><b id="lv-cities">—</b><span>Cities</span></div>
+                        <div class="gh-stat"><b id="lv-now">—</b><span>Here right now</span></div>
+                        <div class="gh-stat"><b id="lv-top" class="lv-top">—</b><span id="lv-top-label">Top city</span></div>
+                    </div>
+                    <div class="lv-gb" id="lv-gb">
+                        <div class="lv-gb-head"><h3>Guestbook</h3><span>Leave a note — once I approve it, your city gets a little <i class="lv-k-note" aria-hidden="true"></i> on the map.</span></div>
+                        <form class="lv-gb-form" id="lv-gb-form">
+                            <input id="lv-gb-name" type="text" maxlength="24" placeholder="Name (optional)" aria-label="Your name (optional)" autocomplete="nickname">
+                            <input id="lv-gb-note" type="text" maxlength="120" required placeholder="Say hi, leave a tip, roast my code…" aria-label="Your note">
+                            <button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-feather-alt"></i> Sign</button>
+                        </form>
+                        <p class="lv-gb-msg" id="lv-gb-msg" role="status" aria-live="polite"></p>
+                        <ul class="lv-gb-list" id="lv-gb-list"><li class="empty"><p>Loading notes…</p></li></ul>
+                    </div>
+                    <p class="lv-privacy">Coarse city-level location from Cloudflare. No IPs, no cookies. Guestbook notes are approved by hand.</p>
+                    <div class="gh-tip" id="lv-tip" aria-hidden="true"></div>
+                </div>
+            </div>
+        </section>
+
         <!-- ===== ABOUT ===== -->
         <section class="section" id="about">
             <div class="wrap">
@@ -746,7 +826,7 @@
 
     <footer class="footer">
         <div class="wrap">
-            <span><img src="assets/rw-logo.png" alt="">© <span id="year">2026</span> Rob Wiscount · Designed &amp; built in South Jersey · <a href="resume.md">Plain-text resume</a> · <a href="llms.txt">For AI agents</a></span>
+            <span><img src="assets/rw-logo.png" alt="">© <span id="year">2026</span> Rob Wiscount · Designed &amp; built in South Jersey · <a href="how-it-works.html">How this site works</a> · <a href="resume.md">Plain-text resume</a> · <a href="llms.txt">For AI agents</a></span>
             <span>Psst — try <kbd>↑</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><kbd>←</kbd><kbd>→</kbd><kbd>B</kbd><kbd>A</kbd></span>
         </div>
     </footer>
@@ -771,5 +851,9 @@
 
     <div class="toast" role="status" aria-live="polite"></div>
     <script src="js/site.js"></script>
+    <script src="js/eggs.js"></script>
+    <script src="js/dog.js"></script>
+    <script src="js/pool.js"></script>
+    <script src="js/live.js"></script>
 </body>
 </html>
