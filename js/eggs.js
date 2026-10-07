@@ -18,7 +18,6 @@
   /* ==========================================================================
      Achievements — every egg on the page reports here through RW.egg(id)
      ========================================================================== */
-  var liveOn = !!(document.querySelector('meta[name="rw-live"]') || {}).content;
   // Each locked achievement shows its title and a hint (what to do, and where); "Need a nudge?" gives
   // the exact steps. Phones get their own steps wherever the desktop way needs a keyboard or DevTools.
   var touch = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -56,10 +55,19 @@
     { id: 'colophon', icon: '📖', title: 'Read the Manual', desc: 'Found out how this site works.',
       hint: 'Find the page that explains how this site was built.', nudge: 'Open "How this site works" in the footer — or type colophon in the terminal.' }
   ];
-  if (liveOn) ACH.push({ id: 'live', icon: '🛰️', title: 'Not Alone', desc: 'Saw another visitor\'s cursor.',
-    hint: 'See someone else\'s cursor move across the page.', nudge: 'Open the site in a second window (or send it to a friend), put them side by side and move the mouse in one.' });
-  if (liveOn) ACH.push({ id: 'guestbook', icon: '✍️', title: 'Signed the Guestbook', desc: 'Left a note on the visitor map.',
-    hint: 'Leave a note on the visitor map.', nudge: 'Scroll to the Visitors section and sign the guestbook.' });
+  // The live ones only join the list once the live server has actually answered (js/live.js fires rw:live),
+  // so nobody gets stuck at "15 of 17" on a day the server is down.
+  var LIVE_ACH = [
+    { id: 'live', icon: '🛰️', title: 'Not Alone', desc: 'Was on the site at the same time as someone else.',
+      hint: 'Be on this site at the same moment as another visitor.', nudge: 'Open the site on two devices at once (say, your phone and a laptop), or send the link to a friend and visit together.' },
+    { id: 'guestbook', icon: '✍️', title: 'Signed the Guestbook', desc: 'Left a note on the visitor map.',
+      hint: 'Leave a note on the visitor map.', nudge: 'Scroll to the Visitors section and sign the guestbook.' }
+  ];
+  document.addEventListener('rw:live', function () {
+    if (ACH.some(function (a) { return a.id === 'live'; })) return;
+    ACH.push.apply(ACH, LIVE_ACH);
+    paintCount();
+  });
   var KEY = 'rw-eggs', got = store(KEY) || {};
   function count() { return ACH.filter(function (a) { return got[a.id]; }).length; }
 
