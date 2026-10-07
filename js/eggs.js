@@ -41,7 +41,7 @@
     { id: 'mile', icon: '🏃', title: 'Ran the Mile', desc: 'Scrolled the whole page, top to bottom.',
       hint: 'Scroll from the very top of the page all the way to the bottom.', nudge: 'Watch the little runner on the progress bar at the top — get them to the finish line.' },
     { id: 'credits', icon: '🎬', title: 'Stayed for the Credits', desc: 'Watched the end credits all the way through.',
-      hint: 'Movie people stay until the very end. Keep scrolling past the bottom of the page.', nudge: 'Or type credits in the terminal — and watch to the end without skipping.' },
+      hint: 'Movie people stay until the very end. At the bottom of the page, keep scrolling until the film reel fills.', nudge: 'Or type credits in the terminal — and watch to the end without skipping.' },
     { id: 'vim', icon: '⌨️', title: 'Escaped Vim', desc: 'Got out of vim. Put it on your resume.',
       hint: 'Type vim in the terminal. Getting back out is the hard part.', nudge: 'Inside vim, press Esc' + (touch ? ' (on a phone, type esc)' : '') + ', then type :wq and press Enter.' },
     { id: 'rmrf', icon: '💥', title: 'Nuked It', desc: 'Ran rm -rf / and lived.',
@@ -704,17 +704,32 @@
   }
   C.credits = function () { print('Roll credits… 🎬 (Esc skips)', 'ok'); rollCredits(); };
   (function () {
-    var pushed = 0, rolled = false, touchY = null;
-    function atBottom() { return innerHeight + scrollY >= document.documentElement.scrollHeight - 2; }
+    // Keep scrolling past the bottom and a cue fills up like a film reel; full reel = credits.
+    // The cue shows how close you are, drains slowly instead of resetting, and can just be tapped.
+    var NEED = 700, pushed = 0, cooldown = 0, touchY = null, drain = 0;
+    var cue = document.createElement('button');
+    cue.type = 'button'; cue.className = 'credits-cue';
+    cue.innerHTML = '<span class="cc-text">🎬 Keep scrolling for the credits</span><span class="cc-bar"><i></i></span>';
+    cue.setAttribute('aria-label', 'Roll the end credits');
+    var foot = $('.footer'); (foot || document.body).appendChild(cue); // its own row at the very end of the page, never over anything
+    var fill = cue.querySelector('i');
+    function atBottom() { return innerHeight + scrollY >= document.documentElement.scrollHeight - 12; }
+    function paint() { fill.style.transform = 'scaleX(' + Math.min(1, pushed / NEED).toFixed(3) + ')'; }
+    function roll() { pushed = 0; paint(); cooldown = Date.now() + 1500; rollCredits(); }
     function push(d) {
-      if (rolled || crawlOpen) return;
-      if (!atBottom()) { pushed = 0; return; }
-      pushed += d;
-      if (pushed > 1400) { rolled = true; rollCredits(); }
+      if (crawlOpen || Date.now() < cooldown || !atBottom()) return;
+      pushed += d; paint();
+      if (pushed >= NEED) return roll();
+      clearInterval(drain); // let go and the reel slowly rewinds
+      drain = setTimeout(function () { drain = setInterval(function () { pushed = Math.max(0, pushed - 30); paint(); if (!pushed) clearInterval(drain); }, 40); }, 900);
     }
-    window.addEventListener('wheel', function (e) { if (e.deltaY > 0) push(e.deltaY); else pushed = 0; }, { passive: true });
+    function onScroll() { cue.classList.toggle('show', atBottom()); } // lights up once you're there
+    cue.addEventListener('click', roll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('wheel', function (e) { if (e.deltaY > 0) push(Math.min(e.deltaY, 120)); }, { passive: true });
+    window.addEventListener('keydown', function (e) { if ((e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ' || e.key === 'End') && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) push(120); });
     window.addEventListener('touchstart', function (e) { touchY = e.touches[0].clientY; }, { passive: true });
-    window.addEventListener('touchmove', function (e) { if (touchY !== null) { push((touchY - e.touches[0].clientY) * 2); touchY = e.touches[0].clientY; } }, { passive: true });
+    window.addEventListener('touchmove', function (e) { if (touchY !== null) { var d = touchY - e.touches[0].clientY; if (d > 0) push(d * 2.5); touchY = e.touches[0].clientY; } }, { passive: true });
   })();
 
   /* ==========================================================================
@@ -722,7 +737,8 @@
      ========================================================================== */
   (function () {
     // The page is one mile long. A pill rides the progress bar with how far you've "run",
-    // cheers at each quarter, and turns into your finish time at the bottom.
+    // cheers at each quarter, and turns into your finish time at the bottom. After a short
+    // victory lap it packs itself away for the rest of the visit (the trophy case keeps the record).
     var chip = document.createElement('button');
     chip.type = 'button'; chip.className = 'mile-chip';
     chip.innerHTML = '<i class="fas fa-running" aria-hidden="true"></i><span class="mile-d">0.00 mi</span>';
@@ -732,7 +748,7 @@
     ticks.innerHTML = '<i style="left:25%"></i><i style="left:50%"></i><i style="left:75%"></i>';
     document.body.appendChild(ticks); document.body.appendChild(chip);
     var dEl = chip.querySelector('.mile-d'), nav = $('.nav');
-    var started = 0, finished = false, idle = 0, fade = 0, best = 0, cheering = 0, lastQ = 0;
+    var started = 0, finished = false, packed = false, idle = 0, fade = 0, best = 0, cheering = 0, lastQ = 0;
     var CHEERS = { 1: '¼ mile in 👟', 2: 'Halfway 💪', 3: '¾ — almost there' };
 
     function onScroll() {
@@ -741,7 +757,7 @@
       var w = chip.offsetWidth || 90, x = Math.max(8, Math.min(innerWidth - w - 8, p * innerWidth - w / 2));
       var top = nav && !nav.classList.contains('hidden') ? 82 : 10; // stay clear of the nav when it's showing
       chip.style.transform = 'translate(' + Math.round(x) + 'px,' + top + 'px)';
-      var show = scrollY > 240 || finished;
+      var show = !packed && (scrollY > 240 || finished);
       chip.classList.toggle('show', show); ticks.classList.toggle('show', show);
       if (!finished && !cheering) dEl.textContent = p.toFixed(2) + ' mi';
       if (!started && scrollY > 0) started = performance.now();
@@ -770,6 +786,10 @@
       var r = chip.getBoundingClientRect(); RW.burst(r.left + r.width / 2, r.bottom, 50);
       RW.toast('🏃 You ran 1 mile of robwiscount.org in ' + pace + '. ' + quip + (streak > 1 ? ' Day ' + streak + ' of your streak 🔥' : ''));
       unlock('mile');
+      setTimeout(function () { // victory lap's over: tuck it away so it isn't on screen all visit
+        chip.classList.add('packed');
+        setTimeout(function () { packed = true; onScroll(); }, 600);
+      }, 6500);
     }
     chip.addEventListener('click', function () {
       RW.toast(finished ? '🏁 Mile logged. Rob runs one every day — the app that tracks it is up in Mile A Day.' : '🏃 This page is exactly one mile long. Scroll to the bottom to log your mile, Mile A Day style.');
