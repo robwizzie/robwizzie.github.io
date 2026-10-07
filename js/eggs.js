@@ -551,11 +551,6 @@
       var c = document.createElement('img');
       c.className = 'fx-cameo'; c.src = src; c.alt = '';
       document.body.appendChild(c); fx.cameo = c;
-      // CC BY photos need a credit; it rides along for screen readers here, and the full list is on how-it-works.html#credits.
-      fetch('assets/themes/credits.json').then(function (r) { return r.ok ? r.json() : {}; }).then(function (all) {
-        var k = all[t.cameo];
-        if (k && c.isConnected) c.alt = 'Photo: ' + k.author + ' · ' + k.license + ' (Wikimedia Commons)';
-      }).catch(function () {});
     });
   }
 

@@ -1,6 +1,14 @@
-# Theme art sources
+# Theme photos
 
-Rob's own photos that `tests/theme_art.py` cuts out instead of searching Wikimedia Commons.
+Rob's own photos for the terminal themes' cameos. Name each one for its theme (.jpg, .jpeg, .png, .heic or .webp):
 
-- `phanatic*` (any image named starting with "phanatic": .jpg, .jpeg, .png, .heic or .webp) becomes the
-  Phillies theme cameo, `assets/themes/phanatic.png`.
+| File | Theme |
+| --- | --- |
+| `lebron-photo` | LeBron (also fills the portrait in LeBron mode) |
+| `keanu` | Matrix |
+| `swoop` | Eagles |
+| `phanatic` | Phillies |
+| `gritty` | Flyers |
+| `franklin` | Sixers |
+
+`python tests/theme_cutout.py` cuts them out into `assets/themes/<name>.png`. See the top of that file.
