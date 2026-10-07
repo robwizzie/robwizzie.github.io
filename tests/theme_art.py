@@ -23,20 +23,27 @@ OUT = os.path.join(ROOT, 'assets', 'themes')
 API = 'https://commons.wikimedia.org/w/api.php'
 UA = {'User-Agent': 'robwiscount.org theme art (https://robwiscount.org)'}
 
-# Where to look, best first. Categories are tried in order, then a file search.
+# Where to look, best first. "files" = picked by eye from a --review run (Commons titles); "crop" = the part
+# of that cutout to keep, as fractions (left, top, right, bottom) of its bounding box, to drop a bystander.
+# Without "files", categories are tried in order, then a file search.
 TARGETS = {
     'lebron-photo': {'files': ['File:LeBron James, Olympic Games 2024.jpg'],
                      'cats': ['LeBron James in 2026', 'LeBron James in 2025', 'LeBron James in 2024', 'LeBron James in 2023'], 'search': 'LeBron James Lakers',
                      'must': r'lebron', 'person': True},
-    'keanu':        {'cats': ['Keanu Reeves in 2023', 'Keanu Reeves in 2019', 'Keanu Reeves in 2017', 'Keanu Reeves in 2014', 'Keanu Reeves'], 'search': 'Keanu Reeves',
+    'keanu':        {'files': ['File:Keanu Reeves (15107060898).jpg'],
+                     'cats': ['Keanu Reeves in 2023', 'Keanu Reeves in 2019', 'Keanu Reeves in 2017', 'Keanu Reeves in 2014', 'Keanu Reeves'], 'search': 'Keanu Reeves',
                      'must': r'keanu', 'avoid': r'mural|graffiti|paint|statue|wax|poster|drawing|art\b|cosplay', 'person': True},
-    'swoop':        {'cats': ['Swoop (Philadelphia Eagles)', 'Swoop (mascot)'], 'search': 'Swoop Eagles mascot',
+    'swoop':        {'files': ['File:Philadelphia Eagles Super Bowl LII Victory Parade (40173332621).jpg'], 'crop': (0.1, 0, 1, 1),
+                     'cats': ['Swoop (Philadelphia Eagles)', 'Swoop (mascot)'], 'search': 'Swoop Eagles mascot',
                      'must': r'\bswoop\b', 'avoid': r'stadium|field|aerial'},
-    'phanatic':     {'cats': ['Phillie Phanatic'], 'search': 'Phillie Phanatic',
+    'phanatic':     {'files': ['File:DSC 0504 (42929012051).jpg'], 'crop': (0.22, 0, 1, 1),
+                     'cats': ['Phillie Phanatic'], 'search': 'Phillie Phanatic',
                      'must': r'phanatic', 'avoid': r'phoebe|cart|vehicle'},
-    'gritty':       {'cats': ['Gritty (mascot)', 'Gritty (Philadelphia Flyers)'], 'search': 'Gritty Philadelphia Flyers mascot',
+    'gritty':       {'files': ['File:2019-01-24 Gritty Philadelphia Flyers at All Star Game (cropped).jpeg'], 'crop': (0, 0, 0.62, 1),
+                     'cats': ['Gritty (mascot)', 'Gritty (Philadelphia Flyers)'], 'search': 'Gritty Philadelphia Flyers mascot',
                      'must': r'\bgritty\b.*(flyers|mascot)|(flyers|mascot).*\bgritty\b', 'avoid': r'angels|band|pride'},
-    'franklin':     {'cats': ['Franklin the Dog', 'Franklin (mascot)', 'Franklin (Philadelphia 76ers)'], 'search': 'Franklin 76ers mascot',
+    'franklin':     {'files': ['File:Franklin the Dog.jpg'], 'crop': (0.45, 0, 0.84, 1),
+                     'cats': ['Franklin the Dog', 'Franklin (mascot)', 'Franklin (Philadelphia 76ers)'], 'search': 'Franklin 76ers mascot',
                      'must': r'franklin', 'avoid': r'benjamin|statue'},
 }
 # Licenses that allow reuse on a personal site with credit. (Commons doesn't host NC/ND files.)
@@ -186,6 +193,12 @@ def main():
                         d = os.path.join(OUT, '_review', name)
                         os.makedirs(d, exist_ok=True)
                         th = cut.crop(box); th.thumbnail((480, 480)); th.save(os.path.join(d, '%02d.png' % (len(picks) - 1)))
+                if box and not review and t.get('crop'):
+                    cut = cut.crop(box)
+                    w, h = cut.size
+                    l, tp, r, b = t['crop']
+                    cut = main_subject(cut.crop((round(l * w), round(tp * h), round(r * w), round(b * h))))
+                    s, box = score(cut)
                 if box and (best is None or s > best[0]):
                     best = (s, cut.crop(box), c)
             except Exception as e:
