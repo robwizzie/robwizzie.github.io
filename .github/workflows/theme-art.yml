@@ -36,7 +36,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install "rembg[cpu]" pillow requests scipy
+      - run: pip install "rembg[cpu]" pillow requests scipy pillow-heif
       - name: Find, cut out, credit
         env:
           ONLY: ${{ inputs.only }}

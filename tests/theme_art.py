@@ -5,7 +5,7 @@ exists) and writes assets/themes/credits.json, which how-it-works.html lists, be
 photos must credit their photographer.
 
 Runs on GitHub (.github/workflows/theme-art.yml); Wikimedia isn't reachable from every machine.
-    pip install "rembg[cpu]" pillow requests scipy
+    pip install "rembg[cpu]" pillow requests scipy pillow-heif
     python tests/theme_art.py                 # every target
     python tests/theme_art.py keanu gritty    # just these
     python tests/theme_art.py --sheet out.png # also save a contact sheet of what was tried
@@ -36,7 +36,9 @@ TARGETS = {
     'swoop':        {'files': ['File:Philadelphia Eagles Super Bowl LII Victory Parade (40173332621).jpg'], 'crop': (0.1, 0, 1, 1),
                      'cats': ['Swoop (Philadelphia Eagles)', 'Swoop (mascot)'], 'search': 'Swoop Eagles mascot',
                      'must': r'\bswoop\b', 'avoid': r'stadium|field|aerial'},
-    'phanatic':     {'files': ['File:DSC 0504 (42929012051).jpg'], 'crop': (0.22, 0, 1, 1),
+    # Rob's own photo with the Phanatic (tests/theme-src/), so no Commons credit needed.
+    'phanatic':     {'local': 'tests/theme-src/phanatic*', 'credit': 'Rob Wiscount (his own photo)',
+                     'files': ['File:DSC 0504 (42929012051).jpg'], 'crop': (0.22, 0, 1, 1),
                      'cats': ['Phillie Phanatic'], 'search': 'Phillie Phanatic',
                      'must': r'phanatic', 'avoid': r'phoebe|cart|vehicle'},
     'gritty':       {'files': ['File:2019-01-24 Gritty Philadelphia Flyers at All Star Game (cropped).jpeg'], 'crop': (0, 0, 0.62, 1),
@@ -65,6 +67,12 @@ def files_in(params):
 
 
 def candidates(t):
+    import glob
+    found = sorted(glob.glob(os.path.join(ROOT, t['local']))) if t.get('local') else []
+    found = [f for f in found if f.lower().endswith(('.jpg', '.jpeg', '.png', '.heic', '.webp'))]
+    if found:
+        return [{'title': os.path.basename(found[0]), 'local': found[0], 'page': '', 'license': 'own photo',
+                 'license_url': '', 'author': t.get('credit', ''), 'date': ''}]
     seen, out = set(), []
     if t.get('files'):
         out = files_in({'action': 'query', 'titles': '|'.join(t['files'])})
@@ -182,7 +190,14 @@ def main():
         picks = []
         for c in cands[:tries]:
             try:
-                img = Image.open(io.BytesIO(requests.get(c['thumb'], headers=UA, timeout=60).content)).convert('RGB')
+                if c.get('local'):
+                    from PIL import ImageOps
+                    if c['local'].lower().endswith('.heic'):
+                        import pillow_heif; pillow_heif.register_heif_opener()  # straight off an iPhone
+                    img = ImageOps.exif_transpose(Image.open(c['local'])).convert('RGB')  # phone photos carry their rotation in EXIF
+                    img.thumbnail((1400, 1400))
+                else:
+                    img = Image.open(io.BytesIO(requests.get(c['thumb'], headers=UA, timeout=60).content)).convert('RGB')
                 cut = cutout(img, t.get('person', False))
                 s, box = score(cut)
                 tried.append((name, c['title'], s, cut))
@@ -193,12 +208,14 @@ def main():
                         d = os.path.join(OUT, '_review', name)
                         os.makedirs(d, exist_ok=True)
                         th = cut.crop(box); th.thumbnail((480, 480)); th.save(os.path.join(d, '%02d.png' % (len(picks) - 1)))
-                if box and not review and t.get('crop'):
+                if box and not review and t.get('crop') and not c.get('local'):
                     cut = cut.crop(box)
                     w, h = cut.size
                     l, tp, r, b = t['crop']
                     cut = main_subject(cut.crop((round(l * w), round(tp * h), round(r * w), round(b * h))))
                     s, box = score(cut)
+                if box and (t.get('files') or c.get('local')):
+                    s = max(s, 0.01)  # picked by eye: a tight crop can fill the frame and score 0, but it's still the one
                 if box and (best is None or s > best[0]):
                     best = (s, cut.crop(box), c)
             except Exception as e:
@@ -214,8 +231,11 @@ def main():
         if img.height > MAX_H:
             img = img.resize((round(img.width * MAX_H / img.height), MAX_H), Image.LANCZOS)
         img.save(os.path.join(OUT, name + '.png'), optimize=True)
-        credits[name] = {'title': c['title'].replace('File:', ''), 'author': c['author'], 'license': c['license'],
-                         'license_url': c['license_url'], 'source': c['page'], 'date': c['date']}
+        if c.get('local'):
+            credits.pop(name, None)  # Rob's own photo: nothing to credit
+        else:
+            credits[name] = {'title': c['title'].replace('File:', ''), 'author': c['author'], 'license': c['license'],
+                             'license_url': c['license_url'], 'source': c['page'], 'date': c['date']}
         print(f'{name}: saved ({s:.2f}) from {c["title"]}')
     if not review:
         json.dump(credits, open(credits_path, 'w'), indent=2, ensure_ascii=False)
