@@ -234,8 +234,8 @@
         <div class="wrap">
             <span class="eyebrow">Image credits</span>
             <h2 class="h-display">Borrowed, <span class="blue">with thanks.</span></h2>
-            <p class="lede">The terminal's themes bring in a few guests. Their photos come from Wikimedia Commons under the licenses below, cut out onto transparent backgrounds (that's the only change). Team mascots and names belong to their teams; they're here as a fan's tribute, not an endorsement.</p>
-            <ul class="co-credits" id="co-credits"><li>LeBron head and album art: from my own <a href="https://lebronify.app" target="_blank" rel="noopener">LeBronify</a>.</li></ul>
+            <p class="lede">The terminal's themes bring in a few guests, from my own photos, cut out onto transparent backgrounds by <code>tests/theme_cutout.py</code>. Team mascots and names belong to their teams; they're here as a fan's tribute, not an endorsement.</p>
+            <ul class="co-credits"><li>LeBron head and album art: from my own <a href="https://lebronify.app" target="_blank" rel="noopener">LeBronify</a>.</li></ul>
         </div>
     </section>
 
@@ -249,16 +249,6 @@
     </section>
 </main>
 <script>
-  // Credits for the theme photos (written by tests/theme_art.py), listed as they appear.
-  fetch('assets/themes/credits.json').then(function (r) { return r.ok ? r.json() : {}; }).then(function (c) {
-    var names = { 'lebron-photo': 'LeBron James', keanu: 'Keanu Reeves', swoop: 'Swoop (Philadelphia Eagles)', phanatic: 'The Phillie Phanatic', gritty: 'Gritty (Philadelphia Flyers)', franklin: 'Franklin (Philadelphia 76ers)' };
-    var ul = document.getElementById('co-credits'), esc = function (v) { var d = document.createElement('div'); d.textContent = v || ''; return d.innerHTML; };
-    Object.keys(c).forEach(function (k) {
-      var x = c[k], li = document.createElement('li');
-      li.innerHTML = '<b>' + esc(names[k] || k) + '</b>: photo by ' + esc(x.author) + ', <a href="' + esc(x.license_url || x.source) + '" target="_blank" rel="noopener">' + esc(x.license) + '</a>, via <a href="' + esc(x.source) + '" target="_blank" rel="noopener">Wikimedia Commons</a>.';
-      ul.appendChild(li);
-    });
-  }).catch(function () {});
   // Reading the manual counts as an achievement on the main page.
   try { var g = JSON.parse(localStorage.getItem('rw-eggs')) || {}; if (!g.colophon) { g.colophon = Date.now(); localStorage.setItem('rw-eggs', JSON.stringify(g)); } } catch (e) {}
 </script>
