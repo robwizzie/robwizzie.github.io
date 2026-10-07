@@ -560,7 +560,7 @@
   var commands = {
     help: function () {
       print('Available commands:', 'ok');
-      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  git log     my GitHub squares\n  hire rob    the best command\n  contact     how to reach me\n  achievements  secrets you\'ve found\n  colophon    how this site is built\n  clear       wipe the screen', 'dim');
+      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  git log     my GitHub squares\n  hire rob    the best command\n  contact     how to reach me\n  achievements  secrets you\'ve found\n  hint        stuck on one? step-by-step help\n  colophon    how this site is built\n  clear       wipe the screen', 'dim');
       print('…and a few commands that aren\'t on this list. 👀', 'dim');
     },
     whoami: function () {
