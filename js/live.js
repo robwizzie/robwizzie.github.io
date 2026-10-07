@@ -118,8 +118,13 @@
     pill(n);
   }
 
+  // Tell eggs.js the live server is really up, so the live achievements only count when they can be earned.
+  var announced = false;
+  function liveUp() { if (!announced) { announced = true; document.dispatchEvent(new CustomEvent('rw:live')); } }
+
   function setStats(s) {
     if (!s || typeof s.total !== 'number') return;
+    liveUp();
     stats = s;
     paintStats();
     map.paint();
@@ -254,6 +259,8 @@
     peers = {};
     (list || []).forEach(function (p) { if (p && p.id && p.id !== me.id) peers[p.id] = p; });
     here = Math.max(1, n || 0);
+    // "Not Alone": anyone else on the site counts, so phones (which don't send a cursor) can earn it too.
+    if (here > 1 && !seenOther) { seenOther = true; if (RW.egg) RW.egg('live'); }
     for (var id in curs) if (!peers[id]) dropCursor(id);
     paintNow();
     map.paint();
@@ -281,7 +288,7 @@
     clearTimeout(retryTimer); retryTimer = 0;
     try { ws = new WebSocket(WS_URL); } catch (e) { ws = null; return reconnect(); }
     ws.onopen = function () {
-      wsOpen = true; retry = 0;
+      wsOpen = true; retry = 0; liveUp();
       pingTimer = setInterval(function () { try { ws.send('ping'); } catch (e) {} }, 30000);
     };
     ws.onmessage = function (e) {

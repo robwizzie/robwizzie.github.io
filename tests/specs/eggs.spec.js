@@ -35,3 +35,25 @@ test('end credits roll and close', async ({ page }) => {
   await page.keyboard.press('Escape');
   await expect(page.locator('.credits')).toHaveCount(0);
 });
+
+test('the Konami code works by swiping on a phone', async ({ page }, info) => {
+  test.skip(info.project.name !== 'phone', 'touch only');
+  await page.goto('/');
+  await page.evaluate(() => {
+    const at = (x, y) => new Touch({ identifier: 1, target: document.body, clientX: x, clientY: y });
+    const fire = (type, x, y) => window.dispatchEvent(new TouchEvent(type, { touches: type === 'touchend' ? [] : [at(x, y)], changedTouches: [at(x, y)], bubbles: true }));
+    const moves = { U: [0, -120], D: [0, 120], L: [-120, 0], R: [120, 0], T: [0, 0] };
+    for (const m of 'UUDDLRLRTT') { fire('touchstart', 180, 400); fire('touchend', 180 + moves[m][0], 400 + moves[m][1]); }
+  });
+  await page.locator('.ach-foot').click();
+  await expect(page.locator('.ach-grid li.on', { hasText: 'Cheat Code' })).toHaveCount(1);
+});
+
+test('whistling for the dog counts even when the 3D dog can\'t load', async ({ page }) => {
+  await page.route('**/vendor/three/**', (r) => r.abort());
+  await page.goto('/');
+  await term(page, 'dog');
+  await expect(page.locator('.toast')).toContainText('napping');
+  await page.locator('.ach-foot').click();
+  await expect(page.locator('.ach-grid li.on', { hasText: 'Who Let the Dog Out' })).toHaveCount(1);
+});

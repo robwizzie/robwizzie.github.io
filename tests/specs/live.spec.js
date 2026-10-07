@@ -29,3 +29,19 @@ test('last film on the movie card, and the movies command', async ({ page }) => 
   await term(page, 'movies');
   expect(await termOut(page)).toContain('Weapons (2025)');
 });
+
+test('"Not Alone" unlocks from just sharing the site, so phones can earn it', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('.ach-foot').click();
+  await expect(page.locator('.ach-grid li.on', { hasText: 'Not Alone' })).toHaveCount(1);
+});
+
+test('live achievements only count when the live server is reachable', async ({ page }) => {
+  await page.route('https://rw-live.robertwiscount.workers.dev/**', (r) => r.abort()); // later routes win
+  await page.routeWebSocket(/rw-live/, (ws) => ws.close());
+  await page.goto('/');
+  await page.waitForTimeout(2000);
+  await expect(page.locator('.ach-foot')).toContainText('/15');
+  await page.locator('.ach-foot').click();
+  await expect(page.locator('.ach-grid li', { hasText: 'Signed the Guestbook' })).toHaveCount(0);
+});

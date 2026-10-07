@@ -1,0 +1,65 @@
+name: Project screenshots
+
+# Refreshes the framed project screenshots in assets/work/ (juice.jpg, pick5.jpg, ...) from the live sites,
+# using tests/screenshots.js and the project list in tests/screenshots.json.
+#   - Run it by hand (Actions → Project screenshots → Run workflow), optionally with "only" = juice,pick5.
+#     It commits the fresh images to the branch you ran it on.
+#   - Once a month it refreshes them on master.
+# No loops: pushes made with the default GITHUB_TOKEN never trigger new workflow runs, so the bot's
+# "Refresh project screenshots" commit can't re-run this workflow (or anything else).
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Comma-separated project ids from tests/screenshots.json (blank = every enabled project)'
+        required: false
+        default: ''
+  schedule:
+    - cron: '17 9 1 * *' # 09:17 UTC on the 1st of each month
+
+concurrency:
+  group: screenshots-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      BRANCH: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+      - run: npm ci
+        working-directory: tests
+      - run: npx playwright install --with-deps chromium
+        working-directory: tests
+
+      - name: Capture
+        working-directory: tests
+        env:
+          ONLY: ${{ inputs.only }}
+        run: |
+          if [ -n "$ONLY" ]; then node screenshots.js --only "$ONLY"; else node screenshots.js; fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: project-screenshots
+          path: assets/work/*.jpg
+          retention-days: 14
+
+      - name: Commit changed images
+        run: |
+          if [ -z "$(git status --porcelain -- assets/work)" ]; then echo "Screenshots already up to date"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/work
+          git commit -m "Refresh project screenshots"
+          git pull --rebase origin "$BRANCH"
+          git push origin "HEAD:refs/heads/$BRANCH"

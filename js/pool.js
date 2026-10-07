@@ -10,6 +10,9 @@
   var eightCard = cards.filter(function (c) { return /🎱/.test(c.textContent); })[0];
 
   // Ball 1 rides the Mile A Day card, Eagles get the green 6, the 🎱 card gets the 8.
+  // Felt and trim follow the site theme (RW.tc is the current theme color; see js/site.js).
+  function shade(k, a) { var c = (RW.tc && RW.tc.blue) || [91, 143, 249]; return 'rgba(' + c.map(function (v) { return Math.round(v * k); }).join(',') + ',' + (a == null ? 1 : a) + ')'; }
+  function hi(a) { return 'rgba(' + ((RW.tc && RW.tc.hi) || [141, 178, 255]).join(',') + ',' + a + ')'; }
   var COLORS = { 1: '#f5c518', 2: '#1f4fd8', 3: '#d8262e', 4: '#5b2a86', 5: '#f07b1c', 6: '#11804a', 7: '#7a1a24', 8: '#111111' };
   var RACK = [1, 9, 2, 10, 8, 3, 11, 7, 14, 4, 5, 13, 15, 6, 12]; // apex → back row, 8 dead centre
   var CARD_BALLS = [1, 6, 4, 8, 3, 5];
@@ -142,11 +145,11 @@
     var rg = g.createLinearGradient(0, t.ty, 0, t.ty + t.th);
     rg.addColorStop(0, '#16203a'); rg.addColorStop(1, '#0a0f1d');
     g.fillStyle = rg; g.fill();
-    g.strokeStyle = 'rgba(141,178,255,.35)'; g.lineWidth = 1; g.stroke();
+    g.strokeStyle = hi(0.35); g.lineWidth = 1; g.stroke();
     // felt: deep RW blue, lit from above, vignette at the cushions
     var cx = t.fx + t.fw / 2, cy = t.fy + t.fh / 2;
     var fg = g.createRadialGradient(cx, cy, 0, cx, cy, Math.max(t.fw, t.fh) * 0.62);
-    fg.addColorStop(0, '#1b4cb4'); fg.addColorStop(0.55, '#14398a'); fg.addColorStop(1, '#091d4a');
+    fg.addColorStop(0, shade(0.62)); fg.addColorStop(0.55, shade(0.46)); fg.addColorStop(1, shade(0.24));
     g.fillStyle = fg; g.fillRect(t.fx, t.fy, t.fw, t.fh);
     // felt grain
     var nz = document.createElement('canvas'); nz.width = nz.height = 96;
@@ -168,7 +171,7 @@
     g.fillStyle = 'rgba(255,255,255,.22)'; g.beginPath(); g.arc(fsx, fsy, 2, 0, 7); g.fill();
     g.beginPath(); g.arc(hx, hy, 2, 0, 7); g.fill();
     // diamonds on the rails
-    g.fillStyle = 'rgba(141,178,255,.55)';
+    g.fillStyle = hi(0.55);
     for (var k = 1; k < 8; k++) {
       if (k === 4) continue;
       var a = t.fx + t.fw * k / 8, b = t.fy + t.fh * k / 8;
@@ -180,7 +183,7 @@
       var pg = g.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.pr);
       pg.addColorStop(0, '#000'); pg.addColorStop(0.75, '#020409'); pg.addColorStop(1, '#0c1222');
       g.fillStyle = pg; g.beginPath(); g.arc(p.x, p.y, p.pr, 0, 7); g.fill();
-      g.strokeStyle = 'rgba(141,178,255,.25)'; g.lineWidth = 1; g.stroke();
+      g.strokeStyle = hi(0.25); g.lineWidth = 1; g.stroke();
     });
     return c;
   }
@@ -281,7 +284,7 @@
     g.shadowColor = 'rgba(0,0,0,.5)'; g.shadowBlur = 10; g.shadowOffsetX = 4; g.shadowOffsetY = 6;
     var lg = g.createLinearGradient(x0, y0, x1, y1);
     lg.addColorStop(0, '#e9edf7'); lg.addColorStop(0.03, '#e9edf7'); lg.addColorStop(0.031, '#d9c7a3');
-    lg.addColorStop(0.62, '#c8a46b'); lg.addColorStop(0.63, '#0d111b'); lg.addColorStop(0.8, '#5b8ff9'); lg.addColorStop(0.81, '#0d111b'); lg.addColorStop(1, '#06080d');
+    lg.addColorStop(0.62, '#c8a46b'); lg.addColorStop(0.63, '#0d111b'); lg.addColorStop(0.8, shade(1)); lg.addColorStop(0.81, '#0d111b'); lg.addColorStop(1, '#06080d');
     g.fillStyle = lg;
     g.beginPath();
     g.moveTo(x0 + px * w0 / 2, y0 + py * w0 / 2); g.lineTo(x1 + px * w1 / 2, y1 + py * w1 / 2);
