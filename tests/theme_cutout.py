@@ -6,8 +6,8 @@ and run
     pip install "rembg[cpu]" pillow scipy pillow-heif
     python tests/theme_cutout.py              # every photo in tests/theme-src/
     python tests/theme_cutout.py gritty       # just these
-Each becomes assets/themes/<name>.png (js/eggs.js shows it as that theme's cameo; LeBron's also fills the
-portrait). A photo that already has a transparent background is just trimmed and resized.
+Each becomes assets/themes/<name>.png (js/eggs.js shows it as that theme's cameo); LeBron's also makes
+assets/themes/lebron-portrait.png for the hexagon portrait in LeBron mode. A photo that already has a transparent background is just trimmed and resized.
 Optional crop before cutting, as fractions (left, top, right, bottom), e.g. to drop a bystander:
     python tests/theme_cutout.py phanatic --crop 0.2,0,1,1
 """
@@ -74,6 +74,11 @@ def make(name, path, crop=None):
         cut = cut.resize((round(cut.width * MAX_H / cut.height), MAX_H), Image.LANCZOS)
     cut.save(os.path.join(OUT, name + '.png'), optimize=True)
     print(f'{name}: {os.path.basename(path)} -> assets/themes/{name}.png {cut.size}')
+    if name == 'lebron-photo':  # LeBron mode's portrait: a centered, nearly square head-and-shoulders crop, like Rob's
+        w = min(cut.width, round(cut.height * 0.95))
+        x = (cut.width - w) // 2
+        cut.crop((x, 0, x + w, cut.height)).save(os.path.join(OUT, 'lebron-portrait.png'), optimize=True)
+        print(f'  + assets/themes/lebron-portrait.png ({w}x{cut.height})')
 
 
 def main():
