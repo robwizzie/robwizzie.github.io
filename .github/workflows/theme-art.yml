@@ -2,19 +2,24 @@ name: Theme art
 
 # Finds freely licensed photos on Wikimedia Commons (Keanu, the Philly mascots, a recent LeBron),
 # cuts them out onto transparent backgrounds and commits them to assets/themes/ with credits.json.
-# Runs when tests/theme_art.py lands on master, or by hand (Actions -> Theme art -> Run workflow;
-# "only" = e.g. "gritty keanu" to redo just those). Never runs on pull requests. Pushes made with
-# GITHUB_TOKEN don't trigger other workflows, so it can't loop.
+# Run by hand on a branch (Actions -> Theme art -> Run workflow), never automatically: picks get
+# checked by eye before they reach master.
+#   review = true  -> saves every candidate cutout to assets/themes/_review/<name>/ (with index.json of
+#                     Commons titles) on that branch. Look, then pin the good ones in TARGETS[...]['files'].
+#   review = false -> makes the final assets/themes/<name>.png + credits.json (pinned files first).
+# "only" = e.g. "gritty keanu" to do just those. Pushes made with GITHUB_TOKEN don't trigger other
+# workflows, so it can't loop.
 on:
-  push:
-    branches: [master]
-    paths: ['tests/theme_art.py', '.github/workflows/theme-art.yml']
   workflow_dispatch:
     inputs:
       only:
         description: 'Space-separated names (lebron-photo keanu swoop phanatic gritty franklin); blank = all'
         required: false
         default: ''
+      review:
+        description: 'Save every candidate to assets/themes/_review/ instead of picking'
+        type: boolean
+        default: false
 
 concurrency:
   group: theme-art
@@ -31,11 +36,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install "rembg[cpu]" pillow requests
+      - run: pip install "rembg[cpu]" pillow requests scipy
       - name: Find, cut out, credit
         env:
           ONLY: ${{ inputs.only }}
-        run: python tests/theme_art.py $ONLY --sheet contact-sheet.png
+          REVIEW: ${{ inputs.review && '--review' || '' }}
+        run: python tests/theme_art.py $ONLY $REVIEW --sheet contact-sheet.png
       - uses: actions/upload-artifact@v4
         if: always()
         with:
