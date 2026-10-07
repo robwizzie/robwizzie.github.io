@@ -55,3 +55,17 @@ test('missing pages get the 404 page, a dog, and a good guess', async ({ page })
   await page.click('#lost-home');
   await page.waitForURL('http://localhost:4173/', { timeout: 5000 });
 });
+
+test('the mile pill logs your time at the bottom, then packs itself away', async ({ page }) => {
+  await page.goto('/');
+  const chip = page.locator('.mile-chip');
+  for (let i = 1; i <= 10; i++) {
+    await page.evaluate(i => scrollTo(0, (document.documentElement.scrollHeight - innerHeight) * i / 10), i);
+    await page.waitForTimeout(120);
+  }
+  await expect(chip).toHaveClass(/done/);
+  await expect(chip).toContainText('1 mile');
+  await expect(chip).toHaveClass(/packed/, { timeout: 9000 });
+  await page.evaluate(() => scrollTo(0, 3000)); // scrolling again doesn't bring it back
+  await expect(chip).not.toHaveClass(/show/);
+});

@@ -57,3 +57,37 @@ test('whistling for the dog counts even when the 3D dog can\'t load', async ({ p
   await page.locator('.ach-foot').click();
   await expect(page.locator('.ach-grid li.on', { hasText: 'Who Let the Dog Out' })).toHaveCount(1);
 });
+
+const toBottom = (page) => expect.poll(() => page.evaluate(() => {
+  document.documentElement.style.scrollBehavior = 'auto'; // the page grows as sections load, so keep going until it's really the end
+  scrollTo(0, document.documentElement.scrollHeight);
+  return innerHeight + scrollY >= document.documentElement.scrollHeight - 12;
+}), { timeout: 15000 }).toBe(true);
+
+test('scrolling past the bottom fills the credits reel and rolls them', async ({ page }) => {
+  await page.goto('/');
+  await toBottom(page);
+  const cue = page.locator('.credits-cue');
+  await expect(cue).toHaveClass(/show/);
+  await expect(cue).toContainText('Keep scrolling for the credits');
+  if (test.info().project.name === 'phone') { // phones swipe: drive real touch events
+    const cdp = await page.context().newCDPSession(page);
+    const touch = (type, y) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x: 200, y }] });
+    for (let i = 0; i < 4; i++) {
+      await touch('touchStart', 600);
+      for (let y = 560; y >= 200; y -= 40) await touch('touchMove', y);
+      await touch('touchEnd');
+    }
+  } else {
+    await page.mouse.move(600, 400);
+    for (let i = 0; i < 8; i++) await page.mouse.wheel(0, 120);
+  }
+  await expect(page.locator('.credits')).toBeVisible();
+});
+
+test('the credits cue can just be tapped', async ({ page }) => {
+  await page.goto('/');
+  await toBottom(page);
+  await page.locator('.credits-cue').click();
+  await expect(page.locator('.credits')).toBeVisible();
+});
