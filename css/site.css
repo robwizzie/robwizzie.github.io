@@ -1180,15 +1180,21 @@ body.has-ribbon .dog-home { bottom: 96px; }
 }
 
 /* Cameo: the mascot / Keanu / LeBron peeks up from the bottom-left corner */
-.fx-cameo { position: fixed; left: 2vw; bottom: 28px; z-index: 59; width: clamp(120px, 15vw, 220px); height: auto; pointer-events: none;
-  filter: drop-shadow(0 18px 30px rgba(0,0,0,.6)); animation: cameoUp 1s var(--ease) .4s both, cameoBob 3.2s ease-in-out 1.4s infinite alternate; transform-origin: 50% 100%; }
+.fx-cameo { position: fixed; left: 2vw; bottom: 28px; z-index: 59; height: clamp(150px, 30vh, 260px); width: auto; max-width: min(24vw, 320px); object-fit: contain; object-position: 0 100%;
+  pointer-events: none; filter: drop-shadow(0 18px 30px rgba(0,0,0,.6)); transform-origin: 50% 100%;
+  animation: cameoUp 1s var(--ease) .4s both, cameoBob 3.2s ease-in-out 1.4s infinite alternate; transition: translate .8s var(--ease); }
 @keyframes cameoUp { from { transform: translateY(110%) rotate(-8deg); } }
 @keyframes cameoBob { from { transform: rotate(-3deg); } to { transform: rotate(3deg) translateY(-6px); } }
-@media (max-width: 640px) { .fx-cameo { width: 96px; bottom: 80px; opacity: .9; } }
+/* After saying hi it ducks behind the ribbon, just its head peeking out; tap it to bring it back up */
+.fx-cameo.tucked { translate: 0 62%; pointer-events: auto; cursor: pointer; }
+@media (max-width: 640px) { .fx-cameo { height: 130px; max-width: 42vw; bottom: 80px; } .fx-cameo.tucked { translate: 0 74%; } }
+@media (prefers-reduced-motion: reduce) { .fx-cameo { animation: none; transition: none; } }
 
 /* Swapped-in portrait (LeBron mode): a head or cutout sits nicely in the hexagon */
-.portrait-hex img.swapped-in { width: auto; height: 80%; max-width: 74%; object-fit: contain; object-position: 50% 100%; bottom: 3%;
-  animation: portraitIn .7s var(--ease) both; filter: drop-shadow(0 10px 24px rgba(0,0,0,.55)); }
+.portrait-hex img.swapped-in { animation: portraitIn .7s var(--ease) both; }
+/* The LeBronify head (no shoulders) sits higher and smaller; a head-and-shoulders photo fills it like mine does */
+.portrait-hex img.swapped-in[src$=".webp"] { width: auto; height: 80%; max-width: 74%; object-fit: contain; object-position: 50% 100%; bottom: 3%;
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,.55)); }
 /* ...and when the theme ends, my photo bounces back */
 .portrait-hex img.back-in { animation: portraitIn .7s var(--ease) both; }
 @keyframes portraitIn { 0% { opacity: 0; transform: translateX(-50%) translateY(18%) scale(.7) rotate(-6deg); } 60% { opacity: 1; transform: translateX(-50%) translateY(-3%) scale(1.04) rotate(2deg); } 100% { transform: translateX(-50%); } }
@@ -1200,4 +1206,3 @@ body.has-ribbon .dog-home { bottom: 96px; }
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 ::view-transition-old(root) { z-index: 1; } ::view-transition-new(root) { z-index: 2; }
 html:not([data-theme]) ::view-transition-old(root) { z-index: 2; } html:not([data-theme]) ::view-transition-new(root) { z-index: 1; }
-@media (prefers-reduced-motion: reduce) { .fx-cameo { animation: none; } }

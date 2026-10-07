@@ -384,7 +384,7 @@
         copy: 'Forward at heart, point guard when needed. From <strong>Akron, Ohio</strong>, straight out of high school and the No. 1 pick in 2003. Rings in <strong>Miami, Cleveland and Los Angeles</strong>, the I PROMISE School back home, and somehow also the star of <strong>a parody Spotify Rob built</strong>. You are my sunshine. 🌞',
         badges: [['🏆', '4× NBA champion', 'Miami · Cleveland · L.A.'], ['👑', 'All-time leading scorer', '40,000+ points']]
       },
-      portrait: ['assets/themes/lebron-photo.png', 'assets/themes/lebron-head.webp'] },
+      portrait: ['assets/themes/lebron-portrait.png', 'assets/themes/lebron-head.webp'] },
     eagles: { squares: 'midnight green.', blue: '#1fb5a8', hi: '#7fe0d6', line: 'Fly, Eagles, fly 🦅', ribbon: ['🦅 E-A-G-L-E-S · EAGLES!', 'FLY EAGLES FLY', 'GO BIRDS', 'BIRD GANG'], ribbonBg: '#004c54', ribbonFg: '#d7dcdf',
       float: ['🦅', '🏈', '💚'], count: 10, flyby: '🦅', cameo: 'swoop', emoji: '🦅', label: 'Eagles' },
     phillies: { squares: 'Phillies red.', blue: '#ff3347', hi: '#ff8a96', line: 'Ring the bell 🔔', ribbon: ['🔔 RING THE BELL', 'RED OCTOBER', 'DANCING ON MY OWN', 'LET\'S GO PHILLIES'], ribbonBg: '#e81828', ribbonFg: '#ffffff',
@@ -551,6 +551,10 @@
       var c = document.createElement('img');
       c.className = 'fx-cameo'; c.src = src; c.alt = '';
       document.body.appendChild(c); fx.cameo = c;
+      // Say hi, then duck down so only the head peeks over the ribbon (it would cover the page otherwise). Tap to pop back up.
+      var tuck = function () { clearTimeout(c.t); c.t = setTimeout(function () { c.classList.add('tucked'); }, 5500); };
+      c.addEventListener('click', function () { c.classList.remove('tucked'); tuck(); });
+      tuck();
     });
   }
 
