@@ -16,6 +16,7 @@ const LETTERBOXD_USER = 'robwizzie';
 const LETTERBOXD_TTL = 1800;  // seconds
 const NOTE_MAX = 120, NAME_MAX = 24, NOTES_SHOWN = 40, PENDING_CAP = 300, NOTES_PER_HOUR = 30;
 const SOURCE_DAYS = 120;      // how long visit sources are kept
+const DEVICES = ['phone', 'tablet', 'desktop'];
 
 function allowed(origin) { return !!origin && (ORIGINS.includes(origin) || DEV_ORIGIN.test(origin)); }
 
@@ -360,7 +361,7 @@ export class Live {
   peers(except) {
     return this.sockets(except).slice(0, 50).map((ws) => {
       const a = ws.deserializeAttachment() || {};
-      return { id: a.id, city: a.city, region: a.region, country: a.country, lat: a.lat, lon: a.lon };
+      return { id: a.id, city: a.city, region: a.region, country: a.country, lat: a.lat, lon: a.lon, d: a.d || '' };
     });
   }
 
@@ -410,6 +411,10 @@ export class Live {
       this.broadcast({ t: 'c', id: a.id, x: cx, y: cy }, ws);
     } else if (m.t === 'h') {
       this.broadcast({ t: 'h', id: a.id }, ws); // cursor left the window
+    } else if (m.t === 'd' && !a.d && DEVICES.includes(m.d)) {
+      a.d = m.d; // device hint, once per socket, so "Here now" can say "on a phone"
+      ws.serializeAttachment(a);
+      this.presence();
     }
   }
 

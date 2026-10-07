@@ -107,12 +107,18 @@
   /* ---------- Typed roles ---------- */
   var typed = $('.typed');
   var roles = ['web apps', 'iOS apps', 'Apple Watch apps', 'video games', 'my own graphics', 'things people use'];
+  var ri = 0, ci = roles[0].length, deleting = true;
+  // Themes (LeBron mode) can swap the words; null puts mine back.
+  var myRoles = roles;
+  var setRoles = function (list) {
+    roles = list || myRoles; ri = 0; ci = 0; deleting = false;
+    if (reduceMotion) typed.textContent = roles[roles.length - 1];
+  };
   if (reduceMotion) {
     typed.textContent = 'things people use';
   } else {
-    var ri = 0, ci = roles[0].length, deleting = true;
     (function step() {
-      var word = roles[ri];
+      var word = roles[ri] || '';
       typed.textContent = word.slice(0, ci);
       var delay = deleting ? 40 : 85;
       if (deleting) {
@@ -120,7 +126,7 @@
         if (ci < 0) { deleting = false; ri = (ri + 1) % roles.length; ci = 0; delay = 250; }
       } else {
         ci++;
-        if (ci > roles[ri].length) { deleting = true; ci = roles[ri].length; delay = 1700; }
+        if (ci > word.length) { deleting = true; ci = word.length; delay = 1700; }
       }
       setTimeout(step, delay);
     })();
@@ -899,7 +905,7 @@
   /* ---------- Hooks for the easter-egg scripts (js/eggs.js, js/dog.js, js/pool.js, js/live.js) ---------- */
   window.RW = {
     $: $, $$: $$, reduceMotion: reduceMotion, finePointer: finePointer,
-    toast: toast, burst: burst, party: party, egg: egg, copy: copy, tc: tc, rgba: rgba,
+    toast: toast, burst: burst, party: party, egg: egg, copy: copy, tc: tc, rgba: rgba, setRoles: setRoles,
     commands: commands, print: print, esc: esc, run: run,
     setTermMode: function (fn) { termMode = fn || null; },
     openFetch: openFetch, playTrack: function (i) { lbfLoad(i, true); }, tracks: TRACKS,

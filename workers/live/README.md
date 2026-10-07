@@ -2,7 +2,7 @@
 
 Tiny Cloudflare Worker + one Durable Object behind the live bits of robwiscount.org (`js/live.js`):
 
-- **`GET /live`** (WebSocket, Hibernation API): presence + other visitors' cursors. Each socket gets a random id and a coarse place (city / region / country from `request.cf`). Clients send `{t:'c', x, y}` (x = 0–1 of viewport width, y = 0–1 of document height, ~15/s max); the DO clamps, rate-limits (30 msg/s, 200 bytes) and relays `{t:'c', id, x, y}` to everyone else. Joins/leaves broadcast `{t:'p', n, peers}`; new sockets get `{t:'hi', id, you, peers}`. Capped at 100 sockets. `ping` → `pong` is answered without waking the object.
+- **`GET /live`** (WebSocket, Hibernation API): presence + other visitors' cursors. Each socket gets a random id and a coarse place (city / region / country from `request.cf`). Clients send `{t:'c', x, y}` (x = 0–1 of viewport width, y = 0–1 of document height, ~15/s max); the DO clamps, rate-limits (30 msg/s, 200 bytes) and relays `{t:'c', id, x, y}` to everyone else. Clients may send `{t:'d', d:'phone'|'tablet'|'desktop'}` once on connect; it's kept per socket and each peer carries it as `d` (empty if unknown). Joins/leaves broadcast `{t:'p', n, peers}`; new sockets get `{t:'hi', id, you, peers}`. Capped at 100 sockets. `ping` → `pong` is answered without waking the object.
 - **`POST /visit`** `{"id": "<random per-day id>"}`: counts a visit at most once per browser per day, tallied by city (lat/lon rounded to 0.1°). Returns the same body as `/stats` plus `you`.
 - **`GET /stats`**: `{ total, countries, cityCount, cities: [{city, region, country, lat, lon, n}] (top 150), recent: [{city, region, country, t}] (last 25), now }`. Cached 5 s in memory.
 
