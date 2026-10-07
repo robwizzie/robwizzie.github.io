@@ -200,6 +200,7 @@
   function summon(name) {
     if (loading) return;
     var id = pick(name);
+    if (!found) { found = true; RW.egg('dog'); } // whistling counts, even if this browser can't show the 3D dog
     if (active && !leaving && id === who) return;
     if (active) stop(); // a different dog takes over
     prepare(id).then(function () { go(id); }, function () {});
@@ -215,7 +216,6 @@
     active = true; leaving = false;
     pill.hidden = false;
     if (bone) bone.setAttribute('aria-pressed', 'true');
-    if (!found) { found = true; RW.egg('dog'); }
     RW.toast('🐕 ' + DOGS[id].name + ' got out! ' + (RW.finePointer ? 'Click' : 'Tap') + ' anywhere to throw.');
     start();
   }

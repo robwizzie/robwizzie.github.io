@@ -48,3 +48,12 @@ test('the Konami code works by swiping on a phone', async ({ page }, info) => {
   await page.locator('.ach-foot').click();
   await expect(page.locator('.ach-grid li.on', { hasText: 'Cheat Code' })).toHaveCount(1);
 });
+
+test('whistling for the dog counts even when the 3D dog can\'t load', async ({ page }) => {
+  await page.route('**/vendor/three/**', (r) => r.abort());
+  await page.goto('/');
+  await term(page, 'dog');
+  await expect(page.locator('.toast')).toContainText('napping');
+  await page.locator('.ach-foot').click();
+  await expect(page.locator('.ach-grid li.on', { hasText: 'Who Let the Dog Out' })).toHaveCount(1);
+});
