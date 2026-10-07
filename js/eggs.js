@@ -93,8 +93,8 @@
     got[id] = Date.now(); store(KEY, got);
     queue.push(a); nextPop(); paintCount();
     if (count() === ACH.length) setTimeout(function () {
-      RW.party();
-      queue.push({ icon: '🏆', title: 'Completionist — your trophy\'s in the case' }); nextPop();
+      // js/celebrate.js puts on the full show; fall back to confetti if it isn't loaded.
+      if (RW.celebrate) RW.celebrate(); else { RW.party(); queue.push({ icon: '🏆', title: 'Completionist — your trophy\'s in the case' }); nextPop(); }
     }, 1200);
   }
   document.addEventListener('rw:egg', function (e) { unlock(e.detail); });
@@ -153,7 +153,7 @@
   function wallpaper() {
     var W = 1170, H = 2532, c = document.createElement('canvas'), x = c.getContext('2d');
     c.width = W; c.height = H;
-    var g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0a1430'); g.addColorStop(1, '#05070c');
+    var g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, RW.rgba(RW.tc.blue.map(function (v) { return Math.round(v * 0.14); }))); g.addColorStop(1, '#05070c');
     x.fillStyle = g; x.fillRect(0, 0, W, H);
     function hex(cx, cy, r) { x.beginPath(); for (var k = 0; k < 6; k++) { var an = Math.PI / 3 * k - Math.PI / 2; x.lineTo(cx + Math.cos(an) * r, cy + Math.sin(an) * r); } x.closePath(); }
     var r = 46, dx = r * Math.sqrt(3), dy = r * 1.5;
@@ -161,19 +161,20 @@
       for (var xx = (row % 2) * dx / 2; xx < W + r; xx += dx) {
         var d = Math.hypot(xx - W / 2, y - H * 0.42) / H;
         hex(xx, y, r - 5);
-        x.fillStyle = 'rgba(91,143,249,' + Math.max(0.03, 0.42 - d * 0.9).toFixed(3) + ')';
-        if (Math.random() < 0.08) x.fillStyle = 'rgba(141,178,255,' + Math.max(0.1, 0.7 - d).toFixed(3) + ')';
+        x.fillStyle = RW.rgba(RW.tc.blue, Math.max(0.03, 0.42 - d * 0.9).toFixed(3));
+        if (Math.random() < 0.08) x.fillStyle = RW.rgba(RW.tc.hi, Math.max(0.1, 0.7 - d).toFixed(3));
         x.fill();
       }
     }
     var img = new Image();
     img.onload = function () {
-      var s = 420; x.shadowColor = 'rgba(91,143,249,.8)'; x.shadowBlur = 80;
-      x.drawImage(img, W / 2 - s / 2, H * 0.42 - s / 2, s, s); x.shadowBlur = 0;
+      var s = 420; x.shadowColor = RW.rgba(RW.tc.blue, 0.8); x.shadowBlur = 80;
+      x.filter = getComputedStyle(document.documentElement).getPropertyValue('--logo-filter').trim() || 'none'; // themed logo
+      x.drawImage(img, W / 2 - s / 2, H * 0.42 - s / 2, s, s); x.shadowBlur = 0; x.filter = 'none';
       x.textAlign = 'center'; x.fillStyle = '#fff';
       x.font = '700 120px "Saira Extra Condensed", "Arial Narrow", sans-serif';
       x.fillText('ACHIEVEMENT HUNTER', W / 2, H * 0.62);
-      x.fillStyle = '#8db2ff'; x.font = '500 44px "JetBrains Mono", monospace';
+      x.fillStyle = RW.rgba(RW.tc.hi); x.font = '500 44px "JetBrains Mono", monospace';
       x.fillText(ACH.length + '/' + ACH.length + ' SECRETS · ROBWISCOUNT.ORG', W / 2, H * 0.62 + 90);
       x.fillStyle = 'rgba(238,242,251,.55)'; x.font = '400 38px Inter, sans-serif';
       x.fillText('Completed ' + new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), W / 2, H * 0.62 + 160);
@@ -214,6 +215,8 @@
   };
   RW.commands['how it works'] = RW.commands.colophon;
   RW.unlock = unlock;
+  // For js/celebrate.js: the achievement list, what's been found (id -> time), the wallpaper, the trophy case.
+  RW.achievements = { list: function () { return ACH.slice(); }, got: function () { return got; }, wallpaper: wallpaper, open: openPanel };
 
   // The Konami code for phones: swipe up, up, down, down, left, right, left, right, then tap twice.
   (function () {
@@ -265,7 +268,7 @@
     function drawIcon(t) {
       fx.clearRect(0, 0, 32, 32); fx.save(); fx.translate(16, 16); fx.rotate(t * Math.PI / 6);
       fx.beginPath(); for (var k = 0; k < 6; k++) { var an = Math.PI / 3 * k - Math.PI / 2; fx.lineTo(Math.cos(an) * 14, Math.sin(an) * 14); }
-      fx.closePath(); fx.fillStyle = '#5b8ff9'; fx.fill(); fx.lineWidth = 2.5; fx.strokeStyle = '#fff'; fx.stroke(); fx.restore();
+      fx.closePath(); fx.fillStyle = RW.rgba(RW.tc.blue); fx.fill(); fx.lineWidth = 2.5; fx.strokeStyle = '#fff'; fx.stroke(); fx.restore();
       fx.fillStyle = '#fff'; fx.font = 'bold 13px sans-serif'; fx.textAlign = 'center'; fx.textBaseline = 'middle'; fx.fillText('👋', 16, 17);
       var url = fc.toDataURL('image/png');
       icons.forEach(function (l) { l.href = url; });
@@ -364,45 +367,160 @@
     print(esc(' ' + bar + '\n< ' + text + ' >\n ' + dash + '\n        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||'));
   };
 
-  // Themes are just new values for the same CSS tokens the whole site is built on.
+  /* ---------- Themes ----------
+     A theme is new values for the four color tokens the whole site is built on, plus a little party:
+     things floating behind the content, a chant ribbon, a fly-by. Team marks and mascots are trademarked,
+     so the teams get their colors, emoji and chants instead of logos. */
   var THEMES = {
-    matrix: ['#22e36b', '#8dffb4', 'Wake up, Neo…'], eagles: ['#1fb5a8', '#7fe0d6', 'Fly, Eagles, fly 🦅'],
-    phillies: ['#ff3347', '#ff8a96', 'Ring the bell 🔔'], flyers: ['#ff6a2b', '#ffab85', 'Let\'s go Flyers 🏒'],
-    sixers: ['#3d7bff', '#9fbcff', 'Trust the process 🏀'], lebron: ['#f5b323', '#ffd877', 'LeBron mode 👑'], default: null
+    lebron: { squares: 'gold.', blue: '#f5b323', hi: '#ffd877', line: 'LeBron mode 👑 — he\'s everywhere now.', ribbon: ['👑 LEBRON MODE', 'THE KING', 'TACO TUESDAY 🌮', 'YOU ARE MY SUNSHINE', 'GLAZED, NOT CONFUSED'], ribbonBg: '#552583', ribbonFg: '#fdb927',
+      faces: ['bronicide', 'lehips', 'lenade', 'taco', 'lebronifornia'], count: 11, flyby: '👑' },
+    eagles: { squares: 'midnight green.', blue: '#1fb5a8', hi: '#7fe0d6', line: 'Fly, Eagles, fly 🦅', ribbon: ['🦅 E-A-G-L-E-S · EAGLES!', 'FLY EAGLES FLY', 'GO BIRDS', 'BIRD GANG'], ribbonBg: '#004c54', ribbonFg: '#d7dcdf',
+      float: ['🦅', '🏈', '💚'], count: 10, flyby: '🦅' },
+    phillies: { squares: 'Phillies red.', blue: '#ff3347', hi: '#ff8a96', line: 'Ring the bell 🔔', ribbon: ['🔔 RING THE BELL', 'RED OCTOBER', 'DANCING ON MY OWN', 'LET\'S GO PHILLIES'], ribbonBg: '#e81828', ribbonFg: '#ffffff',
+      float: ['⚾', '🔔', '❤️'], count: 10, flyby: '⚾', stripes: true },
+    flyers: { squares: 'orange and black.', blue: '#ff6a2b', hi: '#ffab85', line: 'Let\'s go Flyers 🏒', ribbon: ['🏒 LET\'S GO FLYERS', 'ORANGE AND BLACK', 'BROAD STREET', 'GRITTY WOULD APPROVE 🧡'], ribbonBg: '#000000', ribbonFg: '#f74902',
+      float: ['🏒', '🥅', '🧡'], count: 10, flyby: '🏒' },
+    sixers: { squares: 'Sixers blue.', blue: '#3d7bff', hi: '#9fbcff', line: 'Trust the process 🏀', ribbon: ['🏀 TRUST THE PROCESS', 'BROTHERLY LOVE', 'HERE THE SIXERS COME', 'PHILA UNITE'], ribbonBg: '#ed174c', ribbonFg: '#ffffff',
+      float: ['🏀', '⭐', '🔔'], count: 10, flyby: '🏀' },
+    matrix: { squares: 'green again. Whoa.', blue: '#22e36b', hi: '#8dffb4', line: 'Wake up, Neo… The Matrix has you.', ribbon: ['FOLLOW THE WHITE RABBIT 🐇', 'THERE IS NO SPOON 🥄', 'WHOA.', 'KNOCK, KNOCK, NEO'], ribbonBg: '#020a04', ribbonFg: '#22e36b',
+      rain: true },
+    default: null
   };
+  var BASE_HUE = 221; // the RW logo's blue
+  function hexHsl(hex) {
+    var c = [0, 2, 4].map(function (i) { return parseInt(hex.substr(i + 1, 2), 16) / 255; });
+    var mx = Math.max.apply(null, c), mn = Math.min.apply(null, c), l = (mx + mn) / 2, h = 0, sat = 0, d = mx - mn;
+    if (d) {
+      sat = d / (1 - Math.abs(2 * l - 1));
+      h = mx === c[0] ? ((c[1] - c[2]) / d) % 6 : mx === c[1] ? (c[2] - c[0]) / d + 2 : (c[0] - c[1]) / d + 4;
+      h = (h * 60 + 360) % 360;
+    }
+    return { h: h, s: sat, l: l };
+  }
+
+  var fx = null, rainRaf = 0, flybyTimer = 0;
+  function clearFx() {
+    if (fx) { fx.layer.remove(); if (fx.ribbon) fx.ribbon.remove(); fx = null; }
+    cancelAnimationFrame(rainRaf); rainRaf = 0; clearInterval(flybyTimer); flybyTimer = 0;
+    document.body.classList.remove('has-ribbon');
+  }
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+
+  function buildFx(name, t) {
+    var layer = document.createElement('div');
+    layer.className = 'theme-fx'; layer.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(layer);
+    fx = { layer: layer };
+    // Floaters: drift and bob behind the content, never in the way of a click.
+    var n = innerWidth < 600 ? Math.ceil(t.count * 0.6) : t.count;
+    for (var i = 0; i < (t.faces || t.float ? n : 0); i++) {
+      var el;
+      if (t.faces) { el = document.createElement('img'); el.src = 'assets/lebronify/faces/' + t.faces[i % t.faces.length] + '.png'; el.alt = ''; el.className = 'fx-float fx-face'; }
+      else { el = document.createElement('span'); el.textContent = t.float[i % t.float.length]; el.className = 'fx-float'; }
+      var size = t.faces ? rnd(44, 92) : rnd(22, 46);
+      // Mostly in the side margins (wide screens have empty space there); the rest stay faint behind the text.
+      var gutter = (innerWidth - 1180) / 2 + 30, side = gutter > 70 && Math.random() < 0.75;
+      var x = side ? (Math.random() < 0.5 ? rnd(4, gutter - size - 8) : innerWidth - rnd(gutter - 8, size + 12)) : rnd(4, innerWidth - size - 4);
+      if (!side) el.classList.add('fx-dim');
+      el.style.cssText = 'left:' + Math.round(x) + 'px;top:' + rnd(6, 90).toFixed(1) + '%;--s:' + size.toFixed(0) + 'px;--d:' + rnd(7, 14).toFixed(1) + 's;--delay:-' + rnd(0, 10).toFixed(1) + 's;--r:' + rnd(-18, 18).toFixed(0) + 'deg';
+      layer.appendChild(el);
+    }
+    // Chant ribbon along the bottom
+    var rb = document.createElement('div');
+    rb.className = 'theme-ribbon'; rb.setAttribute('aria-hidden', 'true');
+    rb.style.setProperty('--rb-bg', t.ribbonBg); rb.style.setProperty('--rb-fg', t.ribbonFg);
+    var text = t.ribbon.join('   ·   ') + '   ·   ';
+    rb.innerHTML = '<div class="theme-ribbon-track"><span>' + text + text + '</span><span>' + text + text + '</span></div>';
+    document.body.appendChild(rb); fx.ribbon = rb;
+    document.body.classList.add('has-ribbon');
+    // Matrix: a faint rain behind everything for as long as you're in it
+    if (t.rain) matrixRain(layer);
+    // Fly-by every so often
+    if (t.flyby && !reduceMotion) {
+      var fly = function () {
+        var f = document.createElement('span');
+        f.className = 'fx-flyby fx-' + name; f.textContent = t.flyby;
+        f.style.top = rnd(14, 70).toFixed(0) + '%';
+        layer.appendChild(f);
+        setTimeout(function () { f.remove(); }, 4200);
+      };
+      setTimeout(fly, 700); flybyTimer = setInterval(function () { if (!document.hidden) fly(); }, 11000);
+    }
+  }
+
+  function matrixRain(layer) {
+    var cv = document.createElement('canvas'), cx = cv.getContext('2d'), cols, drops, last = 0, burstUntil = performance.now() + 2600;
+    cv.className = 'fx-rain'; layer.appendChild(cv);
+    function size() { cv.width = innerWidth; cv.height = innerHeight; cols = Math.ceil(innerWidth / 16); drops = []; for (var i = 0; i < cols; i++) drops.push(Math.random() * -40); }
+    size(); window.addEventListener('resize', size);
+    (function tick(now) {
+      if (!fx || fx.layer !== layer) { window.removeEventListener('resize', size); return; }
+      rainRaf = requestAnimationFrame(tick);
+      if (now - last < (now < burstUntil ? 16 : 70)) return; // full speed for the intro, then a calm drizzle
+      last = now;
+      cx.fillStyle = 'rgba(6,8,13,.14)'; cx.fillRect(0, 0, cv.width, cv.height);
+      cx.fillStyle = '#22e36b'; cx.font = '15px "JetBrains Mono", monospace';
+      drops.forEach(function (y, i) { cx.fillText('ROBWISCOUNT01ｱｲｳｴｵｶｷ'.charAt(Math.floor(Math.random() * 20)), i * 16, y * 16); drops[i] = y > cv.height / 16 && Math.random() > 0.96 ? 0 : y + 1; });
+      cv.style.opacity = now < burstUntil ? 1 : 0.22;
+    })(performance.now());
+    if (reduceMotion) { cancelAnimationFrame(rainRaf); cv.style.opacity = 0.15; }
+  }
+
   function setTheme(name) {
     var root = document.documentElement, t = THEMES[name];
-    ['--blue', '--blue-hi', '--blue-soft', '--blue-glow'].forEach(function (v) { root.style.removeProperty(v); });
+    ['--blue', '--blue-hi', '--blue-soft', '--blue-glow', '--logo-filter'].forEach(function (v) { root.style.removeProperty(v); });
     root.removeAttribute('data-theme');
-    if (!t) return;
-    var rgb = t[0].match(/\w\w/g).map(function (h) { return parseInt(h, 16); }).join(',');
-    root.style.setProperty('--blue', t[0]); root.style.setProperty('--blue-hi', t[1]);
-    root.style.setProperty('--blue-soft', 'rgba(' + rgb + ',.12)'); root.style.setProperty('--blue-glow', 'rgba(' + rgb + ',.35)');
-    root.setAttribute('data-theme', name);
-    if (name === 'matrix' && !reduceMotion) rain();
+    clearFx();
+    if (t) {
+      var rgb = t.blue.match(/\w\w/g).map(function (h) { return parseInt(h, 16); }).join(',');
+      root.style.setProperty('--blue', t.blue); root.style.setProperty('--blue-hi', t.hi);
+      root.style.setProperty('--blue-soft', 'rgba(' + rgb + ',.12)'); root.style.setProperty('--blue-glow', 'rgba(' + rgb + ',.35)');
+      var hsl = hexHsl(t.blue);
+      root.style.setProperty('--logo-filter', 'hue-rotate(' + Math.round(hsl.h - BASE_HUE) + 'deg) saturate(' + Math.max(0.7, hsl.s / 0.93).toFixed(2) + ')');
+      root.setAttribute('data-theme', name);
+      buildFx(name, t);
+    }
+    // "Green squares, but make them blue." names the theme's color instead.
+    var sq = document.querySelector('#commits .h2 .blue');
+    if (sq) { if (!sq.getAttribute('data-orig')) sq.setAttribute('data-orig', sq.textContent); sq.textContent = t ? 'but make them ' + t.squares : sq.getAttribute('data-orig'); }
+    document.dispatchEvent(new CustomEvent('rw:theme', { detail: name }));
   }
+
+  var NEO = [
+    "        .-''''''-.",
+    "      .'          '.",
+    "     /   ________   \\",
+    "    |   |__||  |__|   |     \"Whoa.\"",
+    "    |        __        |",
+    "     \\     '.__.'     /      - Neo",
+    "      '.            .'",
+    "        '-.______.-'"
+  ].join('\n');
+
   C.theme = function (arg) {
     var name = (arg || '').toLowerCase();
-    if (!(name in THEMES) && name !== 'blue') { print('usage: theme ' + Object.keys(THEMES).join(' | '), 'dim'); return; }
+    if (!(name in THEMES) && name !== 'blue') {
+      print('usage: theme &lt;name&gt;   —   ' + Object.keys(THEMES).join(' · '), 'dim');
+      return;
+    }
     if (name === 'blue') name = 'default';
     setTheme(name);
-    print(name === 'default' ? 'Back to RW blue. ✔' : THEMES[name][2], 'ok');
-    if (name !== 'default') unlock('theme');
+    if (name === 'default') { print('Back to RW blue. ✔', 'ok'); return; }
+    print(THEMES[name].line, 'ok');
+    unlock('theme');
+    if (name === 'matrix') {
+      print(esc(NEO), 'ok');
+      print('Red pill or blue pill? Type <span class="p">red</span> to stay in the Matrix, or <span class="p">blue</span> to wake up in your bed.', 'dim');
+      RW.setTermMode(function (line) {
+        var l = (line || '').trim().toLowerCase();
+        RW.setTermMode(null);
+        if (l === 'red' || l === 'red pill') print('Welcome to the real world. 🐇 (theme default gets you out)', 'ok');
+        else if (l === 'blue' || l === 'blue pill') { setTheme('default'); print('The story ends. You wake up in your bed and believe whatever you want to believe. 💊', 'ok'); }
+        else if (l) RW.run(line);
+      });
+    } else print('<span class="dim">Back to normal any time: </span><span class="p">theme default</span>');
   };
-  function rain() {
-    var cv = document.createElement('canvas'), cx = cv.getContext('2d'), cols, drops, t0 = performance.now();
-    cv.className = 'matrix-rain'; document.body.appendChild(cv);
-    cv.width = innerWidth; cv.height = innerHeight;
-    cols = Math.ceil(innerWidth / 16); drops = []; for (var i = 0; i < cols; i++) drops.push(Math.random() * -40);
-    (function tick(now) {
-      cx.fillStyle = 'rgba(6,8,13,.12)'; cx.fillRect(0, 0, cv.width, cv.height);
-      cx.fillStyle = '#22e36b'; cx.font = '15px "JetBrains Mono", monospace';
-      drops.forEach(function (y, i) { cx.fillText('ROBWISCOUNT01'.charAt(Math.floor(Math.random() * 13)), i * 16, y * 16); drops[i] = y > cv.height / 16 && Math.random() > 0.96 ? 0 : y + 1; });
-      var t = now - t0;
-      cv.style.opacity = t < 2200 ? 1 : Math.max(0, 1 - (t - 2200) / 800);
-      if (t < 3000) requestAnimationFrame(tick); else cv.remove();
-    })(t0);
-  }
+  C.themes = function () { C.theme(''); };
 
   /* ==========================================================================
      End credits — `credits`, or keep scrolling past the footer
@@ -456,18 +574,40 @@
      Mile A Day mode: scrolling the page is running it
      ========================================================================== */
   (function () {
-    var runner = document.createElement('div');
-    runner.className = 'mile-runner'; runner.setAttribute('aria-hidden', 'true');
-    runner.innerHTML = '<span>🏃</span>';
-    document.body.appendChild(runner);
-    var started = 0, finished = false, idle;
+    // The page is one mile long. A pill rides the progress bar with how far you've "run",
+    // cheers at each quarter, and turns into your finish time at the bottom.
+    var chip = document.createElement('button');
+    chip.type = 'button'; chip.className = 'mile-chip';
+    chip.innerHTML = '<i class="fas fa-running" aria-hidden="true"></i><span class="mile-d">0.00 mi</span>';
+    chip.setAttribute('aria-label', 'Mile A Day mode: this page is one mile long');
+    var ticks = document.createElement('div');
+    ticks.className = 'mile-ticks'; ticks.setAttribute('aria-hidden', 'true');
+    ticks.innerHTML = '<i style="left:25%"></i><i style="left:50%"></i><i style="left:75%"></i>';
+    document.body.appendChild(ticks); document.body.appendChild(chip);
+    var dEl = chip.querySelector('.mile-d'), nav = $('.nav');
+    var started = 0, finished = false, idle = 0, fade = 0, best = 0, cheering = 0, lastQ = 0;
+    var CHEERS = { 1: '¼ mile in 👟', 2: 'Halfway 💪', 3: '¾ — almost there' };
+
     function onScroll() {
-      var max = document.documentElement.scrollHeight - innerHeight, p = max > 0 ? Math.min(1, scrollY / max) : 0;
-      runner.style.transform = 'translateX(' + (p * (innerWidth - 30)) + 'px)';
-      runner.classList.toggle('show', scrollY > 240);
+      var max = document.documentElement.scrollHeight - innerHeight, p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
+      best = Math.max(best, p);
+      var w = chip.offsetWidth || 90, x = Math.max(8, Math.min(innerWidth - w - 8, p * innerWidth - w / 2));
+      var top = nav && !nav.classList.contains('hidden') ? 82 : 10; // stay clear of the nav when it's showing
+      chip.style.transform = 'translate(' + Math.round(x) + 'px,' + top + 'px)';
+      var show = scrollY > 240 || finished;
+      chip.classList.toggle('show', show); ticks.classList.toggle('show', show);
+      if (!finished && !cheering) dEl.textContent = p.toFixed(2) + ' mi';
       if (!started && scrollY > 0) started = performance.now();
-      if (!reduceMotion) { runner.classList.add('running'); clearTimeout(idle); idle = setTimeout(function () { runner.classList.remove('running'); }, 180); }
+      var q = Math.floor(best * 4 + 1e-6);
+      if (!finished && q > lastQ && q < 4) { lastQ = q; cheer(CHEERS[q]); }
+      if (!reduceMotion) { chip.classList.add('running'); clearTimeout(idle); idle = setTimeout(function () { chip.classList.remove('running'); }, 200); }
+      // Fade out while you read; come back when you scroll.
+      chip.classList.remove('rest'); clearTimeout(fade); fade = setTimeout(function () { if (!finished) chip.classList.add('rest'); }, 2600);
       if (!finished && started && p > 0.995) finish();
+    }
+    function cheer(text) {
+      cheering = 1; dEl.textContent = text; chip.classList.add('cheer');
+      setTimeout(function () { cheering = 0; chip.classList.remove('cheer'); onScroll(); }, 1600);
     }
     function finish() {
       finished = true;
@@ -477,10 +617,16 @@
       var s = store('rw-mile') || {};
       var streak = s.last === today ? s.streak || 1 : s.last === ymd(y) ? (s.streak || 1) + 1 : 1;
       store('rw-mile', { last: today, streak: streak });
+      chip.classList.add('done'); chip.classList.remove('rest');
+      chip.querySelector('i').className = 'fas fa-flag-checkered';
+      dEl.textContent = '1 mile · ' + pace;
+      var r = chip.getBoundingClientRect(); RW.burst(r.left + r.width / 2, r.bottom, 50);
       RW.toast('🏃 You ran 1 mile of robwiscount.org in ' + pace + '. ' + quip + (streak > 1 ? ' Day ' + streak + ' of your streak 🔥' : ''));
-      runner.classList.add('done');
       unlock('mile');
     }
+    chip.addEventListener('click', function () {
+      RW.toast(finished ? '🏁 Mile logged. Rob runs one every day — the app that tracks it is up in Mile A Day.' : '🏃 This page is exactly one mile long. Scroll to the bottom to log your mile, Mile A Day style.');
+    });
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
   })();

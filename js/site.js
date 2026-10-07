@@ -7,6 +7,23 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
+  /* ---------- Theme color: canvases read it, and it follows the terminal's `theme` command ---------- */
+  var tc = { blue: [91, 143, 249], hi: [141, 178, 255] };
+  function parseColor(v) {
+    v = (v || '').trim();
+    var m = v.match(/^#([0-9a-f]{6})$/i);
+    if (m) return [0, 2, 4].map(function (i) { return parseInt(m[1].substr(i, 2), 16); });
+    m = v.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
+    return m ? [+m[1], +m[2], +m[3]] : null;
+  }
+  function readTheme() {
+    var cs = getComputedStyle(document.documentElement);
+    tc.blue = parseColor(cs.getPropertyValue('--blue')) || tc.blue;
+    tc.hi = parseColor(cs.getPropertyValue('--blue-hi')) || tc.hi;
+  }
+  function rgba(c, a) { return 'rgba(' + c.join(',') + ',' + (a == null ? 1 : a) + ')'; }
+  document.addEventListener('rw:theme', readTheme);
+
   /* ---------- Loader ---------- */
   function finishLoading() {
     var loader = $('.loader');
@@ -134,7 +151,7 @@
         var wave = reduceMotion ? 0 : Math.sin(t * 1.2 + d.x * 0.012 + d.y * 0.01) * 0.5 + 0.5;
         var px = d.x + dx * pull * 0.22, py = d.y + dy * pull * 0.22;
         var a = 0.07 + wave * 0.08 + pull * 0.75;
-        ctx.fillStyle = 'rgba(91,143,249,' + a.toFixed(3) + ')';
+        ctx.fillStyle = rgba(tc.blue, a.toFixed(3));
         ctx.beginPath(); ctx.arc(px, py, 1.2 + pull * 2.2, 0, 6.283); ctx.fill();
       }
       if (!reduceMotion) requestAnimationFrame(draw);
@@ -380,9 +397,10 @@
   function sizeConfetti() { cv.width = innerWidth * dpr2(); cv.height = innerHeight * dpr2(); cx.setTransform(dpr2(), 0, 0, dpr2(), 0, 0); }
   function dpr2() { return Math.min(2, window.devicePixelRatio || 1); }
   sizeConfetti(); window.addEventListener('resize', sizeConfetti);
-  var colors = ['#5b8ff9', '#8db2ff', '#ffffff', '#2f5fd0', '#0b0d12'];
+  function confettiColors() { return [rgba(tc.blue), rgba(tc.hi), '#ffffff', rgba(tc.blue.map(function (v) { return Math.round(v * 0.62); })), '#0b0d12']; }
   function burst(x, y, n, fromTop) {
     if (reduceMotion) return;
+    var colors = confettiColors();
     for (var i = 0; i < n; i++) {
       var a = fromTop ? Math.PI / 2 + (Math.random() - 0.5) : -Math.PI / 2 + (Math.random() - 0.5) * 2.2;
       var sp = fromTop ? 2 + Math.random() * 3 : 6 + Math.random() * 9;
@@ -881,7 +899,7 @@
   /* ---------- Hooks for the easter-egg scripts (js/eggs.js, js/dog.js, js/pool.js, js/live.js) ---------- */
   window.RW = {
     $: $, $$: $$, reduceMotion: reduceMotion, finePointer: finePointer,
-    toast: toast, burst: burst, party: party, egg: egg, copy: copy,
+    toast: toast, burst: burst, party: party, egg: egg, copy: copy, tc: tc, rgba: rgba,
     commands: commands, print: print, esc: esc, run: run,
     setTermMode: function (fn) { termMode = fn || null; },
     openFetch: openFetch, playTrack: function (i) { lbfLoad(i, true); }, tracks: TRACKS,
