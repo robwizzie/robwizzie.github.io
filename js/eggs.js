@@ -19,25 +19,47 @@
      Achievements — every egg on the page reports here through RW.egg(id)
      ========================================================================== */
   var liveOn = !!(document.querySelector('meta[name="rw-live"]') || {}).content;
+  // Each locked achievement shows its title and a hint (what to do, and where); "Need a nudge?" gives
+  // the exact steps. Phones get their own steps wherever the desktop way needs a keyboard or DevTools.
+  var touch = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   var ACH = [
-    { id: 'konami', icon: '🎮', title: 'Cheat Code', desc: 'Entered the Konami code.', hint: '↑ ↑ ↓ ↓ … you know the rest.' },
-    { id: 'logo', icon: '🌀', title: 'Spin Doctor', desc: 'Spun the RW logo five times.', hint: 'Some logos like to spin.' },
-    { id: 'fetch', icon: '🐶', title: 'Good Game', desc: 'Booted up Fetch.', hint: 'There\'s a whole video game on this page.' },
-    { id: 'lebron', icon: '👑', title: 'LeBronified', desc: 'Played a LeBronify banger.', hint: 'Press play on a parody.' },
-    { id: 'ripple', icon: '🌊', title: 'Making Waves', desc: 'Rippled the GitHub squares.', hint: 'Poke the blue squares.' },
-    { id: 'console', icon: '🔧', title: 'Under the Hood', desc: 'Called rob.hire() from the console.', hint: 'Developers: open DevTools.' },
-    { id: 'tabaway', icon: '👋', title: 'You Came Back', desc: 'Left the tab and came back.', hint: 'Leave. Then come back.' },
-    { id: 'mile', icon: '🏃', title: 'Ran the Mile', desc: 'Scrolled the whole page, top to bottom.', hint: 'Go the distance.' },
-    { id: 'credits', icon: '🎬', title: 'Stayed for the Credits', desc: 'Watched the end credits all the way through.', hint: 'Movie people stay until the very end.' },
-    { id: 'vim', icon: '⌨️', title: 'Escaped Vim', desc: 'Got out of vim. Put it on your resume.', hint: 'Open vim in the terminal. Good luck.' },
-    { id: 'rmrf', icon: '💥', title: 'Nuked It', desc: 'Ran rm -rf / and lived.', hint: 'Try the most dangerous command there is.' },
-    { id: 'theme', icon: '🎨', title: 'Repainted', desc: 'Re-themed the whole site.', hint: 'The terminal can change the colors.' },
-    { id: 'dog', icon: '🦴', title: 'Who Let the Dog Out', desc: 'Whistled for the dog.', hint: 'Type a three-letter word for a good boy.' },
-    { id: 'pool', icon: '🎱', title: 'Break Shot', desc: 'Broke the rack on the About cards.', hint: 'Rob plays pool. Ask the terminal to break.' }
+    { id: 'konami', icon: '🎮', title: 'Cheat Code', desc: 'Entered the Konami code.',
+      hint: 'Enter the classic video-game cheat code.',
+      nudge: touch ? 'Swipe on the page: up, up, down, down, left, right, left, right — then tap twice.' : 'Press ↑ ↑ ↓ ↓ ← → ← → B A on your keyboard (anywhere outside the terminal).' },
+    { id: 'logo', icon: '🌀', title: 'Spin Doctor', desc: 'Spun the RW logo five times.',
+      hint: 'The big RW logo near the bottom of the page likes to spin.', nudge: 'Scroll to the Contact section and ' + (touch ? 'tap' : 'click') + ' the RW logo 5 times.' },
+    { id: 'fetch', icon: '🐶', title: 'Good Game', desc: 'Booted up Fetch.',
+      hint: 'There\'s a whole video game you can play on this page.', nudge: 'Go to the Fetch section and press Play — or type play fetch in the terminal.' },
+    { id: 'lebron', icon: '👑', title: 'LeBronified', desc: 'Played a LeBronify banger.',
+      hint: 'The LeBronify section is a music player. Play any song.', nudge: 'Scroll to LeBronify and press play — or type lebron in the terminal.' },
+    { id: 'ripple', icon: '🌊', title: 'Making Waves', desc: 'Rippled the GitHub squares.',
+      hint: 'The blue GitHub squares are clickable.', nudge: (touch ? 'Tap' : 'Click') + ' any square in the Commit log section.' },
+    { id: 'console', icon: '🔧', title: 'Under the Hood', desc: 'Called rob.hire().',
+      hint: touch ? 'There\'s a hidden rob.hire() command. The site\'s terminal can run it.' : 'Developers: there\'s a note for you in the browser console.',
+      nudge: touch ? 'Type rob.hire() in the terminal (the Interactive section).' : 'Open DevTools (F12, or ⌥⌘I on a Mac), go to Console and type rob.hire() — or type it in the site\'s terminal.' },
+    { id: 'tabaway', icon: '👋', title: 'You Came Back', desc: 'Left the tab and came back.',
+      hint: 'Switch to another tab or app for a few seconds, then come back.', nudge: 'Peek at the tab\'s title while you\'re away — then return to this tab.' },
+    { id: 'mile', icon: '🏃', title: 'Ran the Mile', desc: 'Scrolled the whole page, top to bottom.',
+      hint: 'Scroll from the very top of the page all the way to the bottom.', nudge: 'Watch the little runner on the progress bar at the top — get them to the finish line.' },
+    { id: 'credits', icon: '🎬', title: 'Stayed for the Credits', desc: 'Watched the end credits all the way through.',
+      hint: 'Movie people stay until the very end. Keep scrolling past the bottom of the page.', nudge: 'Or type credits in the terminal — and watch to the end without skipping.' },
+    { id: 'vim', icon: '⌨️', title: 'Escaped Vim', desc: 'Got out of vim. Put it on your resume.',
+      hint: 'Type vim in the terminal. Getting back out is the hard part.', nudge: 'Inside vim, press Esc' + (touch ? ' (on a phone, type esc)' : '') + ', then type :wq and press Enter.' },
+    { id: 'rmrf', icon: '💥', title: 'Nuked It', desc: 'Ran rm -rf / and lived.',
+      hint: 'In the terminal, try the command that deletes everything on a real computer. It\'s safe here!', nudge: 'Type rm -rf / in the terminal.' },
+    { id: 'theme', icon: '🎨', title: 'Repainted', desc: 'Re-themed the whole site.',
+      hint: 'Type theme in the terminal to see the color options.', nudge: 'Try theme eagles — or matrix, phillies, flyers, sixers or lebron.' },
+    { id: 'dog', icon: '🦴', title: 'Who Let the Dog Out', desc: 'Whistled for the dog.',
+      hint: touch ? 'There\'s a bone 🦴 hidden in the footer.' : 'Type the word dog anywhere on the page.', nudge: (touch ? 'Tap' : 'Click') + ' the 🦴 next to the copyright line at the very bottom — or type dog in the terminal.' },
+    { id: 'pool', icon: '🎱', title: 'Break Shot', desc: 'Broke the rack on the About cards.',
+      hint: 'Rob plays pool, and the About cards can turn into a rack.', nudge: 'Type break in the terminal — or ' + (touch ? 'tap' : 'click') + ' the 🎱 card in the About section three times fast.' },
+    { id: 'colophon', icon: '📖', title: 'Read the Manual', desc: 'Found out how this site works.',
+      hint: 'Find the page that explains how this site was built.', nudge: 'Open "How this site works" in the footer — or type colophon in the terminal.' }
   ];
-  ACH.push({ id: 'colophon', icon: '📖', title: 'Read the Manual', desc: 'Found out how this site works.', hint: 'Every good site has a colophon.' });
-  if (liveOn) ACH.push({ id: 'live', icon: '🛰️', title: 'Not Alone', desc: 'Saw another visitor\'s cursor.', hint: 'Visit with a friend.' });
-  if (liveOn) ACH.push({ id: 'guestbook', icon: '✍️', title: 'Signed the Guestbook', desc: 'Left a note on the visitor map.', hint: 'Leave your mark on the map.' });
+  if (liveOn) ACH.push({ id: 'live', icon: '🛰️', title: 'Not Alone', desc: 'Saw another visitor\'s cursor.',
+    hint: 'See someone else\'s cursor move across the page.', nudge: 'Open the site in a second window (or send it to a friend), put them side by side and move the mouse in one.' });
+  if (liveOn) ACH.push({ id: 'guestbook', icon: '✍️', title: 'Signed the Guestbook', desc: 'Left a note on the visitor map.',
+    hint: 'Leave a note on the visitor map.', nudge: 'Scroll to the Visitors section and sign the guestbook.' });
   var KEY = 'rw-eggs', got = store(KEY) || {};
   function count() { return ACH.filter(function (a) { return got[a.id]; }).length; }
 
@@ -94,10 +116,11 @@
       '<div class="ach-bar"><i style="width:' + Math.round(n / ACH.length * 100) + '%"></i></div>' +
       '<ul class="ach-grid">' + ACH.map(function (a) {
         var on = !!got[a.id];
-        return '<li class="' + (on ? 'on' : '') + '"><span class="ach-ico">' + (on ? a.icon : '🔒') + '</span><span><b>' + (on ? a.title : '???') + '</b><small>' + (on ? a.desc : a.hint) + '</small></span></li>';
+        return '<li class="' + (on ? 'on' : '') + '"><span class="ach-ico">' + (on ? a.icon : '🔒') + '</span><span><b>' + a.title + '</b><small>' + (on ? a.desc : a.hint) + '</small>' +
+          (on ? '' : '<details class="ach-nudge"><summary>Need a nudge?</summary><small>' + a.nudge + '</small></details>') + '</span></li>';
       }).join('') + '</ul>' +
       (done ? '<button class="btn btn-primary ach-wall" type="button"><i class="fas fa-download"></i> Download your trophy wallpaper</button>'
-            : '<p class="ach-note">Progress saves in this browser. Hints are on the locked ones.</p>') +
+            : '<p class="ach-note">Progress saves in this browser. Stuck? Open "Need a nudge?" on any locked one, or type <code>hint</code> in the terminal.</p>') +
       '</div>';
     $('.ach-close', panel).addEventListener('click', closePanel);
     var wall = $('.ach-wall', panel); if (wall) wall.addEventListener('click', wallpaper);
@@ -157,12 +180,24 @@
 
   RW.commands.achievements = function () {
     RW.print('🏆 ' + count() + '/' + ACH.length + ' secrets found', 'ok');
-    ACH.forEach(function (a) { RW.print((got[a.id] ? '✔ ' + a.title : '🔒 ??? — ' + a.hint), got[a.id] ? '' : 'dim'); });
+    ACH.forEach(function (a) { RW.print((got[a.id] ? '✔ ' + a.title : '🔒 ' + a.title + ' — ' + a.hint), got[a.id] ? '' : 'dim'); });
+    RW.print('Stuck? Type <span class="p">hint</span> for step-by-step help.', 'dim');
     RW.print('<a href="#" data-trophies>→ open the trophy case</a>');
     var l = $$('[data-trophies]').pop();
     if (l) l.addEventListener('click', function (e) { e.preventDefault(); openPanel(); });
   };
   RW.commands.trophies = RW.commands.achievements;
+  // hint: the exact steps for the next locked one (run it again for the next).
+  var hintAt = 0;
+  RW.commands.hint = RW.commands.hints = function () {
+    var left = ACH.filter(function (a) { return !got[a.id]; });
+    if (!left.length) { RW.print('Nothing left to find — you got all ' + ACH.length + '. 🏆', 'ok'); return; }
+    var a = left[hintAt++ % left.length];
+    RW.print('💡 ' + a.title + ': ' + a.hint, 'ok');
+    RW.print('   ' + a.nudge, 'dim');
+    if (left.length > 1) RW.print('Type <span class="p">hint</span> again for another (' + left.length + ' left).', 'dim');
+  };
+  RW.commands['rob.hire()'] = RW.commands['rob.hire'] = function () { RW.print(window.rob.hire(), 'ok'); };
   RW.commands.colophon = function () {
     RW.print('robwiscount.org — plain HTML, CSS and JS. No framework, no build step.', 'ok');
     RW.print('  page      GitHub Pages · one stylesheet on design tokens · one script per feature\n  live      Cloudflare Worker + Durable Object (SQLite): cursors, visits, guestbook\n  dogs      the real Fetch models → gltf-transform → three.js, ortho camera in CSS px\n  pool      elastic collisions, 14 substeps a frame, cushions, pockets\n  tests     Playwright + Lighthouse on every pull request', 'dim');
@@ -171,6 +206,20 @@
   };
   RW.commands['how it works'] = RW.commands.colophon;
   RW.unlock = unlock;
+
+  // The Konami code for phones: swipe up, up, down, down, left, right, left, right, then tap twice.
+  (function () {
+    var CODE = 'UUDDLRLRTT', seq = '', x0 = 0, y0 = 0, t0 = 0;
+    window.addEventListener('touchstart', function (e) { var t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; t0 = Date.now(); }, { passive: true });
+    window.addEventListener('touchend', function (e) {
+      var t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0, ax = Math.abs(dx), ay = Math.abs(dy), m;
+      if (ax < 12 && ay < 12 && Date.now() - t0 < 350) m = 'T';
+      else if (Math.max(ax, ay) > 40) m = ay > ax ? (dy < 0 ? 'U' : 'D') : (dx < 0 ? 'L' : 'R');
+      else return;
+      seq = (seq + m).slice(-CODE.length);
+      if (seq === CODE) { seq = ''; RW.party(); RW.toast('🎮 Cheat code unlocked: +30 lives. Now go hire Rob.'); unlock('konami'); }
+    }, { passive: true });
+  })();
 
   /* ==========================================================================
      Console: a note for whoever opens DevTools, and rob.hire()

@@ -892,3 +892,11 @@ body:has(.mini-player:not([hidden])) .lv-pill { bottom: 88px; }
 .lb-last b i { font-style: normal; color: var(--muted); font-weight: 500; }
 .lb-last em { font-style: normal; color: #00c030; font-size: .8rem; letter-spacing: .05em; }
 .lb-last em span { color: #ff8000; }
+.ach-nudge { margin-top: 6px; }
+.ach-nudge summary { cursor: pointer; font-size: .76rem; color: var(--blue-hi); list-style: none; display: inline-flex; align-items: center; gap: 5px; }
+.ach-nudge summary::-webkit-details-marker { display: none; }
+.ach-nudge summary::before { content: '💡'; font-size: .8em; }
+.ach-nudge[open] summary { color: var(--muted); }
+.ach-nudge small { display: block; margin-top: 4px; color: var(--text) !important; }
+.ach-grid li:not(.on) b { color: var(--muted); }
+.ach-note code { font-size: .85em; }

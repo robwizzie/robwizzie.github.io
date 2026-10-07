@@ -52,3 +52,19 @@ test('rm -rf / puts everything back', async ({ page }) => {
   await expect.poll(() => termOut(page), { timeout: 15000 }).toContain('Restored from backup');
   expect(await page.evaluate(() => document.getAnimations().filter((a) => a.constructor.name === 'Animation' && a.playState === 'running').length)).toBe(0);
 });
+
+test('locked achievements show their name, a hint and a nudge', async ({ page }) => {
+  await page.locator('.ach-foot').click();
+  const vim = page.locator('.ach-grid li', { hasText: 'Escaped Vim' });
+  await expect(vim).toContainText('Type vim in the terminal');
+  await vim.locator('summary').click();
+  await expect(vim.locator('.ach-nudge')).toContainText(':wq');
+});
+
+test('hint walks you through the next one, and rob.hire() works from the terminal', async ({ page }) => {
+  await term(page, 'hint');
+  expect(await termOut(page)).toContain('💡');
+  await term(page, 'rob.hire()');
+  await expect(page.locator('.ach-foot')).not.toContainText(' 0/');
+  await expect(page.locator('#hire-panel')).toBeVisible();
+});
