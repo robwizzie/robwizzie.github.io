@@ -49,6 +49,9 @@
         .co-eggs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 22px; }
         .co-eggs div { padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--line); font-size: .9rem; color: var(--muted); }
         .co-eggs b { color: var(--text); }
+        .co-credits { margin: 20px 0 0; padding-left: 18px; color: var(--muted); font-size: .92rem; display: grid; gap: 6px; }
+        .co-credits a { color: var(--blue-hi); text-decoration: underline; text-underline-offset: 3px; }
+        .co-credits b { color: var(--text); font-weight: 600; }
         .co-end { padding: clamp(64px, 9vw, 110px) 0; text-align: center; }
         @media (max-width: 900px) { .co-grid { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 600px) { .co-grid, .co-eggs { grid-template-columns: 1fr; } .co-files td.n { display: none; } }
@@ -69,7 +72,7 @@
             <h1 class="h-display">How this site <span class="blue">works.</span></h1>
             <p class="lede">No framework, no build step, no bundler for the page itself. It's plain HTML, CSS and JavaScript on GitHub Pages, plus one small Cloudflare Worker for the live bits. Here's what's under the hood, for the curious.</p>
             <nav class="co-toc" aria-label="On this page">
-                <a href="#stack">The stack</a><a href="#map">How it fits together</a><a href="#live">Live mode</a><a href="#dogs">The 3D dogs</a><a href="#pool">Pool physics</a><a href="#eggs">Easter eggs</a><a href="#perf">Performance</a><a href="#tests">Tests</a><a href="#privacy">Privacy</a>
+                <a href="#stack">The stack</a><a href="#map">How it fits together</a><a href="#live">Live mode</a><a href="#dogs">The 3D dogs</a><a href="#pool">Pool physics</a><a href="#eggs">Easter eggs</a><a href="#perf">Performance</a><a href="#tests">Tests</a><a href="#privacy">Privacy</a><a href="#credits">Credits</a>
             </nav>
         </div>
     </section>
@@ -227,6 +230,15 @@
         </div>
     </section>
 
+    <section class="co" id="credits">
+        <div class="wrap">
+            <span class="eyebrow">Image credits</span>
+            <h2 class="h-display">Borrowed, <span class="blue">with thanks.</span></h2>
+            <p class="lede">The terminal's themes bring in a few guests. Their photos come from Wikimedia Commons under the licenses below, cut out onto transparent backgrounds (that's the only change). Team mascots and names belong to their teams; they're here as a fan's tribute, not an endorsement.</p>
+            <ul class="co-credits" id="co-credits"><li>LeBron head and album art: from my own <a href="https://lebronify.app" target="_blank" rel="noopener">LeBronify</a>.</li></ul>
+        </div>
+    </section>
+
     <section class="co-end">
         <div class="wrap">
             <span class="eyebrow">Built with</span>
@@ -237,6 +249,16 @@
     </section>
 </main>
 <script>
+  // Credits for the theme photos (written by tests/theme_art.py), listed as they appear.
+  fetch('assets/themes/credits.json').then(function (r) { return r.ok ? r.json() : {}; }).then(function (c) {
+    var names = { 'lebron-photo': 'LeBron James', keanu: 'Keanu Reeves', swoop: 'Swoop (Philadelphia Eagles)', phanatic: 'The Phillie Phanatic', gritty: 'Gritty (Philadelphia Flyers)', franklin: 'Franklin (Philadelphia 76ers)' };
+    var ul = document.getElementById('co-credits'), esc = function (v) { var d = document.createElement('div'); d.textContent = v || ''; return d.innerHTML; };
+    Object.keys(c).forEach(function (k) {
+      var x = c[k], li = document.createElement('li');
+      li.innerHTML = '<b>' + esc(names[k] || k) + '</b>: photo by ' + esc(x.author) + ', <a href="' + esc(x.license_url || x.source) + '" target="_blank" rel="noopener">' + esc(x.license) + '</a>, via <a href="' + esc(x.source) + '" target="_blank" rel="noopener">Wikimedia Commons</a>.';
+      ul.appendChild(li);
+    });
+  }).catch(function () {});
   // Reading the manual counts as an achievement on the main page.
   try { var g = JSON.parse(localStorage.getItem('rw-eggs')) || {}; if (!g.colophon) { g.colophon = Date.now(); localStorage.setItem('rw-eggs', JSON.stringify(g)); } } catch (e) {}
 </script>
