@@ -127,11 +127,13 @@
         return '<li class="' + (on ? 'on' : '') + '"><span class="ach-ico">' + (on ? a.icon : '🔒') + '</span><span><b>' + a.title + '</b><small>' + (on ? a.desc : a.hint) + '</small>' +
           (on ? '' : '<details class="ach-nudge"><summary>Need a nudge?</summary><small>' + a.nudge + '</small></details>') + '</span></li>';
       }).join('') + '</ul>' +
-      (done ? '<button class="btn btn-primary ach-wall" type="button"><i class="fas fa-download"></i> Download your trophy wallpaper</button>'
+      (done ? '<div class="ach-done-actions"><button class="btn btn-primary ach-wall" type="button"><i class="fas fa-download"></i> Download your trophy wallpaper</button>' +
+              (RW.celebrate ? '<button class="btn btn-ghost ach-replay" type="button"><i class="fas fa-trophy"></i> Replay the celebration</button>' : '') + '</div>'
             : '<p class="ach-note">Progress saves in this browser. Stuck? Open "Need a nudge?" on any locked one, or type <code>hint</code> in the terminal.</p>') +
       '</div>';
     $('.ach-close', panel).addEventListener('click', closePanel);
     var wall = $('.ach-wall', panel); if (wall) wall.addEventListener('click', wallpaper);
+    var replay = $('.ach-replay', panel); if (replay) replay.addEventListener('click', function () { closePanel(); setTimeout(RW.celebrate, 300); });
   }
   var lastFocus = null;
   function openPanel() {
@@ -373,17 +375,26 @@
      so the teams get their colors, emoji and chants instead of logos. */
   var THEMES = {
     lebron: { squares: 'gold.', blue: '#f5b323', hi: '#ffd877', line: 'LeBron mode 👑 — he\'s everywhere now.', ribbon: ['👑 LEBRON MODE', 'THE KING', 'TACO TUESDAY 🌮', 'YOU ARE MY SUNSHINE', 'GLAZED, NOT CONFUSED'], ribbonBg: '#552583', ribbonFg: '#fdb927',
-      faces: ['bronicide', 'lehips', 'lenade', 'taco', 'lebronifornia'], count: 11, flyby: '👑' },
+      faces: ['bronicide', 'lehips', 'lenade', 'taco', 'lebronifornia'], count: 11, flyby: '👑', cameo: 'lebron-photo', emoji: '👑', label: 'LeBron',
+      name: ['LeBron', 'James'],
+      hero: {
+        pill: 'Still the King', verb: 'I bring',
+        roles: ['championships', 'chase-down blocks', 'Taco Tuesday', 'the I PROMISE School', 'my talents to South Beach'],
+        proof: [['4×', 'NBA champion, with three different teams'], ['4×', 'NBA Finals MVP'], ['40K+', 'points, the most in NBA history']],
+        copy: 'Forward at heart, point guard when needed. From <strong>Akron, Ohio</strong>, straight out of high school and the No. 1 pick in 2003. Rings in <strong>Miami, Cleveland and Los Angeles</strong>, the I PROMISE School back home, and somehow also the star of <strong>a parody Spotify Rob built</strong>. You are my sunshine. 🌞',
+        badges: [['🏆', '4× NBA champion', 'Miami · Cleveland · L.A.'], ['👑', 'All-time leading scorer', '40,000+ points']]
+      },
+      portrait: ['assets/themes/lebron-photo.png', 'assets/themes/lebron-head.webp'] },
     eagles: { squares: 'midnight green.', blue: '#1fb5a8', hi: '#7fe0d6', line: 'Fly, Eagles, fly 🦅', ribbon: ['🦅 E-A-G-L-E-S · EAGLES!', 'FLY EAGLES FLY', 'GO BIRDS', 'BIRD GANG'], ribbonBg: '#004c54', ribbonFg: '#d7dcdf',
-      float: ['🦅', '🏈', '💚'], count: 10, flyby: '🦅' },
+      float: ['🦅', '🏈', '💚'], count: 10, flyby: '🦅', cameo: 'swoop', emoji: '🦅', label: 'Eagles' },
     phillies: { squares: 'Phillies red.', blue: '#ff3347', hi: '#ff8a96', line: 'Ring the bell 🔔', ribbon: ['🔔 RING THE BELL', 'RED OCTOBER', 'DANCING ON MY OWN', 'LET\'S GO PHILLIES'], ribbonBg: '#e81828', ribbonFg: '#ffffff',
-      float: ['⚾', '🔔', '❤️'], count: 10, flyby: '⚾', stripes: true },
+      float: ['⚾', '🔔', '❤️'], count: 10, flyby: '⚾', stripes: true, cameo: 'phanatic', emoji: '⚾', label: 'Phillies' },
     flyers: { squares: 'orange and black.', blue: '#ff6a2b', hi: '#ffab85', line: 'Let\'s go Flyers 🏒', ribbon: ['🏒 LET\'S GO FLYERS', 'ORANGE AND BLACK', 'BROAD STREET', 'GRITTY WOULD APPROVE 🧡'], ribbonBg: '#000000', ribbonFg: '#f74902',
-      float: ['🏒', '🥅', '🧡'], count: 10, flyby: '🏒' },
+      float: ['🏒', '🥅', '🧡'], count: 10, flyby: '🏒', cameo: 'gritty', emoji: '🏒', label: 'Flyers' },
     sixers: { squares: 'Sixers blue.', blue: '#3d7bff', hi: '#9fbcff', line: 'Trust the process 🏀', ribbon: ['🏀 TRUST THE PROCESS', 'BROTHERLY LOVE', 'HERE THE SIXERS COME', 'PHILA UNITE'], ribbonBg: '#ed174c', ribbonFg: '#ffffff',
-      float: ['🏀', '⭐', '🔔'], count: 10, flyby: '🏀' },
+      float: ['🏀', '⭐', '🔔'], count: 10, flyby: '🏀', cameo: 'franklin', emoji: '🏀', label: 'Sixers' },
     matrix: { squares: 'green again. Whoa.', blue: '#22e36b', hi: '#8dffb4', line: 'Wake up, Neo… The Matrix has you.', ribbon: ['FOLLOW THE WHITE RABBIT 🐇', 'THERE IS NO SPOON 🥄', 'WHOA.', 'KNOCK, KNOCK, NEO'], ribbonBg: '#020a04', ribbonFg: '#22e36b',
-      rain: true },
+      rain: true, cameo: 'keanu', emoji: '🕶️', label: 'Matrix' },
     default: null
   };
   var BASE_HUE = 221; // the RW logo's blue
@@ -400,7 +411,7 @@
 
   var fx = null, rainRaf = 0, flybyTimer = 0;
   function clearFx() {
-    if (fx) { fx.layer.remove(); if (fx.ribbon) fx.ribbon.remove(); fx = null; }
+    if (fx) { fx.layer.remove(); if (fx.ribbon) fx.ribbon.remove(); if (fx.cameo) fx.cameo.remove(); fx = null; }
     cancelAnimationFrame(rainRaf); rainRaf = 0; clearInterval(flybyTimer); flybyTimer = 0;
     document.body.classList.remove('has-ribbon');
   }
@@ -466,11 +477,147 @@
     if (reduceMotion) { cancelAnimationFrame(rainRaf); cv.style.opacity = 0.15; }
   }
 
+  /* Swaps: the LeBron theme puts LeBron in Rob's place (photo and name), and puts it all back after. */
+  var swapped = null;
+  function restoreSwaps() {
+    if (!swapped) return;
+    swapped.forEach(function (x) {
+      if (x.attr === 'class') x.el.classList.remove(x.val);
+      else if (x.attr === 'html') x.el.innerHTML = x.val;
+      else if (x.attr) x.el.setAttribute(x.attr, x.val);
+      else x.el.textContent = x.val;
+    });
+    if (swapped.roles && RW.setRoles) RW.setRoles(null);
+    if (swapped.me) { // my photo pops back in
+      swapped.me.classList.remove('back-in'); void swapped.me.offsetWidth; swapped.me.classList.add('back-in');
+    }
+    swapped = null;
+  }
+  // Swap an element's text (attr omitted), innerHTML ('html'), an attribute, or add a class ('class'); restoreSwaps undoes it.
+  function swap(el, val, attr) {
+    if (!el) return;
+    if (attr === 'class') { if (el.classList.contains(val)) return; swapped.push({ el: el, attr: attr, val: val }); el.classList.add(val); return; }
+    swapped.push({ el: el, attr: attr, val: attr === 'html' ? el.innerHTML : attr ? el.getAttribute(attr) : el.textContent });
+    if (attr === 'html') el.innerHTML = val; else if (attr) el.setAttribute(attr, val); else el.textContent = val;
+  }
+  function firstThatLoads(srcs, done) { // try each image in order; call done(src) for the first that exists
+    var i = 0;
+    (function next() {
+      if (i >= srcs.length) return;
+      var im = new Image(), src = srcs[i++];
+      im.onload = function () { done(src); }; im.onerror = next; im.src = src;
+    })();
+  }
+  function applySwaps(name, t) {
+    swapped = [];
+    if (t.name) {
+      var lines = document.querySelectorAll('.hero-title .line > span');
+      if (lines[0]) swap(lines[0], t.name[0]);
+      if (lines[1]) swap(lines[1], t.name[1]);
+      swap(document.querySelector('.nav-brand span'), t.name.join(' '));
+    }
+    if (t.hero) { // the rest of the hero tells their story, not mine
+      var h = t.hero, q = function (sel) { return document.querySelector(sel); };
+      var pill = q('.status-pill');
+      if (pill && pill.lastChild) swap(pill.lastChild, ' ' + h.pill);
+      var sub = q('.hero-sub');
+      if (sub && sub.firstChild && sub.firstChild.nodeType === 3) swap(sub.firstChild, h.verb + ' ');
+      if (h.roles && RW.setRoles) { RW.setRoles(h.roles); swapped.roles = true; }
+      var proof = document.querySelectorAll('.hero-proof li');
+      (h.proof || []).forEach(function (p, i) { if (proof[i]) swap(proof[i], '<b>' + p[0] + '</b><span>' + p[1] + '</span>', 'html'); });
+      if (h.copy) swap(q('.hero-copy'), h.copy, 'html');
+      (h.badges || []).forEach(function (b, i) {
+        var el = q('.fb-' + (i + 1));
+        if (el) swap(el, '<span class="ico">' + b[0] + '</span><span>' + b[1] + '<small>' + b[2] + '</small></span>', 'html');
+      });
+    }
+    if (t.portrait) {
+      var img = document.querySelector('.portrait-hex img'), mine = swapped;
+      firstThatLoads(t.portrait, function (src) {
+        if (swapped !== mine) return; // theme changed while loading
+        swap(img, src, 'src'); swap(img, 'Portrait of ' + t.name.join(' ') + ' (LeBron mode)', 'alt');
+        swap(img, 'swapped-in', 'class');
+        swapped.me = img;
+      });
+    }
+  }
+
+  /* Cameo: the team mascot (or Keanu, or LeBron) peeks up from the bottom corner, if its art is there. */
+  function addCameo(t) {
+    if (!t.cameo || !fx) return;
+    var layer = fx.layer;
+    firstThatLoads(['assets/themes/' + t.cameo + '.png'], function (src) {
+      if (!fx || fx.layer !== layer) return;
+      var c = document.createElement('img');
+      c.className = 'fx-cameo'; c.src = src; c.alt = '';
+      document.body.appendChild(c); fx.cameo = c;
+      // CC BY photos need a credit; it rides along for screen readers here, and the full list is on how-it-works.html#credits.
+      fetch('assets/themes/credits.json').then(function (r) { return r.ok ? r.json() : {}; }).then(function (all) {
+        var k = all[t.cameo];
+        if (k && c.isConnected) c.alt = 'Photo: ' + k.author + ' · ' + k.license + ' (Wikimedia Commons)';
+      }).catch(function () {});
+    });
+  }
+
+  /* The theme bar: shows which theme is on, lets you hop to another, and turns it off. No terminal needed. */
+  var bar = null;
+  function renderBar(name) {
+    if (!THEMES[name]) { if (bar) { bar.classList.remove('show'); var b0 = bar; setTimeout(function () { if (!b0.classList.contains('show')) b0.hidden = true; }, 300); } return; }
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.className = 'theme-bar'; bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', 'Theme');
+      document.body.appendChild(bar);
+      bar.addEventListener('click', function (e) {
+        var b = e.target.closest('button');
+        if (!b) return;
+        switchTheme(b.getAttribute('data-theme'), e);
+      });
+    }
+    var t = THEMES[name];
+    bar.innerHTML = '<span class="tb-now">' + t.emoji + ' <b>' + t.label + ' mode</b></span>' +
+      '<span class="tb-picks">' + Object.keys(THEMES).filter(function (k) { return THEMES[k] && k !== name; }).map(function (k) {
+        return '<button type="button" class="tb-pick" data-theme="' + k + '" title="' + THEMES[k].label + ' mode" aria-label="Switch to ' + THEMES[k].label + ' mode" style="--sw:' + THEMES[k].blue + '">' + THEMES[k].emoji + '</button>';
+      }).join('') + '</span>' +
+      '<button type="button" class="tb-off" data-theme="default" aria-label="Back to normal"><i class="fas fa-times" aria-hidden="true"></i><span> Back to normal</span></button>';
+    bar.hidden = false;
+    requestAnimationFrame(function () { bar.classList.add('show'); });
+  }
+
+  /* Switching themes is a little show: the new theme spreads out from wherever you clicked (Matrix
+     rains down in steps; going back to normal shrinks the theme away). View Transitions API where
+     supported, a quick fade elsewhere. */
+  function switchTheme(name, from) {
+    var cur = document.documentElement.getAttribute('data-theme') || 'default';
+    if (name === cur) return;
+    var x = from && from.clientX != null ? from.clientX : innerWidth / 2, y = from && from.clientY != null ? from.clientY : innerHeight / 2;
+    var apply = function () { setTheme(name); renderBar(name); };
+    if (reduceMotion || !document.startViewTransition) {
+      var veil = document.createElement('div'); veil.className = 'theme-veil'; document.body.appendChild(veil);
+      setTimeout(apply, reduceMotion ? 0 : 140); setTimeout(function () { veil.remove(); }, 450);
+      return;
+    }
+    var r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    var vt = document.startViewTransition(apply);
+    vt.ready.then(function () {
+      var el = document.documentElement, opts = { duration: 900, easing: 'cubic-bezier(.7,0,.25,1)' };
+      if (name === 'default') { // the theme shrinks back into where you clicked
+        el.animate({ clipPath: ['circle(' + r + 'px at ' + x + 'px ' + y + 'px)', 'circle(0px at ' + x + 'px ' + y + 'px)'] }, Object.assign({ pseudoElement: '::view-transition-old(root)', fill: 'forwards' }, opts));
+      } else if (name === 'matrix') { // digital rain wipe
+        el.animate({ clipPath: ['inset(0 0 100% 0)', 'inset(0 0 0% 0)'] }, { pseudoElement: '::view-transition-new(root)', duration: 1100, easing: 'steps(22, end)' });
+      } else if (name === 'lebron') { // a crown-gold burst with a little spin
+        el.animate({ clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + r + 'px at ' + x + 'px ' + y + 'px)'], transform: ['scale(1.06) rotate(-2deg)', 'none'] }, Object.assign({ pseudoElement: '::view-transition-new(root)' }, opts));
+      } else { // team themes sweep in diagonally like a jersey stripe
+        el.animate({ clipPath: ['polygon(0 0, 0 0, -30% 100%, -30% 100%)', 'polygon(0 0, 130% 0, 100% 100%, -30% 100%)'] }, Object.assign({ pseudoElement: '::view-transition-new(root)' }, opts, { duration: 800 }));
+      }
+    }).catch(function () {});
+  }
+  RW.setTheme = switchTheme;
+
   function setTheme(name) {
     var root = document.documentElement, t = THEMES[name];
     ['--blue', '--blue-hi', '--blue-soft', '--blue-glow', '--logo-filter'].forEach(function (v) { root.style.removeProperty(v); });
     root.removeAttribute('data-theme');
-    clearFx();
+    clearFx(); restoreSwaps();
     if (t) {
       var rgb = t.blue.match(/\w\w/g).map(function (h) { return parseInt(h, 16); }).join(',');
       root.style.setProperty('--blue', t.blue); root.style.setProperty('--blue-hi', t.hi);
@@ -478,7 +625,7 @@
       var hsl = hexHsl(t.blue);
       root.style.setProperty('--logo-filter', 'hue-rotate(' + Math.round(hsl.h - BASE_HUE) + 'deg) saturate(' + Math.max(0.7, hsl.s / 0.93).toFixed(2) + ')');
       root.setAttribute('data-theme', name);
-      buildFx(name, t);
+      buildFx(name, t); applySwaps(name, t); addCameo(t);
     }
     // "Green squares, but make them blue." names the theme's color instead.
     var sq = document.querySelector('#commits .h2 .blue');
@@ -504,7 +651,8 @@
       return;
     }
     if (name === 'blue') name = 'default';
-    setTheme(name);
+    var tr = document.querySelector('.terminal'), tb = tr && tr.getBoundingClientRect();
+    switchTheme(name, tb ? { clientX: tb.left + tb.width / 2, clientY: tb.top + tb.height / 2 } : null);
     if (name === 'default') { print('Back to RW blue. ✔', 'ok'); return; }
     print(THEMES[name].line, 'ok');
     unlock('theme');
@@ -515,10 +663,10 @@
         var l = (line || '').trim().toLowerCase();
         RW.setTermMode(null);
         if (l === 'red' || l === 'red pill') print('Welcome to the real world. 🐇 (theme default gets you out)', 'ok');
-        else if (l === 'blue' || l === 'blue pill') { setTheme('default'); print('The story ends. You wake up in your bed and believe whatever you want to believe. 💊', 'ok'); }
+        else if (l === 'blue' || l === 'blue pill') { switchTheme('default'); print('The story ends. You wake up in your bed and believe whatever you want to believe. 💊', 'ok'); }
         else if (l) RW.run(line);
       });
-    } else print('<span class="dim">Back to normal any time: </span><span class="p">theme default</span>');
+    } else print('<span class="dim">Back to normal any time: the ✕ at the bottom of the screen, or </span><span class="p">theme default</span>');
   };
   C.themes = function () { C.theme(''); };
 

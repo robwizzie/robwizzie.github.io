@@ -1,0 +1,56 @@
+name: Theme art
+
+# Finds freely licensed photos on Wikimedia Commons (Keanu, the Philly mascots, a recent LeBron),
+# cuts them out onto transparent backgrounds and commits them to assets/themes/ with credits.json.
+# Runs when tests/theme_art.py lands on master, or by hand (Actions -> Theme art -> Run workflow;
+# "only" = e.g. "gritty keanu" to redo just those). Never runs on pull requests. Pushes made with
+# GITHUB_TOKEN don't trigger other workflows, so it can't loop.
+on:
+  push:
+    branches: [master]
+    paths: ['tests/theme_art.py', '.github/workflows/theme-art.yml']
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Space-separated names (lebron-photo keanu swoop phanatic gritty franklin); blank = all'
+        required: false
+        default: ''
+
+concurrency:
+  group: theme-art
+  cancel-in-progress: false
+
+jobs:
+  art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install "rembg[cpu]" pillow requests
+      - name: Find, cut out, credit
+        env:
+          ONLY: ${{ inputs.only }}
+        run: python tests/theme_art.py $ONLY --sheet contact-sheet.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: theme-art
+          path: |
+            contact-sheet.png
+            assets/themes/*.png
+            assets/themes/credits.json
+          retention-days: 14
+      - name: Commit
+        run: |
+          if [ -z "$(git status --porcelain -- assets/themes)" ]; then echo "Nothing new"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/themes
+          git commit -m "Theme art from Wikimedia Commons (see assets/themes/credits.json)"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
