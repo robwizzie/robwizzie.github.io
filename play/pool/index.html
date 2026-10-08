@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>8-Ball</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../../assets/fonts.css">
+<style>
+  :root { --bg: #06080d; --ink: #f4f6fb; --dim: #9aa4b8; --line: rgba(255,255,255,.12); --blue: #5b8ff9; --hi: #8db2ff; --gold: #f2c14e; --bad: #ff6b6b;
+    --display: 'Saira Extra Condensed', 'Arial Narrow', sans-serif; --sans: 'Inter', system-ui, sans-serif; --mono: 'JetBrains Mono', ui-monospace, monospace; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font-family: var(--sans); overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+  body { display: flex; flex-direction: column; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+
+  /* HUD */
+  #hud { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 8px 12px; min-height: 58px; }
+  .chip { display: flex; flex-direction: column; gap: 4px; padding: 6px 10px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.03); transition: border-color .25s, box-shadow .25s; min-width: 0; }
+  .chip.cpu { align-items: flex-end; justify-self: end; }
+  .chip.you { justify-self: start; }
+  .chip.on { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue), 0 0 18px -4px var(--blue); }
+  .chip b { font-family: var(--display); font-size: 1.05rem; letter-spacing: .06em; line-height: 1; }
+  .chip small { color: var(--dim); font-weight: 500; margin-left: 4px; font-family: var(--mono); font-size: .62rem; letter-spacing: .08em; }
+  .rack { display: flex; gap: 3px; min-height: 16px; align-items: center; }
+  .rack i { width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 8px; font-weight: 700; color: #111; position: relative; overflow: hidden; }
+  .rack i::after { content: attr(data-n); position: relative; width: 11px; height: 11px; line-height: 11px; font-size: 7px; letter-spacing: -.04em; text-align: center; border-radius: 50%; background: #fff; }
+  .rack i.gone { opacity: .18; }
+  .rack em { font-style: normal; font-size: .72rem; color: var(--dim); }
+  #msg { text-align: center; font-size: .86rem; font-weight: 600; max-width: 42vw; line-height: 1.25; min-height: 1.25em; }
+  #msg.bad { color: var(--bad); } #msg.good { color: #8ef0b8; }
+  .tools { display: flex; gap: 6px; }
+  .icon { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: rgba(255,255,255,.04); display: grid; place-items: center; font-size: .85rem; }
+  .icon:hover { border-color: var(--blue); }
+
+  /* Stage */
+  #stage { position: relative; flex: 1; min-height: 0; }
+  #table { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #gutter { position: absolute; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  body.land #gutter { left: 6px; top: 8px; bottom: 8px; width: 56px; flex-direction: column; }
+  body.port #gutter { left: 8px; right: 8px; bottom: 6px; height: 60px; }
+  #power { position: relative; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid var(--line); touch-action: none; cursor: grab; }
+  body.land #power { width: 34px; flex: 1; max-height: 360px; }
+  body.port #power { height: 34px; flex: 1; max-width: 420px; }
+  #power .fill { position: absolute; border-radius: 999px; background: linear-gradient(var(--fd, 180deg), #8ef0b8, var(--gold) 60%, var(--bad)); }
+  body.land #power .fill { left: 3px; right: 3px; top: 3px; height: 0; --fd: 180deg; }
+  body.port #power .fill { top: 3px; bottom: 3px; left: 3px; width: 0; --fd: 90deg; }
+  #power span { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--mono); font-size: .58rem; letter-spacing: .14em; color: var(--dim); pointer-events: none; }
+  body.land #power span { writing-mode: vertical-rl; }
+  #power.off { opacity: .35; pointer-events: none; }
+  #spin { width: 46px; height: 46px; flex: none; border-radius: 50%; border: 1px solid var(--line); background: radial-gradient(circle at 38% 34%, #fff, #d9d6cb 70%, #a9a59a); position: relative; padding: 0; }
+  #spin i, #pad i { position: absolute; width: 22%; height: 22%; border-radius: 50%; background: #e0352b; box-shadow: 0 0 0 2px rgba(255,255,255,.7); transform: translate(-50%, -50%); left: 50%; top: 50%; }
+  #pop { position: absolute; z-index: 5; padding: 14px; border-radius: 16px; background: #0d1220; border: 1px solid var(--line); box-shadow: 0 20px 50px -10px #000; text-align: center; }
+  body.land #pop { left: 72px; bottom: 10px; } body.port #pop { right: 10px; bottom: 76px; }
+  #pad { width: 150px; height: 150px; border-radius: 50%; position: relative; background: radial-gradient(circle at 38% 34%, #fff, #dcd9ce 68%, #9e9a8f); touch-action: none; cursor: crosshair; margin: 0 auto 10px; }
+  #pad::before, #pad::after { content: ''; position: absolute; background: rgba(0,0,0,.12); }
+  #pad::before { left: 50%; top: 8%; bottom: 8%; width: 1px; } #pad::after { top: 50%; left: 8%; right: 8%; height: 1px; }
+  #pad i { width: 18px; height: 18px; }
+  #pop p { margin: 0 0 8px; font-size: .72rem; color: var(--dim); max-width: 160px; }
+  .btn { border: 1px solid var(--line); background: rgba(255,255,255,.05); border-radius: 999px; padding: 8px 16px; font-weight: 600; font-size: .85rem; }
+  .btn:hover { border-color: var(--blue); }
+  .btn.go { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  /* Menus */
+  .sheet { position: absolute; inset: 0; z-index: 10; display: grid; place-items: center; background: rgba(4,6,10,.72); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); padding: 16px; }
+  .sheet[hidden] { display: none; }
+  .card { width: min(420px, 100%); text-align: center; padding: 26px 22px; border-radius: 20px; background: #0b1020; border: 1px solid var(--line); box-shadow: 0 30px 80px -20px #000; }
+  .card h1 { font-family: var(--display); font-size: 3.2rem; letter-spacing: .04em; margin: 0; line-height: .9; }
+  .card h1 span { color: var(--blue); }
+  .card p { color: var(--dim); font-size: .88rem; margin: 10px 0 18px; line-height: 1.45; }
+  .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+  .levels button { border: 1px solid var(--line); background: rgba(255,255,255,.03); border-radius: 14px; padding: 12px 6px 10px; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+  .levels button b { font-family: var(--display); font-size: 1.35rem; letter-spacing: .05em; }
+  .levels button small { font-family: var(--mono); font-size: .62rem; color: var(--dim); }
+  .levels button[aria-pressed="true"] { border-color: var(--blue); background: rgba(91,143,249,.14); box-shadow: 0 0 0 1px var(--blue); }
+  .row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .keys { margin-top: 16px; font-size: .7rem; color: var(--dim); font-family: var(--mono); line-height: 1.7; }
+  kbd { font-family: var(--mono); font-size: .66rem; padding: 1px 5px; border-radius: 5px; border: 1px solid var(--line); color: var(--ink); }
+  @media (hover: none) { .keys { display: none; } }
+  @media (max-width: 560px) { #hud { grid-template-columns: 1fr 1fr; } #msg { grid-column: 1 / -1; grid-row: 2; max-width: none; } .chip small { display: none; } }
+</style>
+</head>
+<body class="land">
+  <header id="hud">
+    <div class="chip you" id="chip-you"><b>YOU <small id="you-group"></small></b><div class="rack" id="rack-you"></div></div>
+    <div id="msg" role="status" aria-live="polite"></div>
+    <div class="chip cpu" id="chip-cpu"><b><small id="cpu-group"></small> CPU <small id="cpu-level"></small></b><div class="rack" id="rack-cpu"></div></div>
+  </header>
+  <div id="stage">
+    <canvas id="table" aria-label="Pool table"></canvas>
+    <div id="gutter">
+      <div id="power" class="off" role="slider" aria-label="Shot power: drag to pull the cue back, release to shoot" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="fill"></div><span>PULL</span></div>
+      <button id="spin" type="button" aria-label="Spin" title="Spin (english)"><i></i></button>
+      <button class="icon" id="mute" type="button" aria-label="Sound" aria-pressed="true" title="Sound">🔊</button>
+    </div>
+    <div id="pop" hidden>
+      <div id="pad" aria-label="Where the cue hits the ball"><i></i></div>
+      <p>Top: follow · Bottom: draw · Sides: english off the rails</p>
+      <button class="btn" type="button" id="spin-reset">Center</button>
+    </div>
+    <div class="sheet" id="menu">
+      <div class="card">
+        <h1>8<span>-</span>BALL</h1>
+        <p>You vs. my CPU on a 7-foot bar table. Real physics, real spin, bar rules: call your pocket on the 8.</p>
+        <div class="levels" id="levels">
+          <button type="button" data-level="easy" aria-pressed="false"><b>EASY</b><small data-rec="easy">0–0</small></button>
+          <button type="button" data-level="medium" aria-pressed="true"><b>MEDIUM</b><small data-rec="medium">0–0</small></button>
+          <button type="button" data-level="hard" aria-pressed="false"><b>HARD</b><small data-rec="hard">0–0</small></button>
+        </div>
+        <div class="row"><button class="btn" type="button" id="resume" hidden>Resume</button><button class="btn go" type="button" id="start">Rack 'em</button></div>
+        <div class="keys"><kbd>drag</kbd> aim · <kbd>←</kbd><kbd>→</kbd> fine aim · <kbd>↑</kbd><kbd>↓</kbd> power · <kbd>Space</kbd> shoot · <kbd>S</kbd> spin · <kbd>Esc</kbd> close</div>
+      </div>
+    </div>
+    <div class="sheet" id="over" hidden>
+      <div class="card">
+        <h1 id="over-title">YOU WIN</h1>
+        <p id="over-why"></p>
+        <div class="row"><button class="btn go" type="button" id="again">Rematch</button><button class="btn" type="button" id="change">Change difficulty</button></div>
+      </div>
+    </div>
+  </div>
+  <script src="physics.js"></script>
+  <script src="brain.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

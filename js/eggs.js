@@ -52,6 +52,8 @@
       hint: touch ? 'There\'s a bone 🦴 hidden in the footer.' : 'Type the word dog anywhere on the page.', nudge: (touch ? 'Tap' : 'Click') + ' the 🦴 next to the copyright line at the very bottom — or type dog in the terminal.' },
     { id: 'pool', icon: '🎱', title: 'Break Shot', desc: 'Broke the rack on the About cards.',
       hint: 'Rob plays pool, and the About cards can turn into a rack.', nudge: 'Type break in the terminal — or ' + (touch ? 'tap' : 'click') + ' the 🎱 card in the About section three times fast.' },
+    { id: 'eightball', icon: '🏆', title: 'Called Pocket', desc: 'Beat the CPU at 8-ball.',
+      hint: 'The pool break isn\'t just for show. There\'s a real game in there.', nudge: 'Type play pool in the terminal (or break the rack and hit "Rack \'em"), then beat the CPU on any difficulty.' },
     { id: 'colophon', icon: '📖', title: 'Read the Manual', desc: 'Found out how this site works.',
       hint: 'Find the page that explains how this site was built.', nudge: 'Open "How this site works" in the footer — or type colophon in the terminal.' }
   ];
