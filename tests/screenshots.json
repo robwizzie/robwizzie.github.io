@@ -1,0 +1,9 @@
+{
+  "_comment": "Projects for tests/screenshots.js. Each becomes assets/work/<file>: the live site's above-the-fold view framed in a browser window. bg = page background, glow = colored light at the top (match the project's brand). enabled: false keeps an entry without capturing it by default (--only <id> still runs it). Optional: label (URL pill text, defaults to the domain), width (desktop viewport width, default 1440; height follows at 16:10), wait (extra settle ms), hide (CSS selectors to hide before capturing).",
+  "projects": [
+    { "id": "juice", "file": "juice.jpg", "url": "https://siponpressed.com", "bg": "#1a0d04", "glow": "#40230a", "enabled": true },
+    { "id": "pick5", "file": "pick5.jpg", "url": "https://sportspick5.com", "bg": "#05190e", "glow": "#0b3220", "enabled": true },
+    { "id": "ttb", "file": "ttb.jpg", "url": "https://travelingtastebuds.org", "bg": "#160c08", "glow": "#3a1c10", "enabled": false },
+    { "id": "trouble-brewing", "file": "trouble-brewing.jpg", "url": "https://robwiscount.org/troubled-brewing/", "label": "Trouble Brewing · preview build", "bg": "#140d07", "glow": "#3b2410", "enabled": false }
+  ]
+}
