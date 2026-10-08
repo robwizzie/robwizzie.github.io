@@ -394,6 +394,7 @@
     else msg = 'Sunk ' + sunk + ' on the break. Top Dawgs material 🎱';
     RW.toast(msg);
     RW.egg('pool');
+    offer();
     st.phase = 'hold';
     st.holdTimer = setTimeout(function () {
       if (!st) return;
@@ -402,6 +403,30 @@
       st.balls.forEach(function (b) { if (b.card) b.home2 = center(b.card, lr); });
       st.phase = 'return'; st.retAt = performance.now();
     }, 1100);
+  }
+
+  // After the break: an invitation to play a real game of it.
+  var offerBtn = null, offerTimer = 0;
+  function offer() {
+    if (!RW.openGame) return;
+    if (!offerBtn) {
+      offerBtn = document.createElement('button');
+      offerBtn.type = 'button'; offerBtn.className = 'pool-offer';
+      offerBtn.innerHTML = '🎱 Rack \'em vs my CPU';
+      offerBtn.addEventListener('click', function () { hideOffer(); RW.openGame('pool'); });
+    }
+    life.classList.add('offering');
+    life.appendChild(offerBtn);
+    void offerBtn.offsetWidth;
+    offerBtn.classList.add('on');
+    clearTimeout(offerTimer);
+    offerTimer = setTimeout(hideOffer, 9000);
+  }
+  function hideOffer() {
+    clearTimeout(offerTimer);
+    if (!offerBtn) return;
+    offerBtn.classList.remove('on');
+    setTimeout(function () { if (offerBtn && !offerBtn.classList.contains('on')) { if (offerBtn.parentNode) offerBtn.parentNode.removeChild(offerBtn); life.classList.remove('offering'); } }, 400);
   }
 
   function center(el, lr) {
@@ -415,6 +440,7 @@
     if (RW.reduceMotion) {
       RW.toast('Racked \'em. (Skipping the break — reduced motion is on.) 🎱');
       RW.egg('pool');
+      offer();
       return true;
     }
     busy = true;
@@ -503,7 +529,7 @@
       requestAnimationFrame(wait);
     })(t0);
   };
-  RW.commands.rack = RW.commands.pool = RW.commands['break'];
+  RW.commands.rack = RW.commands['break']; // `pool` opens the real game (js/site.js)
 
   if (eightCard) {
     eightCard.classList.add('pool-card');
