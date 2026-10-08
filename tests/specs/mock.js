@@ -33,7 +33,7 @@ const stats = {
 const you = { city: 'Cherry Hill', region: 'NJ', country: 'US', lat: 39.9, lon: -75 };
 
 async function mockWorld(page, opts = {}) {
-  const calls = { visit: [], guestbook: [] };
+  const calls = { visit: [], guestbook: [], pool: [] };
   await page.route(/^https?:\/\/(?!localhost)/, async (route) => {
     const req = route.request(), url = req.url(), cors = { 'access-control-allow-origin': '*' };
     if (url.includes('github-contributions-api')) return route.fulfill({ json: contributions(), headers: cors });
@@ -50,6 +50,11 @@ async function mockWorld(page, opts = {}) {
         const b = JSON.parse(req.postData() || '{}'); calls.guestbook.push(b);
         return route.fulfill({ json: { ok: true, status: 'pending', note: { id: 99, t: Date.now(), name: b.name, note: b.note, ...you } }, headers: cors });
       }
+      if (p === '/pool' && req.method() === 'POST') {
+        const b = JSON.parse(req.postData() || '{}'); calls.pool.push(b);
+        return route.fulfill({ json: { counted: true, totals: { easy: { w: 120, l: 340 }, medium: { w: 40, l: 210 }, hard: { w: b.won ? 4 : 3, l: 99 } } }, headers: cors });
+      }
+      if (p === '/pool') return route.fulfill({ json: { easy: { w: 120, l: 340 }, medium: { w: 40, l: 210 }, hard: { w: 3, l: 99 } }, headers: cors });
       if (p === '/guestbook') return route.fulfill({ json: { notes: [{ id: 1, t: Date.now() - 3600e3, name: 'Priya', note: 'The pool break is unreal.', city: 'London', region: 'ENG', country: 'GB', lat: 51.5, lon: -0.1 }] }, headers: cors });
       return route.fulfill({ status: 404, json: {}, headers: cors });
     }

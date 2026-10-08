@@ -70,6 +70,8 @@
     }
     if (scratch) { var c = P.cue(g.world); c.on = true; c.pocket = -1; c.x = P.HEAD_X; c.y = H / 2; }
     g.inHand = !!res.foul;
+    g.kitchen = wasBreak && scratch; // APA: a scratch on the break is ball in hand behind the head string; any other foul, anywhere
+    res.kitchen = g.kitchen;
     if (!res.keep) g.turn = o;
     return res;
   }
@@ -184,10 +186,11 @@
           var back = 6 + k * 5 + rnd() * 3, ang = (rnd() - 0.5) * (level === 'hard' ? 0.5 : 0.25);
           var ca = Math.cos(ang), sa = Math.sin(ang), ux = dx / l, uy = dy / l, rx = ux * ca - uy * sa, ry = ux * sa + uy * ca;
           var x = s.gx + rx * back, y = s.gy + ry * back;
-          if (P.free(w, x, y, c)) { spots.push({ x: x, y: y }); break; }
+          if ((!g.kitchen || x <= P.HEAD_X) && P.free(w, x, y, c)) { spots.push({ x: x, y: y }); break; }
         }
       });
-      if (!spots.length) spots.push(anyFree(w, c, rnd));
+      if (g.kitchen) for (var q = 0; q < 10; q++) spots.push(anyFree(w, c, rnd, true)); // behind the line: try spots across the kitchen too
+      if (!spots.length) spots.push(anyFree(w, c, rnd, g.kitchen));
     }
 
     var cands = [];
@@ -283,9 +286,9 @@
     return out;
   }
 
-  function anyFree(w, c, rnd) {
+  function anyFree(w, c, rnd, kitchen) {
     for (var k = 0; k < 200; k++) {
-      var x = R + rnd() * (W - 2 * R), y = R + rnd() * (H - 2 * R);
+      var x = R + rnd() * ((kitchen ? P.HEAD_X : W) - 2 * R), y = R + rnd() * (H - 2 * R);
       if (P.free(w, x, y, c)) return { x: x, y: y };
     }
     return { x: P.HEAD_X, y: H / 2 };
