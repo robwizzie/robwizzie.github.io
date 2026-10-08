@@ -13,7 +13,7 @@
     goose: { name: 'Goose', scale: 1.122, grip: [0.69, 0.56], line: 'Stronger throws. A little slower.' },
     luna: { name: 'Luna', scale: 1.045, grip: [0.64, 0.74], line: 'Fast and agile. Small target.' },
     barkley: { name: 'Barkley', scale: 1.045, grip: [0.75, 0.56], line: 'Small paws. Big dodges.' },
-    posey: { name: 'Posey', scale: 1.188, grip: [0.93, 0.785], line: 'Larger catch window. Beginner friendly.' }
+    posey: { name: 'Posey', scale: 1.1, grip: [0.93, 0.785], line: 'Larger catch window. Beginner friendly.' }
   };
   var IDS = Object.keys(DOGS);
 
@@ -50,7 +50,7 @@
     dpr = Math.min(2, window.devicePixelRatio || 1);
     W = innerWidth; H = innerHeight;
     [under, over].forEach(function (c) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); });
-    DOGH = (W < 560 ? 64 : W < 900 ? 76 : 92) * (who ? DOGS[who].scale : 1.1);
+    DOGH = (W < 560 ? 52 : W < 900 ? 62 : 74) * (who ? DOGS[who].scale : 1.1);
     R = W < 560 ? 11 : W < 900 ? 13 : 15;
     STRIP = Math.round(DOGH * 3.2);
     ground = H - 6;
@@ -86,7 +86,8 @@
     var body = new T.Group(), tilt = new T.Group(), yaw = new T.Group();
     body.add(tilt); tilt.add(yaw); scene.add(body);
     tilt.rotation.x = 0.16; // look down on him a touch, so he reads as 3D
-    var loader = new T.GLTFLoader(), cache = {}, cur = null, v = new T.Vector3();
+    var loader = new T.GLTFLoader(), cache = {}, cur = null, v = new T.Vector3(), ax = new T.Vector3();
+    var hq = body.quaternion.clone(), bq = body.quaternion.clone();
 
     function resize() {
       renderer.setPixelRatio(dpr);
@@ -96,28 +97,63 @@
       cam.updateProjectionMatrix();
     }
 
+    // A one-key clip holding the bind pose, but with the run clip's hip scale: the exported runs shrink the
+    // hips to 0.63–0.79×, so blending back to the raw bind pose made a resting dog balloon to full size.
+    function standClip(m, clip) {
+      var tracks = clip.tracks.map(function (t) {
+        var dot = t.name.lastIndexOf('.'), node = m.getObjectByName(t.name.slice(0, dot)), prop = t.name.slice(dot + 1);
+        var val = prop === 'scale' ? Array.prototype.slice.call(t.values, 0, 3) : node[prop].toArray();
+        return new t.constructor(t.name, [0], val);
+      });
+      return new clip.constructor('stand', 1, tracks);
+    }
+
+    // Height, and where the feet and chest sit, in the current pose (holder space; the rigs face +Z).
+    function measure(holder, skins) {
+      holder.updateMatrixWorld(true);
+      var b = new T.Box3();
+      skins.forEach(function (s) { s.computeBoundingBox(); b.union(s.boundingBox.clone().applyMatrix4(s.matrixWorld)); });
+      return { h: b.max.y - b.min.y, y: -b.min.y, z: -(b.min.z + b.max.z) / 2 };
+    }
+
     function load(id) {
       if (cache[id]) return Promise.resolve(cache[id]);
       return loader.loadAsync('assets/dogs/' + id + '.glb').then(function (g) {
-        var m = g.scene;
-        // Normalise to 1.2 m tall, feet on the floor, centred — the game's own conventions.
+        var m = g.scene, clip = g.animations[0], skins = [];
+        m.traverse(function (o) { if (o.isSkinnedMesh) skins.push(o); });
+        var stand = standClip(m, clip); // before anything animates, while the bones still hold the bind pose
+        // Normalise to 1.2 m tall, feet on the floor, centred — the game's own conventions, and where its grips are measured.
         var box = new T.Box3().setFromObject(m), k = 1.2 / (box.max.y - box.min.y);
         m.scale.setScalar(k);
         box.setFromObject(m);
         m.position.set(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
         var holder = new T.Group(); holder.add(m); holder.updateMatrixWorld(true);
-        // A mouth socket riding the head bone, placed where the game grips toys (these rigs face +Z).
+        // A mouth socket riding the head bone, placed where the game grips toys.
         var head = m.getObjectByName('head'), sock = new T.Object3D();
         sock.position.set(0, DOGS[id].grip[0], DOGS[id].grip[1]);
         holder.add(sock); holder.updateMatrixWorld(true);
         if (head) head.attach(sock);
-        var mixer = new T.AnimationMixer(m), run = mixer.clipAction(g.animations[0]);
-        run.play(); run.setEffectiveWeight(0);
-        cache[id] = {
-          holder: holder, mixer: mixer, run: run, socket: sock, head: head,
+        var mixer = new T.AnimationMixer(m), run = mixer.clipAction(clip), still = mixer.clipAction(stand);
+        run.play(); still.play();
+        // Measure both poses so feet stay planted and the size holds steady as one blends into the other.
+        run.setEffectiveWeight(1); still.setEffectiveWeight(0);
+        var gait = { h: 0, y: 0, z: 0 }, n = 8;
+        for (var i = 0; i < n; i++) {
+          run.time = clip.duration * i / n; mixer.update(0);
+          var g1 = measure(holder, skins); gait.h += g1.h / n; gait.y += g1.y / n; gait.z += g1.z / n;
+        }
+        run.time = 0; run.setEffectiveWeight(0); still.setEffectiveWeight(1); mixer.update(0);
+        var rest = measure(holder, skins);
+        var d = {
+          holder: holder, mixer: mixer, run: run, still: still, socket: sock, head: head,
+          unit: rest.h, stand: rest, gait: gait,
           tail: [m.getObjectByName('tailstart'), m.getObjectByName('tail1')].filter(Boolean)
         };
-        return cache[id];
+        // The bones we nudge on top of the clip, and the clip's own pose for them.
+        d.extra = d.tail.concat(head ? [head] : []);
+        d.extra.forEach(function (b) { b.userData.clipQ = b.quaternion.clone(); });
+        cache[id] = d;
+        return d;
       });
     }
 
@@ -130,7 +166,7 @@
 
     function render(dt, now) {
       if (!cur || !dog) return;
-      var spd = Math.abs(dog.vx), s = DOGH / 1.2;
+      var spd = Math.abs(dog.vx), s = DOGH / cur.unit;
       body.position.set(dog.x, -(ground - dog.h - dog.bob), 0);
       body.scale.setScalar(s);
       // Turn through facing the camera, like a real dog turning around.
@@ -143,20 +179,34 @@
 
       // Walk cycle, blended in with speed and played as fast as he's really going.
       var w = dog.h > 0 ? 0.6 : Math.min(1, spd / 110);
-      cur.run.setEffectiveWeight(w);
+      cur.run.setEffectiveWeight(w); cur.still.setEffectiveWeight(1 - w);
       cur.run.timeScale = Math.max(0.6, spd / (DOGH * 2.6));
+      cur.holder.position.set(0, cur.stand.y + (cur.gait.y - cur.stand.y) * w, cur.stand.z + (cur.gait.z - cur.stand.z) * w);
+      // The mixer only writes a bone when the clip's value changes, so put back last frame's clip pose before
+      // adding the wag and the head turn again. Otherwise they pile up every frame and spin in circles.
+      cur.extra.forEach(function (b) { b.quaternion.copy(b.userData.clipQ); });
       cur.mixer.update(calm ? dt * 0.7 : dt);
+      cur.extra.forEach(function (b) { b.userData.clipQ.copy(b.quaternion); });
+      cur.holder.getWorldQuaternion(hq);
 
       // On top of the clip: a happy tail, and a head that watches the ball.
       var happy = dog.state === 'idle' || dog.state === 'sit' || dog.state === 'return' ? 1 : 0.35;
       var wag = Math.sin(now / (dog.state === 'sit' ? 150 : 95)) * 0.55 * happy * (1 - w * 0.6);
-      cur.tail.forEach(function (b, i) { b.rotateZ(wag * (i ? 0.7 : 1)); });
+      cur.tail.forEach(function (b, i) { turn(b, 0, 1, 0, wag * (i ? 0.7 : 1)); }); // side to side
       if (cur.head) {
         var look = ball && ball.state === 'free' ? Math.max(-0.35, Math.min(0.5, (ground - ball.y) / 900)) : (dog.state === 'sit' ? Math.sin(now / 900) * 0.12 : 0);
         dog.look = (dog.look || 0) + (look - (dog.look || 0)) * Math.min(1, dt * 6);
-        cur.head.rotateX(-dog.look);
+        turn(cur.head, 1, 0, 0, -dog.look); // nose up
       }
       renderer.render(scene, cam);
+    }
+
+    // Rotate a bone about an axis in the dog's own frame (x: his left, y: up, z: forward). Each rig rolls its
+    // bones differently, so a bone-local rotateZ wags one tail and corkscrews the next.
+    function turn(b, x, y, z, a) {
+      b.getWorldQuaternion(bq);
+      ax.set(x, y, z).applyQuaternion(hq).applyQuaternion(bq.invert());
+      b.rotateOnAxis(ax, a);
     }
 
     // Where his mouth is on screen, in CSS pixels.
@@ -324,7 +374,12 @@
         if (!calm && dog.h === 0 && ball.vy > 0 && air > DOGH && air < DOGH + 160 && Math.abs(m.x + dog.vx * 0.1 - ball.x) < 80) {
           dog.vy = 760; dog.h = 0.01; puff(dog.x, 5, dog.dir);
         }
-        if (Math.hypot(m.x - ball.x, m.y - ball.y) < R + DOGH * 0.2) grab(dog.h > 8);
+        if (Math.abs(ball.x - dog.x) < DOGH * 1.2 && Math.abs(dog.vx) < 120) dog.dir = ball.x > dog.x ? 1 : -1;
+        // Off the floor he dips his head for it, so on the ground reach is horizontal: the mouth rides head-high
+        // and could otherwise hover over a resting ball forever.
+        var low = ball.y > ground - ball.size / 2 - DOGH * 0.25;
+        if (Math.hypot(m.x - ball.x, m.y - ball.y) < R + DOGH * 0.2 || (low && dog.h === 0 && Math.abs(m.x - ball.x) < R + DOGH * 0.3)) grab(dog.h > 8);
+        else if (dog.t > 6 && low && Math.abs(dog.x - ball.x) < DOGH * 1.5) grab(false); // never stand there stumped
         break;
       case 'return':
         if (runToward(homeX, ball.thrown ? SPEED * 0.75 : SPEED * 0.6, dt) < 14 && Math.abs(dog.vx) < 60) {
