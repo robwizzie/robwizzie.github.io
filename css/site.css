@@ -569,7 +569,7 @@ kbd { font-family: var(--mono); font-size: .74rem; min-width: 24px; text-align: 
 .email-btn.done .addr { display: none; }
 .contact-links { display: flex; justify-content: center; gap: 8px; margin-top: 30px; flex-wrap: wrap; }
 
-.footer { border-top: 1px solid var(--line); padding: 28px 0 36px; color: var(--dim); font-size: .86rem; }
+.footer { border-top: 1px solid var(--line); padding: 28px 0 110px; /* room below the credits cue for toasts and popups */ color: var(--dim); font-size: .86rem; }
 .footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
 .footer img { width: 26px; display: inline-block; vertical-align: middle; margin-right: 8px; }
 .footer a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
@@ -749,16 +749,27 @@ kbd { font-family: var(--mono); font-size: .74rem; min-width: 24px; text-align: 
 .mile-chip.cheer { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 22%, rgba(13,17,27,.95)); }
 .mile-chip.done { border-color: rgba(61,220,132,.6); background: rgba(16,40,28,.92); }
 .mile-chip.done i { color: var(--green); animation: none; }
+/* After the finish it waves goodbye: a little hop, then it shrinks up and out of sight */
+.mile-chip.packed { animation: milePack .6s var(--ease) forwards; pointer-events: none; }
+@keyframes milePack { 30% { translate: 0 6px; scale: 1.06; } 100% { translate: 0 -30px; scale: .4; opacity: 0; } }
 @keyframes mileStride { from { transform: translateY(0) rotate(-6deg); } to { transform: translateY(-2px) rotate(6deg); } }
 .mile-ticks { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 121; pointer-events: none; opacity: 0; transition: opacity .35s; }
 .mile-ticks.show { opacity: 1; }
 .mile-ticks i { position: absolute; top: 0; width: 2px; height: 5px; margin-left: -1px; border-radius: 0 0 2px 2px; background: color-mix(in srgb, var(--blue-hi) 70%, transparent); }
 @media (max-width: 600px) { .mile-chip { font-size: .66rem; padding: 4px 9px 4px 8px; } }
-@media (prefers-reduced-motion: reduce) { .mile-chip { transition: opacity .2s; } }
+@media (prefers-reduced-motion: reduce) { .mile-chip { transition: opacity .2s; } .mile-chip.packed { animation: none; opacity: 0; } }
 
 /* Matrix rain flash */
 
 /* End credits */
+.credits-cue { display: grid; gap: 7px; justify-items: center; width: max-content; max-width: calc(100% - 32px); margin: 22px auto 0; padding: 10px 18px 11px; border-radius: 14px;
+  background: rgba(13,17,27,.6); border: 1px dashed var(--line-strong); color: var(--muted); font-size: .82rem; font-weight: 600; cursor: pointer;
+  transition: color .3s, border-color .3s, background .3s, box-shadow .3s; }
+.credits-cue.show { color: var(--text); border-style: solid; border-color: color-mix(in srgb, var(--blue) 50%, transparent); background: rgba(13,17,27,.92); box-shadow: 0 0 24px -10px var(--blue-glow); }
+.credits-cue:hover { border-color: var(--blue); color: var(--text); }
+.cc-bar { width: 100%; min-width: 180px; height: 4px; border-radius: 4px; overflow: hidden;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.12) 0 8px, transparent 8px 12px); }
+.cc-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--blue), var(--blue-hi)); transform: scaleX(0); transform-origin: 0 50%; transition: transform .12s linear; }
 .credits { position: fixed; inset: 0; z-index: 490; background: #000; color: var(--blue-hi); overflow: hidden; opacity: 0; transition: opacity .6s; display: grid; place-items: center; }
 .credits.open { opacity: 1; }
 .credits-stage { position: absolute; inset: 0; overflow: hidden;
@@ -1023,7 +1034,8 @@ img[src$="rw-logo.png"] { filter: var(--logo-filter, none); transition: filter .
 .theme-ribbon-track span { white-space: pre; padding-right: 0; }
 @keyframes rbScroll { to { transform: translateX(-50%); } }
 @keyframes rbIn { from { transform: translateY(100%); } }
-body.has-ribbon .footer { padding-bottom: 66px; }
+body.has-ribbon .footer { padding-bottom: 150px; }
+@media (max-width: 640px) { .footer { padding-bottom: 190px; } body.has-ribbon .footer { padding-bottom: 240px; } } /* phone toasts wrap to a few lines */
 body.has-ribbon .toast { bottom: 46px; }
 body.has-ribbon .ach-pop { bottom: 44px; }
 body.has-ribbon .dog-home { bottom: 40px; }
