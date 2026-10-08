@@ -17,6 +17,24 @@
     } catch (e) {}
     return null;
   }
+  /* Everyone's record against each level lives on the site's live worker (workers/live, /pool). Off when the
+     site has no <meta name="rw-live">, or when this page is opened on its own. */
+  var LIVE = (function () {
+    try { var m = window.parent !== window && window.parent.document.querySelector('meta[name="rw-live"]'); return m && m.content ? m.content.replace(/\/+$/, '') : ''; } catch (e) { return ''; }
+  })();
+  var everyone = null;
+  function rid() { var a = new Uint8Array(12); crypto.getRandomValues(a); return Array.prototype.map.call(a, function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }
+  var browserId = store('rw-pool-id') || rid(); store('rw-pool-id', browserId);
+  function loadEveryone() {
+    if (!LIVE || !window.fetch) return;
+    fetch(LIVE + '/pool').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { if (d && d.easy) { everyone = d; recUI(); } }).catch(function () {});
+  }
+  function reportResult(g, won) {
+    if (!LIVE || !window.fetch || g.reported) return;
+    g.reported = true;
+    fetch(LIVE + '/pool', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: browserId, game: g.id, level: g.level, won: won }) })
+      .then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { if (d && d.totals) { everyone = d.totals; recUI(); } }).catch(function () {});
+  }
   function tell(msg) { try { if (window.parent !== window) window.parent.postMessage(Object.assign({ rw: true }, msg), location.origin); } catch (e) {} }
 
   /* ---------- State ---------- */
@@ -28,6 +46,7 @@
   var cpu = null; // { it, shot, t, from, place, start }
   var falling = []; // balls dropping into pockets, for the animation
   var dragging = null; // 'cue' | 'aim' | 'power' | 'pad'
+  var pop = $('#pop');
   var view = { k: 10, e: 0, f: 0, port: false, dpr: 1, cw: 0, ch: 0 };
   var sprites = {}, bg = null, dirtyAll = true, warp = 1; // warp: tests fast-forward the table
 
@@ -77,6 +96,13 @@
     // cushion noses and jaws as a lighter edge
     x.strokeStyle = rgb(f, 0.75, 0.55); x.lineWidth = 0.18; x.lineCap = 'round';
     P.SEGS.forEach(function (s) { x.beginPath(); x.moveTo(s.x1, s.y1); x.lineTo(s.x2, s.y2); x.stroke(); });
+    // the RW logo printed on the felt, upright whichever way the table is turned
+    if (logo.complete && logo.naturalWidth) {
+      x.save(); x.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
+      var mid = toScreen(W / 2, H / 2), ls = H * 0.42 * view.k;
+      x.globalAlpha = 0.2; x.drawImage(logo, mid.x - ls / 2, mid.y - ls / 2, ls, ls);
+      x.restore();
+    }
     // pockets
     P.POCKETS.forEach(function (p) {
       var h = hole(p), cx = h.x, cy = h.y;
@@ -95,6 +121,9 @@
     return c;
   }
   function hole(p) { return { x: p.side ? p.x : (p.x < W / 2 ? -0.55 : W + 0.55), y: p.side ? (p.y < H / 2 ? -0.95 : H + 0.95) : (p.y < H / 2 ? -0.55 : H + 0.55) }; }
+  var logo = new Image();
+  logo.onload = function () { if (view.cw) { bg = paintTable(); } };
+  logo.src = '../../assets/rw-logo.png';
   function rr(x, a, b, w, h, r) { x.beginPath(); x.moveTo(a + r, b); x.arcTo(a + w, b, a + w, b + h, r); x.arcTo(a + w, b + h, a, b + h, r); x.arcTo(a, b + h, a, b, r); x.arcTo(a, b, a + w, b, r); x.closePath(); }
   function dia(x, cx, cy) { x.beginPath(); x.moveTo(cx, cy - 0.45); x.lineTo(cx + 0.3, cy); x.lineTo(cx, cy + 0.45); x.lineTo(cx - 0.3, cy); x.closePath(); x.fill(); }
 
@@ -212,9 +241,10 @@
     var you = game.turn === 0;
     if (!you) { say(mode === 'cpu' ? 'CPU is lining one up…' : 'CPU\'s shot', '', true); return; }
     var t = B.targets(game, 0);
-    if (game.breakShot) say(game.inHand ? 'Your break. Drag the cue ball anywhere behind the line, then pull to shoot.' : 'Your break', '', true);
+    if (game.breakShot) say(game.inHand ? 'Your break. Drag the cue ball anywhere behind the line, then pull the cue back to shoot.' : 'Your break', '', true);
+    else if (game.inHand && game.kitchen) say('Ball in hand behind the line: drag the cue ball into the shaded area', '', true);
     else if (game.inHand) say('Ball in hand: drag the cue ball anywhere', '', true);
-    else if (t.length === 1 && t[0] === 8) say(called == null ? 'On the 8: tap a pocket to call it' : 'Calling the ' + B.POCKET_NAMES[called] + '. Pull to shoot.', '', true);
+    else if (t.length === 1 && t[0] === 8) say(called == null ? 'On the 8: tap a pocket to call it' : 'Calling the ' + B.POCKET_NAMES[called] + '. Pull the cue back to shoot.', '', true);
     else if (game.open) say('Table\'s open: sink anything but the 8', '', true);
     else say('Your shot: ' + game.groups[0], '', true);
   }
@@ -284,6 +314,11 @@
         g.beginPath(); g.arc(h.x, h.y, 2.6, 0, Math.PI * 2);
         g.lineWidth = called === p.i ? 0.35 : 0.2; g.strokeStyle = called === p.i ? '#f2c14e' : 'rgba(255,255,255,.22)'; g.stroke();
       });
+    }
+    // behind the line after a break scratch: show where the cue ball may go
+    if (game.turn === 0 && mode === 'aim' && game.inHand && game.kitchen) {
+      tableXform(g); g.fillStyle = 'rgba(255,255,255,.06)'; g.fillRect(0, 0, P.HEAD_X, H);
+      g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 0.15; g.beginPath(); g.moveTo(P.HEAD_X, 0); g.lineTo(P.HEAD_X, H); g.stroke();
     }
     // guide (yours only)
     if (game.turn === 0 && mode === 'aim' && c.on) guide(c);
@@ -373,6 +408,7 @@
   /* ---------- Turn flow ---------- */
   function newGame() {
     game = B.newGame();
+    game.id = rid(); game.level = level;
     game.turn = breaker; breaker = 1 - breaker;
     aim = 0; power = 0; called = null; calledByHand = false; falling = []; spin = { x: 0, y: 0 }; spinUI();
     sprites = {}; dirtyAll = true;
@@ -418,6 +454,7 @@
     var speed = game.breakShot ? 30 + Math.pow(pw, 1.15) * 360 : 6 + Math.pow(pw, 1.25) * 300;
     if (cpu && cpu.shot) speed = cpu.shot.speed;
     P.strike(game.world, angle, speed, sx, sy);
+    spin = { x: 0, y: 0 }; spinUI(); closePop(); // spin is per shot
     ev = P.newEvents(); ev.fx = fx;
     fx('cue', speed);
     mode = 'roll'; acc = 0;
@@ -432,7 +469,7 @@
     if (game.over) { hud(); return setTimeout(gameOver, 700); }
     var parts = [];
     if (res.assigned) parts.push(who === 0 ? 'You\'re ' + res.assigned + '.' : 'CPU takes ' + res.assigned + ' — you\'re ' + game.groups[0] + '.');
-    if (res.foul) parts.push('Foul: ' + res.foul.toLowerCase() + '. ' + (who === 0 ? 'CPU has ball in hand.' : 'Ball in hand for you.'));
+    if (res.foul) parts.push('Foul: ' + res.foul.toLowerCase() + '. ' + (who === 0 ? 'CPU has ball in hand' : 'Ball in hand for you') + (res.kitchen ? ' behind the line.' : '.'));
     else if (res.keep) parts.push(who === 0 ? pick(['Nice.', 'Good shot.', 'Clean.', 'Keep going.']) : 'CPU makes one.');
     else if (!res.foul) parts.push(who === 0 ? 'Missed. CPU\'s turn.' : 'CPU misses. Your shot.');
     say(parts.join(' '), res.foul ? (who === 0 ? 'bad' : 'good') : (res.keep ? (who === 0 ? 'good' : '') : ''));
@@ -452,6 +489,7 @@
     $('#over').hidden = false;
     hud();
     if (won) tell({ type: 'egg', id: 'eightball' });
+    reportResult(game, won);
     $('#again').focus();
   }
 
@@ -478,6 +516,7 @@
       return f.t < 1;
     });
     if (mode === 'cpu' && game && !game.over) cpuTick(dt);
+    if (charging) { if (canPlay()) setPower((now - charging) / 1000 / CHARGE); else charging = false; } // power = how long Space has been held
     draw();
     requestAnimationFrame(frame);
   }
@@ -519,7 +558,7 @@
   function canPlay() { return game && mode === 'aim' && game.turn === 0; }
   cv.addEventListener('pointerdown', function (e) {
     audio();
-    closePop();
+    if (!pop.hidden) { closePop(); return; } // that tap was just to close the spin pad: leave the shot alone
     if (!canPlay()) return;
     var p = local(e), c = P.cue(game.world);
     if (onEight(0)) { // tapping a pocket calls it
@@ -528,16 +567,29 @@
         if (Math.hypot(p.x - pk.ax, p.y - pk.ay) < 4.2) { called = i; calledByHand = true; prompt(); return; }
       }
     }
-    if (game.inHand && Math.hypot(p.x - c.x, p.y - c.y) < R * 2.6) dragging = 'cue';
+    var grab = e.pointerType === 'touch' ? R * 3.6 : R * 2.6; // fingers are blunter than cursors
+    if (game.inHand && Math.hypot(p.x - c.x, p.y - c.y) < grab) dragging = 'cue';
+    else if (e.pointerType === 'touch') { dragging = 'swipe'; swipe = { p: p, moved: false }; }
     else { dragging = 'aim'; aimAt(p); }
     cv.setPointerCapture(e.pointerId);
   });
   cv.addEventListener('pointermove', function (e) {
     if (!dragging || !canPlay()) return;
     var p = local(e);
-    if (dragging === 'cue') moveCue(p); else if (dragging === 'aim') aimAt(p);
+    if (dragging === 'cue') moveCue(p);
+    else if (dragging === 'aim') aimAt(p);
+    else if (dragging === 'swipe') {
+      // the cue turns by half the angle the finger sweeps around the cue ball: fine control, nothing hidden under your thumb
+      var c = P.cue(game.world), a0 = Math.atan2(swipe.p.y - c.y, swipe.p.x - c.x), a1 = Math.atan2(p.y - c.y, p.x - c.x);
+      if (Math.hypot(p.x - swipe.p.x, p.y - swipe.p.y) > 0.4) swipe.moved = true;
+      if (swipe.moved) { aim += angDiff(a0, a1) * 0.5; swipe.p = p; }
+    }
   });
-  cv.addEventListener('pointerup', function () { dragging = null; });
+  cv.addEventListener('pointerup', function (e) {
+    if (dragging === 'swipe' && !swipe.moved && canPlay()) aimAt(local(e)); // a tap points the cue there
+    dragging = null;
+  });
+  var swipe = null;
   cv.addEventListener('pointercancel', function () { dragging = null; });
   function aimAt(p) { var c = P.cue(game.world); if (Math.hypot(p.x - c.x, p.y - c.y) > R * 0.5) aim = Math.atan2(p.y - c.y, p.x - c.x); }
   function moveCue(p) {
@@ -547,12 +599,11 @@
   }
 
   // Power: drag along the bar to pull the cue back; let go to shoot.
-  var pw = $('#power'), fill = pw.querySelector('.fill'), pStart = null;
+  var pw = $('#power'), pStart = null;
   function setPower(v) {
     power = Math.max(0, Math.min(1, v));
-    var land = !view.port;
-    fill.style.height = land ? 'calc(' + (power * 100) + '% - ' + (power * 6) + 'px)' : '';
-    fill.style.width = land ? '' : 'calc(' + (power * 100) + '% - ' + (power * 6) + 'px)';
+    pw.style.setProperty('--p', power.toFixed(3));
+    pw.classList.toggle('pulling', power > 0.01);
     pw.setAttribute('aria-valuenow', Math.round(power * 100));
   }
   pw.addEventListener('pointerdown', function (e) {
@@ -583,12 +634,15 @@
   }
 
   // Spin pad
-  var pop = $('#pop'), pad = $('#pad'), dot = pad.querySelector('i'), sdot = $('#spin i');
+  var pad = $('#pad'), dot = pad.querySelector('i'), sdot = $('#spin i');
   function spinUI() {
     dot.style.left = (50 + spin.x * 40) + '%'; dot.style.top = (50 - spin.y * 40) + '%';
     sdot.style.left = (50 + spin.x * 40) + '%'; sdot.style.top = (50 - spin.y * 40) + '%';
   }
   function closePop() { pop.hidden = true; }
+  document.addEventListener('pointerdown', function (e) {
+    if (!pop.hidden && e.target !== cv && !pop.contains(e.target) && !$('#spin').contains(e.target) && !pw.contains(e.target)) closePop();
+  }, true);
   $('#spin').addEventListener('click', function (e) { e.stopPropagation(); audio(); pop.hidden = !pop.hidden; });
   $('#spin-reset').addEventListener('click', function () { spin = { x: 0, y: 0 }; spinUI(); });
   function padAt(e) {
@@ -601,7 +655,13 @@
   pad.addEventListener('pointerup', function () { dragging = null; });
 
   // Keyboard
-  var keyPower = false;
+  var keyPower = false, charging = false, CHARGE = 1.6; // seconds of holding Space for a full stroke
+  document.addEventListener('keyup', function (e) {
+    if ((e.key === ' ' || e.key === 'Enter') && charging) {
+      e.preventDefault(); charging = false;
+      if (canPlay() && power > 0.02) fire(); else setPower(0);
+    }
+  });
   document.addEventListener('keydown', function (e) {
     audio();
     if (e.key === 'Escape') {
@@ -616,15 +676,22 @@
     else if (e.key === 'ArrowRight') { aim += step; e.preventDefault(); }
     else if (e.key === 'ArrowUp') { setPower(power + 0.05); keyPower = true; e.preventDefault(); }
     else if (e.key === 'ArrowDown') { setPower(power - 0.05); keyPower = true; e.preventDefault(); }
-    else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (power < 0.02) setPower(0.5); fire(); }
+    else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (!e.repeat && !charging) { charging = performance.now(); setPower(0); } }
     else if (e.key === 's' || e.key === 'S') pop.hidden = !pop.hidden;
   });
 
   /* ---------- Menus ---------- */
   function recUI() {
     Array.prototype.forEach.call(document.querySelectorAll('[data-rec]'), function (el) {
-      var r = records[el.getAttribute('data-rec')] || { w: 0, l: 0 }; el.textContent = r.w + '–' + r.l;
+      var r = records[el.getAttribute('data-rec')] || { w: 0, l: 0 }; el.textContent = 'You ' + r.w + '–' + r.l;
     });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-all]'), function (el) {
+      var r = everyone && everyone[el.getAttribute('data-all')];
+      el.hidden = !r; if (r) el.textContent = 'All ' + fmt(r.w) + '–' + fmt(r.l);
+    });
+    var oa = $('#over-all'), lr = everyone && everyone[level];
+    oa.hidden = !lr || mode !== 'over';
+    if (lr) oa.textContent = 'Everyone vs ' + level + ': ' + fmt(lr.w) + ' wins, ' + fmt(lr.l) + ' losses';
     Array.prototype.forEach.call(document.querySelectorAll('[data-level]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-level') === level)); });
   }
   document.querySelectorAll('[data-level]').forEach(function (b) {
@@ -632,12 +699,13 @@
   });
   // Esc mid-game pauses into the menu; Resume picks up where it left off (the CPU re-thinks its shot).
   var paused = null;
+  function fmt(n) { return n >= 10000 ? Math.round(n / 1000) + 'k' : n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n); }
   function openMenu() {
     var live = game && !game.over && (mode === 'aim' || mode === 'cpu');
     paused = live ? mode : null;
     mode = 'menu'; cpu = null; $('#over').hidden = true; $('#menu').hidden = false;
     $('#resume').hidden = !live; $('#start').textContent = live ? 'New game' : 'Rack \'em';
-    recUI(); hud(); (live ? $('#resume') : $('#start')).focus();
+    recUI(); hud(); loadEveryone(); (live ? $('#resume') : $('#start')).focus();
   }
   $('#resume').addEventListener('click', function () {
     if (!paused) return;
@@ -656,7 +724,7 @@
   B.judge = function (gm, e, pr, cl) { var r = judge0(gm, e, pr, cl); if (r.why) gm.lastWhy = r.why; return r; };
 
   window.addEventListener('resize', layout);
-  layout(); recUI(); spinUI();
+  layout(); recUI(); spinUI(); loadEveryone();
   game = B.newGame(); hud(); // a racked table behind the menu
   requestAnimationFrame(frame);
 
@@ -669,6 +737,10 @@
     game: function () { return game; },
     screen: function (x, y) { var r = cv.getBoundingClientRect(), s = toScreen(x, y); return { x: r.left + s.x, y: r.top + s.y }; },
     warp: function (k) { warp = k; },
-    callPocket: function (i) { called = i; calledByHand = true; }
+    callPocket: function (i) { called = i; calledByHand = true; },
+    aim: function () { return aim; },
+    power: function () { return power; },
+    spin: function () { return { x: spin.x, y: spin.y }; },
+    setSpin: function (x, y) { spin = { x: x, y: y }; spinUI(); }
   };
 })();

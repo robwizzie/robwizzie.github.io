@@ -50,6 +50,29 @@ test.describe('8-ball physics and rules', () => {
     expect(g.over).toBe(true); expect(g.winner).toBe(1);
   });
 
+  test('APA break: 8 wins, 8 plus scratch loses, a scratch is ball in hand behind the line', () => {
+    const fresh = () => { const g = B.newGame(() => 0.5); g.turn = 0; return g; };
+    let g = fresh(); B.judge(g, { first: 1, rail: true, potted: [{ n: 8, pocket: 2 }] }, B.targets(g, 0), null);
+    expect(g).toMatchObject({ over: true, winner: 0 });
+    g = fresh(); B.judge(g, { first: 1, rail: true, potted: [{ n: 8, pocket: 2 }, { n: 0, pocket: 0 }] }, B.targets(g, 0), null);
+    expect(g).toMatchObject({ over: true, winner: 1 });
+    g = fresh(); const res = B.judge(g, { first: 1, rail: true, potted: [{ n: 0, pocket: 1 }] }, B.targets(g, 0), null);
+    expect(res.foul).toBe('Scratch on the break');
+    expect(g).toMatchObject({ turn: 1, inHand: true, kitchen: true });
+    // ...and any later scratch is ball in hand anywhere
+    B.judge(g, { first: 3, rail: true, potted: [{ n: 0, pocket: 1 }] }, B.targets(g, 1), null);
+    expect(g).toMatchObject({ turn: 0, inHand: true, kitchen: false });
+  });
+
+  test('the CPU places behind the line after a break scratch', () => {
+    const g = B.newGame(); g.turn = 1;
+    B.judge(g, { first: 1, rail: true, potted: [{ n: 0, pocket: 1 }] }, B.targets(g, 1), null); // you scratch on the break
+    g.turn = 1; // (the CPU's turn either way in this setup)
+    const it = B.plan(g, 'hard'); let r; while (!(r = it.next()).done);
+    expect(r.value.place).toBeTruthy();
+    expect(r.value.place.x).toBeLessThanOrEqual(P.HEAD_X);
+  });
+
   test('the CPU levels are in the right order', () => {
     let hardWins = 0;
     for (let i = 0; i < 2; i++) {
@@ -133,4 +156,58 @@ test('breaking the rack offers a real game', async ({ page }) => {
   await offer.click();
   await expect(page.locator('#game-modal')).toHaveClass(/open/);
   await expect(page.locator('#game-frame')).toHaveAttribute('src', 'play/pool/index.html');
+});
+
+test('controls: hold Space to charge, spin resets after the shot, closing the spin pad keeps your aim', async ({ page }) => {
+  await page.goto('/');
+  await term(page, 'play pool');
+  const frame = page.frameLocator('#game-frame');
+  await frame.locator('#start').click();
+  const f = page.frame({ url: /play\/pool/ });
+  await f.waitForFunction(() => window.pool8 && pool8.state().mode === 'aim');
+  await f.evaluate(() => { pool8.start('easy'); if (pool8.state().turn !== 0) pool8.start('easy'); });
+  // spin pad open, then a tap on the table only closes it
+  await frame.locator('#spin').click();
+  await expect(frame.locator('#pop')).toBeVisible();
+  const before = await f.evaluate(() => pool8.aim());
+  const box = await frame.locator('#table').boundingBox();
+  await page.mouse.click(box.x + box.width * 0.6, box.y + box.height * 0.25);
+  await expect(frame.locator('#pop')).toBeHidden();
+  expect(await f.evaluate(() => pool8.aim())).toBe(before);
+  // set some draw, then charge with Space: power climbs while held
+  await f.evaluate(() => pool8.setSpin(0, -0.8));
+  await f.evaluate(() => window.focus());
+  await page.keyboard.down(' ');
+  await page.waitForTimeout(450);
+  const mid = await f.evaluate(() => pool8.power());
+  await page.waitForTimeout(450);
+  const later = await f.evaluate(() => pool8.power());
+  expect(mid).toBeGreaterThan(0.1);
+  expect(later).toBeGreaterThan(mid);
+  await page.keyboard.up(' ');
+  await f.waitForFunction(() => pool8.state().mode !== 'aim');
+  expect(await f.evaluate(() => pool8.spin())).toEqual({ x: 0, y: 0 });
+});
+
+test('the menu shows your record and everyone\'s, and a finished game is reported once', async ({ page, calls }) => {
+  await page.goto('/');
+  await term(page, 'play pool');
+  const frame = page.frameLocator('#game-frame');
+  await expect(frame.locator('[data-all="easy"]')).toHaveText('All 120–340');
+  await expect(frame.locator('[data-rec="easy"]')).toHaveText('You 0–0');
+  await frame.locator('[data-level="hard"]').click();
+  await frame.locator('#start').click();
+  const f = page.frame({ url: /play\/pool/ });
+  await f.waitForFunction(() => window.pool8 && pool8.state().mode === 'aim');
+  await f.evaluate(() => { // the same gimme as above: 8 in front of the top-right corner
+    const g = pool8.game(), P = Pool8Physics;
+    g.breakShot = false; g.kitchen = false; g.inHand = false; g.open = false; g.groups = ['solids', 'stripes']; g.turn = 0;
+    g.world.balls.forEach((b) => { if (b.n && b.n < 8) b.on = false; if (b.n > 8) { b.x = 10 + (b.n - 9) * 3; b.y = P.H - 2; } });
+    const e = P.find(g.world, 8), c = P.cue(g.world); e.x = P.W - 8; e.y = 8; c.x = P.W - 16; c.y = 16;
+    pool8.callPocket(2); pool8.warp(6); pool8.shoot(-Math.PI / 4, 0.3, 0, -0.8);
+  });
+  await expect(frame.locator('#over')).toBeVisible({ timeout: 15000 });
+  await expect(frame.locator('#over-all')).toHaveText('Everyone vs hard: 4 wins, 99 losses');
+  expect(calls.pool).toHaveLength(1);
+  expect(calls.pool[0]).toMatchObject({ level: 'hard', won: true });
 });
