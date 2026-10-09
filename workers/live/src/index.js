@@ -17,6 +17,8 @@ const LETTERBOXD_TTL = 1800;  // seconds
 const NOTE_MAX = 120, NAME_MAX = 24, NOTES_SHOWN = 40, PENDING_CAP = 300, NOTES_PER_HOUR = 30;
 const SOURCE_DAYS = 120;      // how long visit sources are kept
 const DEVICES = ['phone', 'tablet', 'desktop'];
+const POOL_LEVELS = ['easy', 'medium', 'hard'];
+const POOL_PER_DAY = 40, POOL_PER_HOUR = 600; // per browser, and a global safety valve
 
 function allowed(origin) { return !!origin && (ORIGINS.includes(origin) || DEV_ORIGIN.test(origin)); }
 
@@ -159,7 +161,7 @@ export default {
     if (route === '/') return json({ ok: true, service: 'rw-live' }, 200, origin);
     if (route === '/letterboxd') return letterboxd(request, origin);
     const admin = route.startsWith('/admin/');
-    if (!['/live', '/visit', '/stats', '/guestbook'].includes(route) && !admin) return json({ error: 'not found' }, 404, origin);
+    if (!['/live', '/visit', '/stats', '/guestbook', '/pool'].includes(route) && !admin) return json({ error: 'not found' }, 404, origin);
     if (admin) {
       if (!env.ADMIN_TOKEN) return json({ error: 'ADMIN_TOKEN is not set — run: npx wrangler secret put ADMIN_TOKEN' }, 503, origin);
       if (!(await sameSecret(request.headers.get('Authorization') || '', 'Bearer ' + env.ADMIN_TOKEN))) return json({ error: 'unauthorized' }, 401, origin);
@@ -176,6 +178,10 @@ export default {
     }
     if (route === '/stats' && request.method !== 'GET') return json({ error: 'GET only' }, 405, origin);
     if (route === '/guestbook' && !['GET', 'POST'].includes(request.method)) return json({ error: 'GET or POST' }, 405, origin);
+    if (route === '/pool') {
+      if (!['GET', 'POST'].includes(request.method)) return json({ error: 'GET or POST' }, 405, origin);
+      if (request.method === 'POST' && !allowed(origin)) return json({ error: 'forbidden origin' }, 403, origin);
+    }
 
     // Hand the DO a fresh request: the coarse place rides in a header the client can't set.
     const headers = new Headers();
@@ -214,7 +220,11 @@ export class Live {
       CREATE INDEX IF NOT EXISTS sources_day ON sources (day);
       CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, t INTEGER NOT NULL, status TEXT NOT NULL, name TEXT, note TEXT NOT NULL, city TEXT, region TEXT, country TEXT, lat REAL, lon REAL, h TEXT);
       CREATE INDEX IF NOT EXISTS notes_status ON notes (status, id);
+      CREATE TABLE IF NOT EXISTS pool (level TEXT PRIMARY KEY, w INTEGER NOT NULL, l INTEGER NOT NULL);
+      CREATE TABLE IF NOT EXISTS pool_seen (g TEXT PRIMARY KEY, b TEXT NOT NULL, day TEXT NOT NULL);
+      CREATE INDEX IF NOT EXISTS pool_seen_b ON pool_seen (b, day);
     `);
+    this.poolWindow = { h: 0, n: 0 };
     this.noteWindow = { h: 0, n: 0 };
     // Answer keepalive pings without waking the object.
     ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
@@ -227,6 +237,7 @@ export class Live {
     if (url.pathname === '/live') return this.connect(place);
     if (url.pathname === '/visit') return this.visit(place, await request.text());
     if (url.pathname === '/guestbook') return request.method === 'POST' ? this.sign(place, await request.text(), !!request.headers.get('X-RW-Auto')) : json(this.notes());
+    if (url.pathname === '/pool') return request.method === 'POST' ? this.poolResult(await request.text()) : json(this.poolTotals());
     if (url.pathname === '/admin/summary') return json(this.summary(+url.searchParams.get('days') || 30));
     if (url.pathname === '/admin/note') return this.moderate(await request.text());
     return json(this.stats());
@@ -332,6 +343,37 @@ export class Live {
     else if (b.action === 'delete') this.sql.exec('DELETE FROM notes WHERE id = ?', id);
     else return json({ error: 'action must be approve, hide or delete' }, 400);
     return json({ ok: true });
+  }
+
+  /* ---------- 8-ball: everyone's record against the CPU, per level ---------- */
+  poolTotals() {
+    const out = {};
+    POOL_LEVELS.forEach((lv) => { out[lv] = { w: 0, l: 0 }; });
+    this.sql.exec('SELECT level, w, l FROM pool').toArray().forEach((r) => { if (out[r.level]) out[r.level] = { w: r.w, l: r.l }; });
+    return out;
+  }
+
+  // { id: per-browser id, game: per-game id, level, won }. Each game counts once; a browser can log a few dozen a day.
+  async poolResult(raw) {
+    let b = {};
+    try { b = JSON.parse(raw || '{}') || {}; } catch (e) {}
+    const id = String(b.id || ''), game = String(b.game || ''), level = String(b.level || '');
+    if (!/^[A-Za-z0-9_-]{8,64}$/.test(id) || !/^[A-Za-z0-9_-]{8,64}$/.test(game)) return json({ error: 'bad id' }, 400);
+    if (!POOL_LEVELS.includes(level) || typeof b.won !== 'boolean') return json({ error: 'bad result' }, 400);
+    const now = Date.now(), day = new Date(now).toISOString().slice(0, 10), hour = Math.floor(now / 3600000);
+    if (this.poolWindow.h !== hour) this.poolWindow = { h: hour, n: 0 };
+    const hash = async (s) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s))).slice(0, 12)].map((x) => x.toString(16).padStart(2, '0')).join('');
+    const g = await hash('pool:' + game), who = await hash('poolb:' + day + ':' + id);
+    const counted = this.poolWindow.n < POOL_PER_HOUR
+      && !this.sql.exec('SELECT 1 FROM pool_seen WHERE g = ?', g).toArray().length
+      && this.sql.exec('SELECT COUNT(*) AS c FROM pool_seen WHERE b = ? AND day = ?', who, day).one().c < POOL_PER_DAY;
+    if (counted) {
+      this.poolWindow.n++;
+      this.sql.exec('INSERT INTO pool_seen (g, b, day) VALUES (?, ?, ?)', g, who, day);
+      this.sql.exec(`INSERT INTO pool (level, w, l) VALUES (?, ?, ?) ON CONFLICT(level) DO UPDATE SET w = w + excluded.w, l = l + excluded.l`, level, b.won ? 1 : 0, b.won ? 0 : 1);
+      this.sql.exec('DELETE FROM pool_seen WHERE day < ?', new Date(now - 86400000).toISOString().slice(0, 10));
+    }
+    return json(Object.assign({ counted }, { totals: this.poolTotals() }));
   }
 
   /* ---------- Admin: who's visiting, and the guestbook queue ---------- */

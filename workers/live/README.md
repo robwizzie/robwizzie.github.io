@@ -9,6 +9,7 @@ Tiny Cloudflare Worker + one Durable Object behind the live bits of robwiscount.
 - **`POST /visit`** also takes where the visit came from: `ref` (only the referrer's host is kept, never the full URL), `r` (a tag Rob puts on links he sends, e.g. `?r=acme`), `utm_source` / `utm_medium` / `utm_campaign`, and `path`. Kept for 120 days.
 - **`GET /letterboxd`**: the latest diary entries from `letterboxd.com/robwizzie/rss/` as JSON, cached 30 minutes.
 - **`GET /guestbook`** / **`POST /guestbook`** `{"id", "name", "note"}`: plain-text notes (120 chars, no links), one per browser per day, max 30 an hour. New notes are `pending` until approved, unless `AUTO_APPROVE` is set.
+- **`GET /pool`** / **`POST /pool`** `{"id", "game", "level": "easy"|"medium"|"hard", "won": true|false}`: everyone's all-time 8-ball record against the CPU (`play/pool/`), per level: `{ easy: {w, l}, medium: {w, l}, hard: {w, l} }`. Each game id counts once (kept for a day to dedupe), at most 40 results per browser per day and 600 an hour overall. POST returns `{ counted, totals }`.
 - **`/admin/summary`**, **`POST /admin/note`** `{"id", "action": "approve" | "hide" | "delete"}`: need `Authorization: Bearer <ADMIN_TOKEN>`. Used by `/admin.html`.
 
 CORS / WebSocket origins: `https://robwiscount.org`, `https://www.robwiscount.org`, `https://robwizzie.github.io`, `http://localhost:*`.
