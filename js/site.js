@@ -322,22 +322,38 @@
     if (label && !a.getAttribute('aria-label')) a.setAttribute('aria-label', a.textContent.trim() + ': ' + label.textContent.trim());
   });
 
-  /* ---------- Fetch player ---------- */
+  /* ---------- Game player: Fetch (Godot) and 8-ball both open in the same modal ---------- */
   var modal = $('#game-modal'), frame = $('#game-frame'), lastFocus = null;
-  function openFetch() {
+  var GAMES = {
+    fetch: { title: 'FETCH', label: 'Play Fetch', src: 'play/fetch/index.html', egg: 'fetch' },
+    pool: { title: '8-BALL', label: 'Play 8-ball against the CPU', src: 'play/pool/index.html', egg: null }
+  };
+  function openGame(id) {
+    var game = GAMES[id] || GAMES.fetch;
     lastFocus = document.activeElement;
     var music = document.getElementById('lbf-audio'); if (music && !music.paused) music.pause();
+    $('#game-title').textContent = game.title;
+    $('#game-title').style.color = id === 'pool' ? 'var(--blue)' : '';
+    $$('[data-keys]', modal).forEach(function (k) { k.hidden = k.getAttribute('data-keys') !== id; });
+    modal.setAttribute('aria-label', game.label); frame.title = game.label;
     modal.classList.add('open'); document.body.classList.add('modal-open');
-    if (!frame.getAttribute('src')) frame.setAttribute('src', 'play/fetch/index.html');
-    egg('fetch');
+    if (frame.getAttribute('src') !== game.src) frame.setAttribute('src', game.src);
+    if (game.egg) egg(game.egg);
     setTimeout(function () { frame.focus(); }, 50);
   }
+  function openFetch() { openGame('fetch'); }
   function closeFetch() {
     if (document.fullscreenElement) document.exitFullscreen().catch(function () {});
     modal.classList.remove('open'); document.body.classList.remove('modal-open');
     frame.removeAttribute('src'); // stops the game and its audio
     if (lastFocus) lastFocus.focus();
   }
+  // The games talk back: 8-ball reports wins (an achievement) and asks to close on Esc from its menu.
+  window.addEventListener('message', function (e) {
+    if (e.origin !== location.origin || e.source !== frame.contentWindow || !e.data || !e.data.rw) return;
+    if (e.data.type === 'egg' && typeof e.data.id === 'string') egg(e.data.id);
+    if (e.data.type === 'close' && modal.classList.contains('open')) closeFetch();
+  });
   $$('[data-play-fetch]').forEach(function (el) {
     el.addEventListener('click', openFetch);
     el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFetch(); } });
@@ -584,7 +600,7 @@
   var commands = {
     help: function () {
       print('Available commands:', 'ok');
-      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  git log     my GitHub squares\n  hire rob    the best command\n  contact     how to reach me\n  achievements  secrets you\'ve found\n  hint        stuck on one? step-by-step help\n  colophon    how this site is built\n  clear       wipe the screen', 'dim');
+      print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  play pool   8-ball vs my CPU\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  git log     my GitHub squares\n  hire rob    the best command\n  contact     how to reach me\n  achievements  secrets you\'ve found\n  hint        stuck on one? step-by-step help\n  colophon    how this site is built\n  clear       wipe the screen', 'dim');
       print('…and a few commands that aren\'t on this list. 👀', 'dim');
     },
     whoami: function () {
@@ -653,6 +669,7 @@
     'cat about.txt': function () { commands.whoami(); },
     sudo: function () { print('Nice try. But you can run: sudo hire rob', 'warn'); },
     'play fetch': function () { print('Booting Fetch… 🐶 (Esc inside the game goes back a menu)', 'ok'); setTimeout(openFetch, 400); },
+    'play pool': function () { print('Racking up 8-ball against my CPU… 🎱 Call your pocket on the 8.', 'ok'); setTimeout(function () { openGame('pool'); }, 400); },
     lebron: function () {
       var i = Math.floor(Math.random() * TRACKS.length);
       print('▶ Now playing: ' + TRACKS[i].title + ' <span class="dim">— ' + TRACKS[i].artist + '</span>', 'ok');
@@ -674,6 +691,7 @@
   commands.skills = commands.stack;
   commands.hire = commands['hire rob'];
   commands.fetch = commands.play = commands['play fetch'];
+  commands.pool = commands['8ball'] = commands['8-ball'] = commands['play 8ball'] = commands['play pool'];
 
   var termMode = null; // an egg can take over the prompt (vim does)
   function run(raw) {
@@ -908,7 +926,7 @@
     toast: toast, burst: burst, party: party, egg: egg, copy: copy, tc: tc, rgba: rgba, setRoles: setRoles,
     commands: commands, print: print, esc: esc, run: run,
     setTermMode: function (fn) { termMode = fn || null; },
-    openFetch: openFetch, playTrack: function (i) { lbfLoad(i, true); }, tracks: TRACKS,
+    openFetch: openFetch, openGame: openGame, playTrack: function (i) { lbfLoad(i, true); }, tracks: TRACKS,
     openHire: function () { var b = $('#hire-btn'), p = $('#hire-panel'); if (b && p && p.hidden) b.click(); }
   };
 

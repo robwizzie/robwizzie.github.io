@@ -41,7 +41,7 @@ test('live achievements only count when the live server is reachable', async ({ 
   await page.routeWebSocket(/rw-live/, (ws) => ws.close());
   await page.goto('/');
   await page.waitForTimeout(2000);
-  await expect(page.locator('.ach-foot')).toContainText('/15');
+  await expect(page.locator('.ach-foot')).toContainText('/16');
   await page.locator('.ach-foot').click();
   await expect(page.locator('.ach-grid li', { hasText: 'Signed the Guestbook' })).toHaveCount(0);
 });
