@@ -57,16 +57,14 @@
     { id: 'colophon', icon: 'book-open', title: 'Read the Manual', desc: 'Found out how this site works.',
       hint: 'Find the page that explains how this site was built.', nudge: 'Open "How this site works" in the footer, or type colophon in the terminal.' }
   ];
-  // The live ones only join the list once the live server has actually answered (js/live.js fires rw:live),
-  // so nobody gets stuck at "15 of 17" on a day the server is down.
+  // The live one only joins the list once the live server has actually answered (js/live.js fires rw:live),
+  // so nobody gets stuck at "15 of 16" on a day the server is down.
   var LIVE_ACH = [
-    { id: 'live', icon: 'satellite-dish', title: 'Not Alone', desc: 'Was on the site at the same time as someone else.',
-      hint: 'Be on this site at the same moment as another visitor.', nudge: 'Open the site on two devices at once (say, your phone and a laptop), or send the link to a friend and visit together.' },
     { id: 'guestbook', icon: 'signature', title: 'Signed the Guestbook', desc: 'Left a note on the visitor map.',
       hint: 'Leave a note on the visitor map.', nudge: 'Scroll to the Visitors section and sign the guestbook.' }
   ];
   document.addEventListener('rw:live', function () {
-    if (ACH.some(function (a) { return a.id === 'live'; })) return;
+    if (ACH.some(function (a) { return a.id === 'guestbook'; })) return;
     ACH.push.apply(ACH, LIVE_ACH);
     paintCount();
   });

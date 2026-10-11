@@ -12,14 +12,14 @@ async function styled(page) {
 async function finishAll(page, seen) {
   await page.goto('/');
   await page.evaluate((seen) => {
-    const ids = window.RW.achievements.list().map((a) => a.id).concat(['live', 'guestbook']), got = {}, now = Date.now();
+    const ids = window.RW.achievements.list().map((a) => a.id).concat(['guestbook']), got = {}, now = Date.now();
     ids.forEach((id, i) => { got[id] = now - 2 * 864e5 + i * 6e4; });
     localStorage.setItem('rw-eggs', JSON.stringify(got));
     if (seen) localStorage.setItem('rw-celebrated', JSON.stringify({ t: now, n: 99 }));
   }, seen);
   await page.reload();
   await styled(page);
-  await page.waitForFunction(() => window.RW.achievements.list().some((a) => a.id === 'live')); // the live ones have joined
+  await page.waitForFunction(() => window.RW.achievements.list().some((a) => a.id === 'guestbook')); // the live one has joined
 }
 
 test('celebrate: the trophy, the real count, every badge and the three buttons', async ({ page }) => {
