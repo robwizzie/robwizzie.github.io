@@ -66,7 +66,7 @@ test('locked achievements show their name, a hint and a nudge', async ({ page })
 
 test('hint walks you through the next one, and rob.hire() works from the terminal', async ({ page }) => {
   await term(page, 'hint');
-  expect(await termOut(page)).toContain('💡');
+  expect(await termOut(page)).toContain('Hint, ');
   await term(page, 'rob.hire()');
   await expect(page.locator('.ach-foot')).not.toContainText(' 0/');
   await expect(page.locator('#hire-panel')).toBeVisible();

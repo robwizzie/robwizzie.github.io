@@ -1,4 +1,4 @@
-/* robwiscount.org — the "you found every achievement" moment: a trophy, the badges, fireworks.
+/* robwiscount.org - the "you found every achievement" moment: a trophy, the badges, fireworks.
    js/eggs.js calls RW.celebrate() when the last one unlocks; the `celebrate` command replays it. */
 (function () {
   'use strict';
@@ -119,7 +119,7 @@
   RW.celebrate = function () {
     if (open) return;
     var t = tally(), lastFocus = document.activeElement, timers = [], stopFx = null;
-    var all = t.found === t.total, line = 'I found all ' + t.total + ' secrets on robwiscount.org 🏆';
+    var all = t.found === t.total, line = 'I found all ' + t.total + ' secrets on robwiscount.org';
     seen({ t: Date.now(), n: t.total });
 
     var ov = document.createElement('div');
@@ -141,7 +141,7 @@
         '</div>' +
         '<span class="cele-kicker">' + (all ? '100% complete' : Math.round(t.found / t.total * 100) + '% complete') + '</span>' +
         '<h2 class="cele-h" id="cele-h">' + (all
-          ? '<span>Every.</span> <span>Single.</span> <span class="blue">One.</span>'
+          ? '<span>All</span> <span>' + t.total + '</span> <span class="blue">found.</span>'
           : '<span>' + t.found + '</span> <span>of</span> <span class="blue">' + t.total + '.</span>') + '</h2>' +
         '<p class="cele-sub" id="cele-sub"><b><span class="cele-n">' + t.found + '</span> of ' + t.total + '</b> secrets found' +
           (t.first ? ' <span class="cele-dot">·</span> <span class="cele-took">' + took(Date.now() - t.first) + '</span>' : '') + '</p>' +
@@ -149,11 +149,11 @@
         '<ul class="cele-badges" aria-label="Your achievements">' + t.list.map(function (a, i) {
           var on = !!(RW.achievements.got() || {})[a.id];
           return '<li class="' + (on ? 'on' : 'off') + '" style="--i:' + i + '" tabindex="0" data-t="' + esc(a.title) + '" aria-label="' + esc(a.title + (on ? '' : ' (locked)')) + '">' +
-            '<span>' + (on ? a.icon : '🔒') + '</span></li>';
+            '<span><i class="fas fa-' + (on ? a.icon : 'lock') + '" aria-hidden="true"></i></span></li>';
         }).join('') + '</ul>' +
         '<div class="cele-actions">' +
           (all ? '<button class="btn btn-primary cele-wall" type="button"><i class="fas fa-download"></i> Download your trophy wallpaper</button>' : '') +
-          '<button class="btn btn-ghost cele-share" type="button"><i class="fas fa-share-nodes"></i> Share</button>' +
+          '<button class="btn btn-ghost cele-share" type="button"><i class="fas fa-share-alt"></i> Share</button>' +
           '<button class="btn btn-ghost cele-back" type="button">Back to the site</button>' +
         '</div>' +
       '</div></div>';
@@ -195,10 +195,10 @@
 
     // Wiring
     var wall = $('.cele-wall', ov);
-    if (wall) wall.addEventListener('click', function () { RW.achievements.wallpaper(); RW.toast('🏆 Wallpaper on its way to your downloads'); });
+    if (wall) wall.addEventListener('click', function () { RW.achievements.wallpaper(); RW.toast('Wallpaper on its way to your downloads'); });
     $('.cele-share', ov).addEventListener('click', function () {
       if (navigator.share) { navigator.share({ title: 'robwiscount.org', text: line, url: SITE }).catch(function () {}); return; }
-      RW.copy(line + ' ' + SITE).then(function () { RW.toast('📋 Copied — paste it anywhere'); }, function () { RW.toast(line + ' ' + SITE); });
+      RW.copy(line + ' ' + SITE).then(function () { RW.toast('Copied. Paste it anywhere.'); }, function () { RW.toast(line + ' ' + SITE); });
     });
     $('.cele-back', ov).addEventListener('click', close);
     $('.cele-x', ov).addEventListener('click', close);
@@ -241,11 +241,11 @@
   RW.commands.celebrate = function () {
     var t = tally(), left = t.total - t.found;
     if (left > 0) {
-      RW.print('Not yet — ' + left + ' secret' + (left === 1 ? '' : 's') + ' left to find (' + t.found + '/' + t.total + ').', 'warn');
+      RW.print('Not yet: ' + left + ' secret' + (left === 1 ? '' : 's') + ' left to find (' + t.found + '/' + t.total + ').', 'warn');
       RW.print('Stuck? Type <span class="p">hint</span> for step-by-step help.', 'dim');
       return;
     }
-    RW.print('🏆 Roll it back. ' + t.total + '/' + t.total + ', every single one.', 'ok');
+    RW.print('Roll it back. ' + t.total + '/' + t.total + ', every single one.', 'ok');
     setTimeout(RW.celebrate, 250);
   };
 

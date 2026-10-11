@@ -70,7 +70,7 @@
         <div class="wrap">
             <span class="eyebrow">Colophon</span>
             <h1 class="h-display">How this site <span class="blue">works.</span></h1>
-            <p class="lede">No framework, no build step, no bundler for the page itself. It's plain HTML, CSS and JavaScript on GitHub Pages, plus one small Cloudflare Worker for the live bits. Here's what's under the hood, for the curious.</p>
+            <p class="lede">There is no framework or bundler for the page itself. It's plain HTML, CSS and JavaScript on GitHub Pages, plus one small Cloudflare Worker for the live bits. Here's what's under the hood, for the curious.</p>
             <nav class="co-toc" aria-label="On this page">
                 <a href="#stack">The stack</a><a href="#map">How it fits together</a><a href="#live">Live mode</a><a href="#dogs">The 3D dogs</a><a href="#pool">Pool physics</a><a href="#eggs">Easter eggs</a><a href="#perf">Performance</a><a href="#tests">Tests</a><a href="#privacy">Privacy</a><a href="#credits">Credits</a>
             </nav>
@@ -193,12 +193,12 @@
             <h2 class="h-display">Every egg is <span class="blue">an event.</span></h2>
             <p class="lede">Features call <code>RW.egg('pool')</code> and know nothing about achievements. <code>eggs.js</code> listens for <code>rw:egg</code> events, shows the Xbox-style popup and saves progress in <code>localStorage</code>. Finding all of them unlocks a phone wallpaper drawn on a canvas. Some of them:</p>
             <div class="co-eggs">
-                <div><b>Terminal</b> — a little shell with a command parser and a way for one feature to take over the prompt. That's how <code>vim</code> traps you until you press Esc and type <code>:wq</code>.</div>
-                <div><b>rm -rf /</b> — everything on screen falls with the Web Animations API, then plays in reverse as "git" restores it.</div>
-                <div><b>Mile A Day mode</b> — a runner rides the scroll bar. My own streak card reads the real number from the Mile A Day API, in Eastern time.</div>
-                <div><b>Gameday</b> — when a Philly team is playing, ESPN's scoreboard turns into a live score pill and the nav takes the team's color.</div>
-                <div><b>Tab away</b> — the Page Visibility API swaps the title, and the favicon becomes a spinning canvas hexagon.</div>
-                <div><b>Console</b> — open DevTools. There's a <code>rob</code> object waiting for you.</div>
+                <div><b>Terminal:</b> a little shell with a command parser and a way for one feature to take over the prompt. That's how <code>vim</code> traps you until you press Esc and type <code>:wq</code>.</div>
+                <div><b>rm -rf /</b>: everything on screen falls with the Web Animations API, then plays in reverse as "git" restores it.</div>
+                <div><b>Mile A Day mode:</b> a runner rides the scroll bar. My own streak card reads the real number from the Mile A Day API, in Eastern time.</div>
+                <div><b>Gameday:</b> when a Philly team is playing, ESPN's scoreboard turns into a live score pill and the nav takes the team's color.</div>
+                <div><b>Tab away:</b> the Page Visibility API swaps the title, and the favicon becomes a spinning canvas hexagon.</div>
+                <div><b>Console:</b> open DevTools. There's a <code>rob</code> object waiting for you.</div>
             </div>
         </div>
     </section>
@@ -227,7 +227,7 @@
         <div class="wrap">
             <span class="eyebrow">Privacy</span>
             <h2 class="h-display">Curious, <span class="blue">not creepy.</span></h2>
-            <p class="lede">No cookies, no ad trackers, no analytics scripts. The Worker keeps visit counts by city, the site that linked you here (just the domain, never the full address), and tags I add to links I send out, like <code>?r=acme</code> on an application, so I know which ones got opened. Then it tidies that tag out of your address bar. Everything else lives in your own browser's storage.</p>
+            <p class="lede">There are no cookies, ad trackers or analytics scripts. The Worker keeps visit counts by city, the site that linked you here (just the domain, never the full address), and tags I add to links I send out, like <code>?r=acme</code> on an application, so I know which ones got opened. Then it tidies that tag out of your address bar. Everything else lives in your own browser's storage.</p>
         </div>
     </section>
 

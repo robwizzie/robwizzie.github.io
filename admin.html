@@ -93,10 +93,10 @@
         <section class="adm-card">
             <h2>Overview <span class="adm-row"><select class="adm-in" id="adm-days" aria-label="Range"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select></span></h2>
             <div class="adm-kpis">
-                <div class="adm-kpi"><b id="k-visits">—</b><span>Visitors (unique per day)</span></div>
-                <div class="adm-kpi"><b id="k-tagged">—</b><span>From tagged links</span></div>
-                <div class="adm-kpi"><b id="k-sources">—</b><span>Different sources</span></div>
-                <div class="adm-kpi"><b id="k-pending">—</b><span>Notes waiting</span></div>
+                <div class="adm-kpi"><b id="k-visits">–</b><span>Visitors (unique per day)</span></div>
+                <div class="adm-kpi"><b id="k-tagged">–</b><span>From tagged links</span></div>
+                <div class="adm-kpi"><b id="k-sources">–</b><span>Different sources</span></div>
+                <div class="adm-kpi"><b id="k-pending">–</b><span>Notes waiting</span></div>
             </div>
             <div class="adm-spark" id="adm-spark" aria-label="Visitors per day"></div>
         </section>
@@ -130,7 +130,7 @@
   try { token = localStorage.getItem(KEY) || ''; } catch (e) {}
   function $(s) { return document.querySelector(s); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  function place(v) { return v.city ? v.city + ', ' + (v.country === 'US' && v.region ? v.region : v.country) : (v.country || '—'); }
+  function place(v) { return v.city ? v.city + ', ' + (v.country === 'US' && v.region ? v.region : v.country) : (v.country || '–'); }
   function when(t) {
     var s = (Date.now() - t) / 1000;
     if (s < 3600) return Math.max(1, Math.round(s / 60)) + 'm ago';
@@ -171,8 +171,8 @@
       $('#adm-spark').innerHTML = days.map(function (x) { return '<i style="height:' + Math.max(3, x[1] / max * 100) + '%" title="' + x[0] + ': ' + x[1] + '"></i>'; }).join('');
       bars($('#adm-sources'), d.sources, 'source');
       bars($('#adm-hosts'), d.hosts, 'host');
-      table($('#adm-tags'), ['Tag', 'Visits', 'Last', 'From'], d.tags.map(function (r) { return '<tr><td class="adm-tag">' + esc(r.tag) + '</td><td class="n">' + r.n + '</td><td>' + when(r.last) + '</td><td>' + esc(r.city || '—') + '</td></tr>'; }));
-      table($('#adm-campaigns'), ['Campaign', 'Medium', 'Visits'], d.campaigns.map(function (r) { return '<tr><td>' + esc(r.campaign) + '</td><td>' + esc(r.medium || '—') + '</td><td class="n">' + r.n + '</td></tr>'; }));
+      table($('#adm-tags'), ['Tag', 'Visits', 'Last', 'From'], d.tags.map(function (r) { return '<tr><td class="adm-tag">' + esc(r.tag) + '</td><td class="n">' + r.n + '</td><td>' + when(r.last) + '</td><td>' + esc(r.city || '–') + '</td></tr>'; }));
+      table($('#adm-campaigns'), ['Campaign', 'Medium', 'Visits'], d.campaigns.map(function (r) { return '<tr><td>' + esc(r.campaign) + '</td><td>' + esc(r.medium || '–') + '</td><td class="n">' + r.n + '</td></tr>'; }));
       table($('#adm-recent'), ['When', 'From', 'Source', 'Tag', 'Page'], d.recent.map(function (r) {
         return '<tr><td>' + when(r.t) + '</td><td>' + esc(place(r)) + '</td><td>' + esc(r.source) + (r.host && r.host !== r.source ? ' <small class="adm-empty">' + esc(r.host) + '</small>' : '') + '</td><td class="adm-tag">' + esc(r.tag || r.campaign || '') + '</td><td>' + esc(r.page || '/') + '</td></tr>';
       }));

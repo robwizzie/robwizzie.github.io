@@ -1,4 +1,4 @@
-/* robwiscount.org — interactions. No dependencies. */
+/* robwiscount.org - interactions. No dependencies. */
 (function () {
   'use strict';
 
@@ -239,9 +239,9 @@
         return '<span class="ls-day ' + cls + '"><span class="ls-dot">' + (done ? '✓' : i === dow ? '•' : '') + '</span>' + l + '</span>';
       }).join('');
       var mins = Math.max(0, (24 - et.hour) * 60 - et.minute), left = Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm';
-      var line = ran === true ? '✓ Today\'s mile is done — day ' + streak.toLocaleString() + ' is in the books.'
-        : ran === false ? 'Day ' + (streak + 1).toLocaleString() + ' isn\'t logged yet — ' + left + ' left to get it in.'
-        : 'Today is day ' + streak.toLocaleString() + ' — ' + left + ' left to get it in.';
+      var line = ran === true ? '✓ Today\'s mile is done. Day ' + streak.toLocaleString() + ' is in the books.'
+        : ran === false ? 'Day ' + (streak + 1).toLocaleString() + ' isn\'t logged yet, ' + left + ' left to get it in.'
+        : 'Today is day ' + streak.toLocaleString() + ', ' + left + ' left to get it in.';
       $('#ls-today').textContent = line;
       $('#ls-today').classList.toggle('ls-done', ran === true);
     }
@@ -409,12 +409,12 @@
     }, function () { location.href = 'mailto:' + emailBtn.getAttribute('data-email'); });
   });
   $('#share-btn').addEventListener('click', function () {
-    var data = { title: 'Rob Wiscount — Developer & App Builder', text: 'Check out Rob Wiscount\'s portfolio', url: 'https://robwiscount.org' };
+    var data = { title: 'Rob Wiscount | Developer & App Builder', text: 'Check out Rob Wiscount\'s portfolio', url: 'https://robwiscount.org' };
     if (navigator.share) navigator.share(data).catch(function () {});
-    else copy(data.url).then(function () { toast('Link copied — thanks for sharing! 🙌'); });
+    else copy(data.url).then(function () { toast('Link copied. Thanks for sharing!'); });
   });
 
-  /* ---------- Confetti (blue, white, black — the logo) ---------- */
+  /* ---------- Confetti (blue, white, black - the logo) ---------- */
   var cv = $('#confetti'), cx = cv.getContext('2d'), parts = [], animating = false;
   function sizeConfetti() { cv.width = innerWidth * dpr2(); cv.height = innerHeight * dpr2(); cx.setTransform(dpr2(), 0, 0, dpr2(), 0, 0); }
   function dpr2() { return Math.min(2, window.devicePixelRatio || 1); }
@@ -463,7 +463,7 @@
     cLogo.style.animation = 'none';
     cLogo.style.transform = 'rotate(' + spins * 360 + 'deg) scale(1.1)';
     var r = cLogo.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 70);
-    if (spins === 5) { toast('You found the logo spinner. You\'re hired… I mean, I\'m hireable. 😄'); egg('logo'); }
+    if (spins === 5) { toast('You found the logo spinner. You\'re hired… I mean, I\'m hireable.'); egg('logo'); }
   });
 
   /* Konami code */
@@ -471,7 +471,7 @@
   document.addEventListener('keydown', function (e) {
     var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     kpos = k === konami[kpos] ? kpos + 1 : (k === konami[0] ? 1 : 0);
-    if (kpos === konami.length) { kpos = 0; party(); toast('🎮 Cheat code unlocked: +30 lives. Now go hire Rob.'); egg('konami'); }
+    if (kpos === konami.length) { kpos = 0; party(); toast('Cheat code unlocked: +30 lives. Now go hire Rob.'); egg('konami'); }
   });
 
   /* ---------- LeBronify player ---------- */
@@ -528,7 +528,7 @@
   $('#lbf-prev').addEventListener('click', function () { audio.currentTime > 3 ? (audio.currentTime = 0) : lbfLoad(cur - 1, true); });
   $('#lbf-shuffle').addEventListener('click', function () {
     shuffle = !shuffle; this.classList.toggle('on', shuffle);
-    toast(shuffle ? '👑 The King will decide what plays next.' : 'Shuffle off. You\'re in charge again.');
+    toast(shuffle ? 'The King will decide what plays next.' : 'Shuffle off. You\'re in charge again.');
   });
   rows.forEach(function (r) { r.addEventListener('click', function () { var i = +r.getAttribute('data-i'); i === cur && !audio.paused ? audio.pause() : (i === cur ? play() : lbfLoad(i, true)); }); });
   ['play', 'pause'].forEach(function (ev) { audio.addEventListener(ev, paint); });
@@ -554,7 +554,7 @@
     if (e.key === 'ArrowLeft') audio.currentTime = Math.max(0, audio.currentTime - 5);
   });
 
-  /* AD Break — the real app interrupts every so often with Anthony Davis */
+  /* AD Break - the real app interrupts every so often with Anthony Davis */
   var ad = $('#ad-break');
   function showAd() { audio.pause(); ad.hidden = false; setTimeout(function () { ad.classList.add('open'); $('.ad-actions button').focus(); }, 10); }
   $$('[data-ad]').forEach(function (b) {
@@ -567,7 +567,7 @@
   /* Taco Tuesday */
   $('#lbf-taco').addEventListener('click', function () {
     var tuesday = new Date().getDay() === 2;
-    toast(tuesday ? '🌮 TACO TUESDAYYYYY' : "🌮 It's not even Tuesday. LeBron doesn't care.");
+    toast(tuesday ? 'TACO TUESDAYYYYY' : "It's not even Tuesday. LeBron doesn't care.");
     lbfLoad(TRACKS.length - 1, true);
     if (reduceMotion) return;
     for (var i = 0; i < 28; i++) {
@@ -601,11 +601,11 @@
     help: function () {
       print('Available commands:', 'ok');
       print('  whoami      who is this guy\n  projects    things I\'ve shipped\n  play fetch  launch my video game\n  play pool   8-ball vs my CPU\n  lebron      play a random LeBronify banger\n  go birds    you know what this does\n  experience  where I\'ve worked\n  stack       what I build with\n  mileaday    the app I\'m proudest of\n  git log     my GitHub squares\n  hire rob    the best command\n  contact     how to reach me\n  achievements  secrets you\'ve found\n  hint        stuck on one? step-by-step help\n  colophon    how this site is built\n  clear       wipe the screen', 'dim');
-      print('…and a few commands that aren\'t on this list. 👀', 'dim');
+      print('…and a few commands that aren\'t on this list.', 'dim');
     },
     whoami: function () {
-      print('Rob Wiscount — front-end developer at heart, full stack by now. South Jersey.');
-      print('Builds apps, games and sites — then makes his friends play them.', 'dim');
+      print('Rob Wiscount. Front-end developer at heart, full stack by now. South Jersey.');
+      print('Builds apps, games and sites, then makes his friends play them.', 'dim');
       print('Designs his own graphics in Canva and edits video in Final Cut and CapCut.', 'dim');
       print('Software developer @ Foley Prep. Co-founder of Mile A Day (live on the App Store).', 'dim');
       print('Builds websites, web apps and iOS apps people actually use.', 'dim');
@@ -626,7 +626,7 @@
        ['Unused CSS Detector', 'VS Code extension', 'https://marketplace.visualstudio.com/items?itemName=robwizzie.unused-css-detector']
       ].forEach(function (p) {
         var link = p[2] ? '<a href="' + p[2] + '"' + (p[2].charAt(0) === '#' ? '' : ' target="_blank" rel="noopener"') + '>' + p[0] + '</a>' : p[0];
-        print('→ ' + link + ' <span class="dim">— ' + p[1] + '</span>');
+        print('→ ' + link + ' <span class="dim">' + p[1] + '</span>');
       });
     },
     experience: function () {
@@ -642,7 +642,7 @@
       print('design   Final Cut Pro · CapCut · Canva · Figma');
     },
     mileaday: function () {
-      print('🔥 Mile A Day — run or walk one mile, every day.', 'ok');
+      print('Mile A Day: run or walk one mile, every day.', 'ok');
       print('iPhone + Apple Watch + widgets + Live Activities, a TypeScript/Postgres backend,\nand a Next.js site. 270K+ lines of code. Live since June 2026.', 'dim');
       print('<a href="https://apps.apple.com/us/app/mile-a-day/id6746970905" target="_blank" rel="noopener">→ get it on the App Store</a>');
     },
@@ -656,23 +656,23 @@
       print('Checking candidate…', 'dim');
       setTimeout(function () { print('✔ ships real products', 'ok'); }, 250);
       setTimeout(function () { print('✔ front end first, full stack when it counts', 'ok'); }, 500);
-      setTimeout(function () { print('✔ fast, curious, AI-native', 'ok'); }, 750);
+      setTimeout(function () { print('✔ uses AI every day to ship faster', 'ok'); }, 750);
       setTimeout(function () {
         print('Match found. Opening a line of communication… <a href="#contact">↓ contact</a>');
         party();
       }, 1050);
     },
-    'go birds': function () { print('🦅 E-A-G-L-E-S  EAGLES! 🦅', 'ok'); burst(innerWidth / 2, innerHeight / 2, 120); },
+    'go birds': function () { print('E-A-G-L-E-S  EAGLES!', 'ok'); burst(innerWidth / 2, innerHeight / 2, 120); },
     'sudo hire rob': function () { commands['hire rob'](); },
     ls: function () { print('about.txt  projects/  mile-a-day/  resume.pdf  secrets.txt', 'dim'); },
-    'cat secrets.txt': function () { print('There are no secrets. Just ship it. 🚀'); },
+    'cat secrets.txt': function () { print('There are no secrets. Just ship it.'); },
     'cat about.txt': function () { commands.whoami(); },
     sudo: function () { print('Nice try. But you can run: sudo hire rob', 'warn'); },
-    'play fetch': function () { print('Booting Fetch… 🐶 (Esc inside the game goes back a menu)', 'ok'); setTimeout(openFetch, 400); },
-    'play pool': function () { print('Racking up 8-ball against my CPU… 🎱 Call your pocket on the 8.', 'ok'); setTimeout(function () { openGame('pool'); }, 400); },
+    'play fetch': function () { print('Booting Fetch… (Esc inside the game goes back a menu)', 'ok'); setTimeout(openFetch, 400); },
+    'play pool': function () { print('Racking up 8-ball against my CPU… Call your pocket on the 8.', 'ok'); setTimeout(function () { openGame('pool'); }, 400); },
     lebron: function () {
       var i = Math.floor(Math.random() * TRACKS.length);
-      print('▶ Now playing: ' + TRACKS[i].title + ' <span class="dim">— ' + TRACKS[i].artist + '</span>', 'ok');
+      print('▶ Now playing: ' + TRACKS[i].title + ' <span class="dim">by ' + TRACKS[i].artist + '</span>', 'ok');
       print('<a href="#lebronify">→ controls are up in the LeBronify section</a>');
       lbfLoad(i, true);
     },
@@ -702,7 +702,7 @@
     history.push(raw); hpos = history.length;
     if (commands[cmd]) commands[cmd]('');
     else if (sp > 0 && commands[cmd.slice(0, sp)]) commands[cmd.slice(0, sp)](line.slice(sp + 1)); // e.g. cowsay <text>
-    else print('command not found: ' + esc(cmd) + ' — try <span class="p">help</span>', 'warn');
+    else print('command not found: ' + esc(cmd) + '. Try <span class="p">help</span>', 'warn');
   }
   input.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') { run(input.value); input.value = ''; }
@@ -861,7 +861,7 @@
       var html = '';
       for (var i = 0; i < 371; i++) html += '<i class="gh-c l0" style="--d:' + (Math.floor(i / 7) * 9) + 'ms"></i>';
       grid.innerHTML = html; grid.classList.add('lit'); card.classList.add('gh-off');
-      note.innerHTML = 'GitHub didn\'t answer just now — <a href="https://github.com/robwizzie" target="_blank" rel="noopener">see the real squares on GitHub</a>';
+      note.innerHTML = 'GitHub didn\'t answer just now. <a href="https://github.com/robwizzie" target="_blank" rel="noopener">see the real squares on GitHub</a>';
     }
 
     var cached = null;
