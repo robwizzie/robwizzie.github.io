@@ -1,4 +1,4 @@
-/* robwiscount.org — easter eggs: achievements, the console, tab-away, terminal tricks,
+/* robwiscount.org - easter eggs: achievements, the console, tab-away, terminal tricks,
    end credits, Mile A Day mode and Philly gameday. Needs window.RW from js/site.js. */
 (function () {
   'use strict';
@@ -16,53 +16,53 @@
   function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
 
   /* ==========================================================================
-     Achievements — every egg on the page reports here through RW.egg(id)
+     Achievements - every egg on the page reports here through RW.egg(id)
      ========================================================================== */
   // Each locked achievement shows its title and a hint (what to do, and where); "Need a nudge?" gives
   // the exact steps. Phones get their own steps wherever the desktop way needs a keyboard or DevTools.
   var touch = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   var ACH = [
-    { id: 'konami', icon: '🎮', title: 'Cheat Code', desc: 'Entered the Konami code.',
+    { id: 'konami', icon: 'gamepad', title: 'Cheat Code', desc: 'Entered the Konami code.',
       hint: 'Enter the classic video-game cheat code.',
-      nudge: touch ? 'Swipe on the page: up, up, down, down, left, right, left, right — then tap twice.' : 'Press ↑ ↑ ↓ ↓ ← → ← → B A on your keyboard (anywhere outside the terminal).' },
-    { id: 'logo', icon: '🌀', title: 'Spin Doctor', desc: 'Spun the RW logo five times.',
+      nudge: touch ? 'Swipe on the page: up, up, down, down, left, right, left, right, then tap twice.' : 'Press ↑ ↑ ↓ ↓ ← → ← → B A on your keyboard (anywhere outside the terminal).' },
+    { id: 'logo', icon: 'sync-alt', title: 'Spin Doctor', desc: 'Spun the RW logo five times.',
       hint: 'The big RW logo near the bottom of the page likes to spin.', nudge: 'Scroll to the Contact section and ' + (touch ? 'tap' : 'click') + ' the RW logo 5 times.' },
-    { id: 'fetch', icon: '🐶', title: 'Good Game', desc: 'Booted up Fetch.',
-      hint: 'There\'s a whole video game you can play on this page.', nudge: 'Go to the Fetch section and press Play — or type play fetch in the terminal.' },
-    { id: 'lebron', icon: '👑', title: 'LeBronified', desc: 'Played a LeBronify banger.',
-      hint: 'The LeBronify section is a music player. Play any song.', nudge: 'Scroll to LeBronify and press play — or type lebron in the terminal.' },
-    { id: 'ripple', icon: '🌊', title: 'Making Waves', desc: 'Rippled the GitHub squares.',
+    { id: 'fetch', icon: 'dog', title: 'Good Game', desc: 'Booted up Fetch.',
+      hint: 'There\'s a whole video game you can play on this page.', nudge: 'Go to the Fetch section and press Play, or type play fetch in the terminal.' },
+    { id: 'lebron', icon: 'crown', title: 'LeBronified', desc: 'Played a LeBronify banger.',
+      hint: 'The LeBronify section is a music player. Play any song.', nudge: 'Scroll to LeBronify and press play, or type lebron in the terminal.' },
+    { id: 'ripple', icon: 'water', title: 'Making Waves', desc: 'Rippled the GitHub squares.',
       hint: 'The blue GitHub squares are clickable.', nudge: (touch ? 'Tap' : 'Click') + ' any square in the Commit log section.' },
-    { id: 'console', icon: '🔧', title: 'Under the Hood', desc: 'Called rob.hire().',
+    { id: 'console', icon: 'wrench', title: 'Under the Hood', desc: 'Called rob.hire().',
       hint: touch ? 'There\'s a hidden rob.hire() command. The site\'s terminal can run it.' : 'Developers: there\'s a note for you in the browser console.',
-      nudge: touch ? 'Type rob.hire() in the terminal (the Interactive section).' : 'Open DevTools (F12, or ⌥⌘I on a Mac), go to Console and type rob.hire() — or type it in the site\'s terminal.' },
-    { id: 'tabaway', icon: '👋', title: 'You Came Back', desc: 'Left the tab and came back.',
-      hint: 'Switch to another tab or app for a few seconds, then come back.', nudge: 'Peek at the tab\'s title while you\'re away — then return to this tab.' },
-    { id: 'mile', icon: '🏃', title: 'Ran the Mile', desc: 'Scrolled the whole page, top to bottom.',
-      hint: 'Scroll from the very top of the page all the way to the bottom.', nudge: 'Watch the little runner on the progress bar at the top — get them to the finish line.' },
-    { id: 'credits', icon: '🎬', title: 'Stayed for the Credits', desc: 'Watched the end credits all the way through.',
-      hint: 'Movie people stay until the very end. At the bottom of the page, keep scrolling until the film reel fills.', nudge: 'Or type credits in the terminal — and watch to the end without skipping.' },
-    { id: 'vim', icon: '⌨️', title: 'Escaped Vim', desc: 'Got out of vim. Put it on your resume.',
+      nudge: touch ? 'Type rob.hire() in the terminal (the Interactive section).' : 'Open DevTools (F12, or ⌥⌘I on a Mac), go to Console and type rob.hire(), or type it in the site\'s terminal.' },
+    { id: 'tabaway', icon: 'hand-paper', title: 'You Came Back', desc: 'Left the tab and came back.',
+      hint: 'Switch to another tab or app for a few seconds, then come back.', nudge: 'Peek at the tab\'s title while you\'re away, then return to this tab.' },
+    { id: 'mile', icon: 'running', title: 'Ran the Mile', desc: 'Scrolled the whole page, top to bottom.',
+      hint: 'Scroll from the very top of the page all the way to the bottom.', nudge: 'Watch the little runner on the progress bar at the top and get them to the finish line.' },
+    { id: 'credits', icon: 'film', title: 'Stayed for the Credits', desc: 'Watched the end credits all the way through.',
+      hint: 'Movie people stay until the very end. At the bottom of the page, keep scrolling until the film reel fills.', nudge: 'Or type credits in the terminal and watch to the end without skipping.' },
+    { id: 'vim', icon: 'keyboard', title: 'Escaped Vim', desc: 'Got out of vim. Put it on your resume.',
       hint: 'Type vim in the terminal. Getting back out is the hard part.', nudge: 'Inside vim, press Esc' + (touch ? ' (on a phone, type esc)' : '') + ', then type :wq and press Enter.' },
-    { id: 'rmrf', icon: '💥', title: 'Nuked It', desc: 'Ran rm -rf / and lived.',
+    { id: 'rmrf', icon: 'bomb', title: 'Nuked It', desc: 'Ran rm -rf / and lived.',
       hint: 'In the terminal, try the command that deletes everything on a real computer. It\'s safe here!', nudge: 'Type rm -rf / in the terminal.' },
-    { id: 'theme', icon: '🎨', title: 'Repainted', desc: 'Re-themed the whole site.',
-      hint: 'Type theme in the terminal to see the color options.', nudge: 'Try theme eagles — or matrix, phillies, flyers, sixers or lebron.' },
-    { id: 'dog', icon: '🦴', title: 'Who Let the Dog Out', desc: 'Whistled for the dog.',
-      hint: touch ? 'There\'s a bone 🦴 hidden in the footer.' : 'Type the word dog anywhere on the page.', nudge: (touch ? 'Tap' : 'Click') + ' the 🦴 next to the copyright line at the very bottom — or type dog in the terminal.' },
-    { id: 'pool', icon: '🎱', title: 'Break Shot', desc: 'Broke the rack on the About cards.',
-      hint: 'Rob plays pool, and the About cards can turn into a rack.', nudge: 'Type break in the terminal — or ' + (touch ? 'tap' : 'click') + ' the 🎱 card in the About section three times fast.' },
-    { id: 'eightball', icon: '🏆', title: 'Called Pocket', desc: 'Beat the CPU at 8-ball.',
+    { id: 'theme', icon: 'palette', title: 'Repainted', desc: 'Re-themed the whole site.',
+      hint: 'Type theme in the terminal to see the color options.', nudge: 'Try theme eagles, or matrix, phillies, flyers, sixers or lebron.' },
+    { id: 'dog', icon: 'bone', title: 'Who Let the Dog Out', desc: 'Whistled for the dog.',
+      hint: touch ? 'There\'s a bone hidden in the footer.' : 'Type the word dog anywhere on the page.', nudge: (touch ? 'Tap' : 'Click') + ' the bone next to the copyright line at the very bottom, or type dog in the terminal.' },
+    { id: 'pool', icon: 'dot-circle', title: 'Break Shot', desc: 'Broke the rack on the About cards.',
+      hint: 'Rob plays pool, and the About cards can turn into a rack.', nudge: 'Type break in the terminal, or ' + (touch ? 'tap' : 'click') + ' the pool card in the About section three times fast.' },
+    { id: 'eightball', icon: 'trophy', title: 'Called Pocket', desc: 'Beat the CPU at 8-ball.',
       hint: 'The pool break isn\'t just for show. There\'s a real game in there.', nudge: 'Type play pool in the terminal (or break the rack and hit "Rack \'em"), then beat the CPU on any difficulty.' },
-    { id: 'colophon', icon: '📖', title: 'Read the Manual', desc: 'Found out how this site works.',
-      hint: 'Find the page that explains how this site was built.', nudge: 'Open "How this site works" in the footer — or type colophon in the terminal.' }
+    { id: 'colophon', icon: 'book-open', title: 'Read the Manual', desc: 'Found out how this site works.',
+      hint: 'Find the page that explains how this site was built.', nudge: 'Open "How this site works" in the footer, or type colophon in the terminal.' }
   ];
   // The live ones only join the list once the live server has actually answered (js/live.js fires rw:live),
   // so nobody gets stuck at "15 of 17" on a day the server is down.
   var LIVE_ACH = [
-    { id: 'live', icon: '🛰️', title: 'Not Alone', desc: 'Was on the site at the same time as someone else.',
+    { id: 'live', icon: 'satellite-dish', title: 'Not Alone', desc: 'Was on the site at the same time as someone else.',
       hint: 'Be on this site at the same moment as another visitor.', nudge: 'Open the site on two devices at once (say, your phone and a laptop), or send the link to a friend and visit together.' },
-    { id: 'guestbook', icon: '✍️', title: 'Signed the Guestbook', desc: 'Left a note on the visitor map.',
+    { id: 'guestbook', icon: 'signature', title: 'Signed the Guestbook', desc: 'Left a note on the visitor map.',
       hint: 'Leave a note on the visitor map.', nudge: 'Scroll to the Visitors section and sign the guestbook.' }
   ];
   document.addEventListener('rw:live', function () {
@@ -81,7 +81,7 @@
   function nextPop() {
     if (showing || !queue.length) return;
     var a = queue.shift(); showing = true;
-    pop.innerHTML = '<span class="ach-ico">' + a.icon + '</span><span class="ach-txt"><small>Achievement unlocked · ' + count() + '/' + ACH.length + '</small><b>' + a.title + '</b></span>';
+    pop.innerHTML = '<span class="ach-ico"><i class="fas fa-' + a.icon + '" aria-hidden="true"></i></span><span class="ach-txt"><small>Achievement unlocked · ' + count() + '/' + ACH.length + '</small><b>' + a.title + '</b></span>';
     pop.classList.add('show');
     setTimeout(function () {
       pop.classList.remove('show');
@@ -96,7 +96,7 @@
     queue.push(a); nextPop(); paintCount();
     if (count() === ACH.length) setTimeout(function () {
       // js/celebrate.js puts on the full show; fall back to confetti if it isn't loaded.
-      if (RW.celebrate) RW.celebrate(); else { RW.party(); queue.push({ icon: '🏆', title: 'Completionist — your trophy\'s in the case' }); nextPop(); }
+      if (RW.celebrate) RW.celebrate(); else { RW.party(); queue.push({ icon: 'trophy', title: 'Completionist: your trophy\'s in the case' }); nextPop(); }
     }, 1200);
   }
   document.addEventListener('rw:egg', function (e) { unlock(e.detail); });
@@ -108,7 +108,7 @@
   if (foot) foot.insertBefore(footBtn, foot.lastElementChild);
   function paintCount() {
     var n = count();
-    footBtn.innerHTML = '🏆 <b>' + n + '/' + ACH.length + '</b> secrets found';
+    footBtn.innerHTML = '<i class="fas fa-trophy" aria-hidden="true"></i> <b>' + n + '/' + ACH.length + '</b> secrets found';
     footBtn.setAttribute('aria-label', 'Trophy case: ' + n + ' of ' + ACH.length + ' secrets found');
     if (panel && !panel.hidden) renderPanel();
   }
@@ -122,11 +122,11 @@
     panel.innerHTML = '<div class="ach-box">' +
       '<button class="round-btn ach-close" type="button" aria-label="Close trophy case"><i class="fas fa-times"></i></button>' +
       '<span class="eyebrow">Trophy case</span>' +
-      '<h2 class="h-display ach-h">' + (done ? 'Every. Single. <span class="blue">One.</span>' : n + ' of ' + ACH.length + ' <span class="blue">secrets found.</span>') + '</h2>' +
+      '<h2 class="h-display ach-h">' + (done ? 'All ' + n + ' <span class="blue">secrets found.</span>' : n + ' of ' + ACH.length + ' <span class="blue">secrets found.</span>') + '</h2>' +
       '<div class="ach-bar"><i style="width:' + Math.round(n / ACH.length * 100) + '%"></i></div>' +
       '<ul class="ach-grid">' + ACH.map(function (a) {
         var on = !!got[a.id];
-        return '<li class="' + (on ? 'on' : '') + '"><span class="ach-ico">' + (on ? a.icon : '🔒') + '</span><span><b>' + a.title + '</b><small>' + (on ? a.desc : a.hint) + '</small>' +
+        return '<li class="' + (on ? 'on' : '') + '"><span class="ach-ico"><i class="fas fa-' + (on ? a.icon : 'lock') + '" aria-hidden="true"></i></span><span><b>' + a.title + '</b><small>' + (on ? a.desc : a.hint) + '</small>' +
           (on ? '' : '<details class="ach-nudge"><summary>Need a nudge?</summary><small>' + a.nudge + '</small></details>') + '</span></li>';
       }).join('') + '</ul>' +
       (done ? '<div class="ach-done-actions"><button class="btn btn-primary ach-wall" type="button"><i class="fas fa-download"></i> Download your trophy wallpaper</button>' +
@@ -192,8 +192,8 @@
   }
 
   RW.commands.achievements = function () {
-    RW.print('🏆 ' + count() + '/' + ACH.length + ' secrets found', 'ok');
-    ACH.forEach(function (a) { RW.print((got[a.id] ? '✔ ' + a.title : '🔒 ' + a.title + ' — ' + a.hint), got[a.id] ? '' : 'dim'); });
+    RW.print(count() + '/' + ACH.length + ' secrets found', 'ok');
+    ACH.forEach(function (a) { RW.print((got[a.id] ? '✔ ' + a.title : '  ' + a.title + ': ' + a.hint), got[a.id] ? '' : 'dim'); });
     RW.print('Stuck? Type <span class="p">hint</span> for step-by-step help.', 'dim');
     RW.print('<a href="#" data-trophies>→ open the trophy case</a>');
     var l = $$('[data-trophies]').pop();
@@ -204,15 +204,15 @@
   var hintAt = 0;
   RW.commands.hint = RW.commands.hints = function () {
     var left = ACH.filter(function (a) { return !got[a.id]; });
-    if (!left.length) { RW.print('Nothing left to find — you got all ' + ACH.length + '. 🏆', 'ok'); return; }
+    if (!left.length) { RW.print('Nothing left to find. You got all ' + ACH.length + '.', 'ok'); return; }
     var a = left[hintAt++ % left.length];
-    RW.print('💡 ' + a.title + ': ' + a.hint, 'ok');
+    RW.print('Hint, ' + a.title + ': ' + a.hint, 'ok');
     RW.print('   ' + a.nudge, 'dim');
     if (left.length > 1) RW.print('Type <span class="p">hint</span> again for another (' + left.length + ' left).', 'dim');
   };
   RW.commands['rob.hire()'] = RW.commands['rob.hire'] = function () { RW.print(window.rob.hire(), 'ok'); };
   RW.commands.colophon = function () {
-    RW.print('robwiscount.org — plain HTML, CSS and JS. No framework, no build step.', 'ok');
+    RW.print('robwiscount.org is plain HTML, CSS and JS with no framework or build step.', 'ok');
     RW.print('  page      GitHub Pages · one stylesheet on design tokens · one script per feature\n  live      Cloudflare Worker + Durable Object (SQLite): cursors, visits, guestbook\n  dogs      the real Fetch models → gltf-transform → three.js, ortho camera in CSS px\n  pool      elastic collisions, 14 substeps a frame, cushions, pockets\n  tests     Playwright + Lighthouse on every pull request', 'dim');
     RW.print('<a href="how-it-works.html">→ read the full write-up</a>');
     unlock('colophon');
@@ -232,7 +232,7 @@
       else if (Math.max(ax, ay) > 40) m = ay > ax ? (dy < 0 ? 'U' : 'D') : (dx < 0 ? 'L' : 'R');
       else return;
       seq = (seq + m).slice(-CODE.length);
-      if (seq === CODE) { seq = ''; RW.party(); RW.toast('🎮 Cheat code unlocked: +30 lives. Now go hire Rob.'); unlock('konami'); }
+      if (seq === CODE) { seq = ''; RW.party(); RW.toast('Cheat code unlocked: +30 lives. Now go hire Rob.'); unlock('konami'); }
     }, { passive: true });
   })();
 
@@ -253,11 +253,11 @@
   window.rob = {
     hire: function () {
       unlock('console'); RW.party(); RW.openHire();
-      return '📬 Great choice. The contact panel is open — or email robertwiscount@gmail.com';
+      return 'Great choice. The contact panel is open, or email robertwiscount@gmail.com';
     },
     stack: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Swift', 'SwiftUI', 'Node', 'PostgreSQL', 'Godot'],
     secrets: function () { return count() + '/' + ACH.length + ' secrets found. Type achievements in the terminal for hints.'; },
-    toString: function () { return 'Rob Wiscount — try rob.hire()'; }
+    toString: function () { return 'Rob Wiscount: try rob.hire()'; }
   };
 
   /* ==========================================================================
@@ -265,7 +265,7 @@
      ========================================================================== */
   (function () {
     var title = document.title, icons = $$('link[rel="icon"]'), hrefs = icons.map(function (l) { return l.href; });
-    var LINES = ['🏃 Rob\'s still running…', '👑 LeBron misses you', '🦅 Come back, GO BIRDS', '🐶 The dog is waiting…', '💾 Unsaved changes: you'];
+    var LINES = ['Rob\'s still running…', 'LeBron misses you', 'Come back, GO BIRDS', 'The dog is waiting…', 'Unsaved changes: you'];
     var timer = null, leftAt = 0, frame = 0;
     var fc = document.createElement('canvas'); fc.width = fc.height = 32;
     var fx = fc.getContext('2d');
@@ -273,7 +273,7 @@
       fx.clearRect(0, 0, 32, 32); fx.save(); fx.translate(16, 16); fx.rotate(t * Math.PI / 6);
       fx.beginPath(); for (var k = 0; k < 6; k++) { var an = Math.PI / 3 * k - Math.PI / 2; fx.lineTo(Math.cos(an) * 14, Math.sin(an) * 14); }
       fx.closePath(); fx.fillStyle = RW.rgba(RW.tc.blue); fx.fill(); fx.lineWidth = 2.5; fx.strokeStyle = '#fff'; fx.stroke(); fx.restore();
-      fx.fillStyle = '#fff'; fx.font = 'bold 13px sans-serif'; fx.textAlign = 'center'; fx.textBaseline = 'middle'; fx.fillText('👋', 16, 17);
+      fx.fillStyle = '#fff'; fx.font = 'bold 13px sans-serif'; fx.textAlign = 'center'; fx.textBaseline = 'middle'; fx.fillText('hi', 16, 17);
       var url = fc.toDataURL('image/png');
       icons.forEach(function (l) { l.href = url; });
     }
@@ -287,7 +287,7 @@
       } else {
         clearInterval(timer);
         icons.forEach(function (l, i) { l.href = hrefs[i]; });
-        if (Date.now() - leftAt > 3000) { document.title = 'Welcome back 👋'; unlock('tabaway'); setTimeout(function () { document.title = title; }, 2200); }
+        if (Date.now() - leftAt > 3000) { document.title = 'Welcome back!'; unlock('tabaway'); setTimeout(function () { document.title = title; }, 2200); }
         else document.title = title;
       }
     });
@@ -313,7 +313,7 @@
       }
       if (l === ':wq' || l === ':x' || l === 'ZZ' || l === ':wq!') {
         RW.setTermMode(null);
-        print('"rob.txt" written. You escaped vim. Put it on your resume. ✔', 'ok');
+        print('"rob.txt" written. You escaped vim. Put it on your resume.', 'ok');
         unlock('vim');
       } else if (l === ':q') print('E37: No write since last change (add ! to override)', 'warn');
       else if (l === ':q!') print('lol no. (try saving on the way out)', 'warn');
@@ -329,7 +329,7 @@
   var nuking = false;
   function nuke() {
     print('rm: descending into / …', 'warn');
-    if (reduceMotion || nuking) { print('…just kidding. Everything\'s fine. ✔', 'ok'); unlock('rmrf'); return; }
+    if (reduceMotion || nuking) { print('…just kidding. Everything\'s fine.', 'ok'); unlock('rmrf'); return; }
     nuking = true;
     var els = $$('main .reveal, main .btn, main .chip, main .term-hints button, .footer .wrap > *').filter(function (el) {
       var r = el.getBoundingClientRect();
@@ -342,13 +342,13 @@
         { transform: 'translate(' + ((Math.random() - 0.5) * 240) + 'px,' + fall + 'px) rotate(' + ((Math.random() - 0.5) * 120) + 'deg)' }
       ], { duration: 900 + Math.random() * 600, delay: 200 + Math.random() * 500 + i * 6, easing: 'cubic-bezier(.55,0,.9,.55)', fill: 'forwards' });
     });
-    setTimeout(function () { RW.toast('💥 Kernel panic. Restoring from git…'); }, 1700);
+    setTimeout(function () { RW.toast('Kernel panic. Restoring from git…'); }, 1700);
     setTimeout(function () {
       anims.forEach(function (a) { a.updatePlaybackRate(1.6); a.reverse(); });
       setTimeout(function () {
         anims.forEach(function (a) { a.cancel(); });
         nuking = false;
-        print('$ git checkout -- .\nRestored from backup. Commit early, commit often. ✔', 'ok');
+        print('$ git checkout -- .\nRestored from backup. Commit early and often.', 'ok');
         unlock('rmrf');
       }, 1600);
     }, 3000);
@@ -357,7 +357,7 @@
   C.rm = function () { print('rm: missing operand. (brave souls try: rm -rf /)', 'dim'); };
 
   C['make me a sandwich'] = function () { print('What? Make it yourself.', 'warn'); };
-  C['sudo make me a sandwich'] = function () { print('Okay. 🥪', 'ok'); };
+  C['sudo make me a sandwich'] = function () { print('Okay. One sandwich, coming up.', 'ok'); };
 
   C.npm = function (arg) {
     if (!/^(i|install|add)\s+rob/i.test(arg || '')) { print('usage: npm install rob', 'dim'); return; }
@@ -376,27 +376,27 @@
      things floating behind the content, a chant ribbon, a fly-by. Team marks and mascots are trademarked,
      so the teams get their colors, emoji and chants instead of logos. */
   var THEMES = {
-    lebron: { squares: 'gold.', blue: '#f5b323', hi: '#ffd877', line: 'LeBron mode 👑 — he\'s everywhere now.', ribbon: ['👑 LEBRON MODE', 'THE KING', 'TACO TUESDAY 🌮', 'YOU ARE MY SUNSHINE', 'GLAZED, NOT CONFUSED'], ribbonBg: '#552583', ribbonFg: '#fdb927',
-      faces: ['bronicide', 'lehips', 'lenade', 'taco', 'lebronifornia'], count: 11, flyby: '👑', cameo: 'lebron-photo', emoji: '👑', label: 'LeBron',
+    lebron: { squares: 'gold.', blue: '#f5b323', hi: '#ffd877', line: 'LeBron mode. He\'s everywhere now.', ribbon: ['LEBRON MODE', 'THE KING', 'TACO TUESDAY', 'YOU ARE MY SUNSHINE', 'GLAZED, NOT CONFUSED'], ribbonBg: '#552583', ribbonFg: '#fdb927',
+      faces: ['bronicide', 'lehips', 'lenade', 'taco', 'lebronifornia'], count: 11, flyby: '👑', cameo: 'lebron-photo', icon: 'crown', label: 'LeBron',
       name: ['LeBron', 'James'],
       hero: {
         pill: 'Still the King', verb: 'I bring',
         roles: ['championships', 'chase-down blocks', 'Taco Tuesday', 'the I PROMISE School', 'my talents to South Beach'],
         proof: [['4×', 'NBA champion, with three different teams'], ['4×', 'NBA Finals MVP'], ['40K+', 'points, the most in NBA history']],
-        copy: 'Forward at heart, point guard when needed. From <strong>Akron, Ohio</strong>, straight out of high school and the No. 1 pick in 2003. Rings in <strong>Miami, Cleveland and Los Angeles</strong>, the I PROMISE School back home, and somehow also the star of <strong>a parody Spotify Rob built</strong>. You are my sunshine. 🌞',
-        badges: [['🏆', '4× NBA champion', 'Miami · Cleveland · L.A.'], ['👑', 'All-time leading scorer', '40,000+ points']]
+        copy: 'Forward at heart, point guard when needed. From <strong>Akron, Ohio</strong>, straight out of high school and the No. 1 pick in 2003. Rings in <strong>Miami, Cleveland and Los Angeles</strong>, the I PROMISE School back home, and somehow also the star of <strong>a parody Spotify Rob built</strong>. You are my sunshine.',
+        badges: [['trophy', '4× NBA champion', 'Miami · Cleveland · L.A.'], ['crown', 'All-time leading scorer', '40,000+ points']]
       },
       portrait: ['assets/themes/lebron-portrait.png', 'assets/themes/lebron-head.webp'] },
-    eagles: { squares: 'midnight green.', blue: '#1fb5a8', hi: '#7fe0d6', line: 'Fly, Eagles, fly 🦅', ribbon: ['🦅 E-A-G-L-E-S · EAGLES!', 'FLY EAGLES FLY', 'GO BIRDS', 'BIRD GANG'], ribbonBg: '#004c54', ribbonFg: '#d7dcdf',
-      float: ['🦅', '🏈', '💚'], count: 10, flyby: '🦅', cameo: 'swoop', emoji: '🦅', label: 'Eagles' },
-    phillies: { squares: 'Phillies red.', blue: '#ff3347', hi: '#ff8a96', line: 'Ring the bell 🔔', ribbon: ['🔔 RING THE BELL', 'RED OCTOBER', 'DANCING ON MY OWN', 'LET\'S GO PHILLIES'], ribbonBg: '#e81828', ribbonFg: '#ffffff',
-      float: ['⚾', '🔔', '❤️'], count: 10, flyby: '⚾', stripes: true, cameo: 'phanatic', emoji: '⚾', label: 'Phillies' },
-    flyers: { squares: 'orange and black.', blue: '#ff6a2b', hi: '#ffab85', line: 'Let\'s go Flyers 🏒', ribbon: ['🏒 LET\'S GO FLYERS', 'ORANGE AND BLACK', 'BROAD STREET', 'GRITTY WOULD APPROVE 🧡'], ribbonBg: '#000000', ribbonFg: '#f74902',
-      float: ['🏒', '🥅', '🧡'], count: 10, flyby: '🏒', cameo: 'gritty', emoji: '🏒', label: 'Flyers' },
-    sixers: { squares: 'Sixers blue.', blue: '#3d7bff', hi: '#9fbcff', line: 'Trust the process 🏀', ribbon: ['🏀 TRUST THE PROCESS', 'BROTHERLY LOVE', 'HERE THE SIXERS COME', 'PHILA UNITE'], ribbonBg: '#ed174c', ribbonFg: '#ffffff',
-      float: ['🏀', '⭐', '🔔'], count: 10, flyby: '🏀', cameo: 'franklin', emoji: '🏀', label: 'Sixers' },
-    matrix: { squares: 'green again. Whoa.', blue: '#22e36b', hi: '#8dffb4', line: 'Wake up, Neo… The Matrix has you.', ribbon: ['FOLLOW THE WHITE RABBIT 🐇', 'THERE IS NO SPOON 🥄', 'WHOA.', 'KNOCK, KNOCK, NEO'], ribbonBg: '#020a04', ribbonFg: '#22e36b',
-      rain: true, cameo: 'keanu', emoji: '🕶️', label: 'Matrix' },
+    eagles: { squares: 'midnight green.', blue: '#1fb5a8', hi: '#7fe0d6', line: 'Fly, Eagles, fly!', ribbon: ['E-A-G-L-E-S · EAGLES!', 'FLY EAGLES FLY', 'GO BIRDS', 'BIRD GANG'], ribbonBg: '#004c54', ribbonFg: '#d7dcdf',
+      float: ['🦅', '🏈', '💚'], count: 10, flyby: '🦅', cameo: 'swoop', icon: 'feather-alt', label: 'Eagles' },
+    phillies: { squares: 'Phillies red.', blue: '#ff3347', hi: '#ff8a96', line: 'Ring the bell!', ribbon: ['RING THE BELL', 'RED OCTOBER', 'DANCING ON MY OWN', 'LET\'S GO PHILLIES'], ribbonBg: '#e81828', ribbonFg: '#ffffff',
+      float: ['⚾', '🔔', '❤️'], count: 10, flyby: '⚾', stripes: true, cameo: 'phanatic', icon: 'baseball-ball', label: 'Phillies' },
+    flyers: { squares: 'orange and black.', blue: '#ff6a2b', hi: '#ffab85', line: 'Let\'s go Flyers!', ribbon: ['LET\'S GO FLYERS', 'ORANGE AND BLACK', 'BROAD STREET', 'GRITTY WOULD APPROVE'], ribbonBg: '#000000', ribbonFg: '#f74902',
+      float: ['🏒', '🥅', '🧡'], count: 10, flyby: '🏒', cameo: 'gritty', icon: 'hockey-puck', label: 'Flyers' },
+    sixers: { squares: 'Sixers blue.', blue: '#3d7bff', hi: '#9fbcff', line: 'Trust the process.', ribbon: ['TRUST THE PROCESS', 'BROTHERLY LOVE', 'HERE THE SIXERS COME', 'PHILA UNITE'], ribbonBg: '#ed174c', ribbonFg: '#ffffff',
+      float: ['🏀', '⭐', '🔔'], count: 10, flyby: '🏀', cameo: 'franklin', icon: 'basketball-ball', label: 'Sixers' },
+    matrix: { squares: 'green again. Whoa.', blue: '#22e36b', hi: '#8dffb4', line: 'Wake up, Neo… The Matrix has you.', ribbon: ['FOLLOW THE WHITE RABBIT', 'THERE IS NO SPOON', 'WHOA.', 'KNOCK, KNOCK, NEO'], ribbonBg: '#020a04', ribbonFg: '#22e36b',
+      rain: true, cameo: 'keanu', icon: 'user-secret', label: 'Matrix' },
     default: null
   };
   var BASE_HUE = 221; // the RW logo's blue
@@ -530,7 +530,7 @@
       if (h.copy) swap(q('.hero-copy'), h.copy, 'html');
       (h.badges || []).forEach(function (b, i) {
         var el = q('.fb-' + (i + 1));
-        if (el) swap(el, '<span class="ico">' + b[0] + '</span><span>' + b[1] + '<small>' + b[2] + '</small></span>', 'html');
+        if (el) swap(el, '<span class="ico"><i class="fas fa-' + b[0] + '"></i></span><span>' + b[1] + '<small>' + b[2] + '</small></span>', 'html');
       });
     }
     if (t.portrait) {
@@ -575,9 +575,9 @@
       });
     }
     var t = THEMES[name];
-    bar.innerHTML = '<span class="tb-now">' + t.emoji + ' <b>' + t.label + ' mode</b></span>' +
+    bar.innerHTML = '<span class="tb-now"><i class="fas fa-' + t.icon + '" aria-hidden="true"></i> <b>' + t.label + ' mode</b></span>' +
       '<span class="tb-picks">' + Object.keys(THEMES).filter(function (k) { return THEMES[k] && k !== name; }).map(function (k) {
-        return '<button type="button" class="tb-pick" data-theme="' + k + '" title="' + THEMES[k].label + ' mode" aria-label="Switch to ' + THEMES[k].label + ' mode" style="--sw:' + THEMES[k].blue + '">' + THEMES[k].emoji + '</button>';
+        return '<button type="button" class="tb-pick" data-theme="' + k + '" title="' + THEMES[k].label + ' mode" aria-label="Switch to ' + THEMES[k].label + ' mode" style="--sw:' + THEMES[k].blue + '"><i class="fas fa-' + THEMES[k].icon + '" aria-hidden="true"></i></button>';
       }).join('') + '</span>' +
       '<button type="button" class="tb-off" data-theme="default" aria-label="Back to normal"><i class="fas fa-times" aria-hidden="true"></i><span> Back to normal</span></button>';
     bar.hidden = false;
@@ -648,13 +648,13 @@
   C.theme = function (arg) {
     var name = (arg || '').toLowerCase();
     if (!(name in THEMES) && name !== 'blue') {
-      print('usage: theme &lt;name&gt;   —   ' + Object.keys(THEMES).join(' · '), 'dim');
+      print('usage: theme &lt;name&gt;   options: ' + Object.keys(THEMES).join(' · '), 'dim');
       return;
     }
     if (name === 'blue') name = 'default';
     var tr = document.querySelector('.terminal'), tb = tr && tr.getBoundingClientRect();
     switchTheme(name, tb ? { clientX: tb.left + tb.width / 2, clientY: tb.top + tb.height / 2 } : null);
-    if (name === 'default') { print('Back to RW blue. ✔', 'ok'); return; }
+    if (name === 'default') { print('Back to RW blue.', 'ok'); return; }
     print(THEMES[name].line, 'ok');
     unlock('theme');
     if (name === 'matrix') {
@@ -663,8 +663,8 @@
       RW.setTermMode(function (line) {
         var l = (line || '').trim().toLowerCase();
         RW.setTermMode(null);
-        if (l === 'red' || l === 'red pill') print('Welcome to the real world. 🐇 (theme default gets you out)', 'ok');
-        else if (l === 'blue' || l === 'blue pill') { switchTheme('default'); print('The story ends. You wake up in your bed and believe whatever you want to believe. 💊', 'ok'); }
+        if (l === 'red' || l === 'red pill') print('Welcome to the real world. (theme default gets you out)', 'ok');
+        else if (l === 'blue' || l === 'blue pill') { switchTheme('default'); print('The story ends. You wake up in your bed and believe whatever you want to believe.', 'ok'); }
         else if (l) RW.run(line);
       });
     } else print('<span class="dim">Back to normal any time: the ✕ at the bottom of the screen, or </span><span class="p">theme default</span>');
@@ -672,13 +672,13 @@
   C.themes = function () { C.theme(''); };
 
   /* ==========================================================================
-     End credits — `credits`, or keep scrolling past the footer
+     End credits - `credits`, or keep scrolling past the footer
      ========================================================================== */
   var CREDITS = [
     ['', 'A Rob Wiscount Production'], ['', 'ROBWISCOUNT.ORG'],
     ['Directed by', 'Rob Wiscount'], ['Written by', 'Rob Wiscount'], ['Designed by', 'Rob Wiscount'], ['Front end, back end & everything in between', 'Rob Wiscount'],
     ['Graphics & video', 'Rob Wiscount (Final Cut, CapCut, Canva)'], ['Running coach', 'Mile A Day'], ['Co-founder & original bet', 'David'],
-    ['Stunt dog', 'Fetch'], ['Music', 'LeBronify — all LeBron, all the time'], ['Craft coffee', 'Trouble Brewing'],
+    ['Stunt dog', 'Fetch'], ['Music', 'LeBronify, all LeBron all the time'], ['Craft coffee', 'Trouble Brewing'],
     ['Pool consultant', 'The Top Dawgs'], ['Box office analysis', 'FantasyFlicks'], ['Moral support', 'The Philadelphia Eagles'],
     ['Filmed on location in', 'South Jersey'], ['Special thanks', 'You, for scrolling this far'],
     ['', 'No LeBrons were harmed in the making of this website.']
@@ -691,7 +691,7 @@
     ov.className = 'credits'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'End credits');
     ov.innerHTML = '<div class="credits-stage"><div class="credits-roll">' +
       CREDITS.map(function (c) { return '<p>' + (c[0] ? '<small>' + c[0] + '</small>' : '') + '<b>' + c[1] + '</b></p>'; }).join('') +
-      '</div></div><div class="credits-end" hidden><span class="stars">★★★★½</span><p>“Hired him before the credits ended.”</p><small>— a Letterboxd review, probably</small>' +
+      '</div></div><div class="credits-end" hidden><span class="stars">★★★★½</span><p>“Hired him before the credits ended.”</p><small>A Letterboxd review, probably</small>' +
       '<button class="btn btn-primary" type="button" data-close>Back to the site</button></div>' +
       '<button class="credits-skip" type="button" data-close>Skip ✕</button>';
     document.body.appendChild(ov); document.body.classList.add('modal-open');
@@ -704,14 +704,14 @@
     document.addEventListener('keydown', onKey);
     requestAnimationFrame(function () { ov.classList.add('open'); $('.credits-skip', ov).focus(); });
   }
-  C.credits = function () { print('Roll credits… 🎬 (Esc skips)', 'ok'); rollCredits(); };
+  C.credits = function () { print('Roll credits… (Esc skips)', 'ok'); rollCredits(); };
   (function () {
     // Keep scrolling past the bottom and a cue fills up like a film reel; full reel = credits.
     // The cue shows how close you are, drains slowly instead of resetting, and can just be tapped.
     var NEED = 700, pushed = 0, cooldown = 0, touchY = null, drain = 0;
     var cue = document.createElement('button');
     cue.type = 'button'; cue.className = 'credits-cue';
-    cue.innerHTML = '<span class="cc-text">🎬 Keep scrolling for the credits</span><span class="cc-bar"><i></i></span>';
+    cue.innerHTML = '<span class="cc-text"><i class="fas fa-film" aria-hidden="true"></i> Keep scrolling for the credits</span><span class="cc-bar"><i></i></span>';
     cue.setAttribute('aria-label', 'Roll the end credits');
     var foot = $('.footer'); (foot || document.body).appendChild(cue); // its own row at the very end of the page, never over anything
     var fill = cue.querySelector('i');
@@ -751,7 +751,7 @@
     document.body.appendChild(ticks); document.body.appendChild(chip);
     var dEl = chip.querySelector('.mile-d'), nav = $('.nav');
     var started = 0, finished = false, packed = false, idle = 0, fade = 0, best = 0, cheering = 0, lastQ = 0;
-    var CHEERS = { 1: '¼ mile in 👟', 2: 'Halfway 💪', 3: '¾ — almost there' };
+    var CHEERS = { 1: '¼ mile in', 2: 'Halfway there', 3: '¾ of a mile, almost there' };
 
     function onScroll() {
       var max = document.documentElement.scrollHeight - innerHeight, p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
@@ -786,7 +786,7 @@
       chip.querySelector('i').className = 'fas fa-flag-checkered';
       dEl.textContent = '1 mile · ' + pace;
       var r = chip.getBoundingClientRect(); RW.burst(r.left + r.width / 2, r.bottom, 50);
-      RW.toast('🏃 You ran 1 mile of robwiscount.org in ' + pace + '. ' + quip + (streak > 1 ? ' Day ' + streak + ' of your streak 🔥' : ''));
+      RW.toast('You ran 1 mile of robwiscount.org in ' + pace + '. ' + quip + (streak > 1 ? ' Day ' + streak + ' of your streak.' : ''));
       unlock('mile');
       setTimeout(function () { // victory lap's over: tuck it away so it isn't on screen all visit
         chip.classList.add('packed');
@@ -794,7 +794,7 @@
       }, 6500);
     }
     chip.addEventListener('click', function () {
-      RW.toast(finished ? '🏁 Mile logged. Rob runs one every day — the app that tracks it is up in Mile A Day.' : '🏃 This page is exactly one mile long. Scroll to the bottom to log your mile, Mile A Day style.');
+      RW.toast(finished ? 'Mile logged. Rob runs one every day, and the app that tracks it is up in Mile A Day.' : 'This page is exactly one mile long. Scroll to the bottom to log your mile, Mile A Day style.');
     });
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
@@ -805,10 +805,10 @@
      ========================================================================== */
   (function () {
     var TEAMS = [
-      { league: 'football/nfl', name: 'Eagles', emoji: '🦅', color: '#1fb5a8', cheer: 'GO BIRDS' },
-      { league: 'basketball/nba', name: 'Sixers', emoji: '🏀', color: '#3d7bff', cheer: 'Trust the process' },
-      { league: 'baseball/mlb', name: 'Phillies', emoji: '⚾', color: '#ff3347', cheer: 'Ring the bell' },
-      { league: 'hockey/nhl', name: 'Flyers', emoji: '🏒', color: '#ff6a2b', cheer: 'Let\'s go Flyers' }
+      { league: 'football/nfl', name: 'Eagles', icon: 'feather-alt', color: '#1fb5a8', cheer: 'GO BIRDS' },
+      { league: 'basketball/nba', name: 'Sixers', icon: 'basketball-ball', color: '#3d7bff', cheer: 'Trust the process' },
+      { league: 'baseball/mlb', name: 'Phillies', icon: 'baseball-ball', color: '#ff3347', cheer: 'Ring the bell' },
+      { league: 'hockey/nhl', name: 'Flyers', icon: 'hockey-puck', color: '#ff6a2b', cheer: 'Let\'s go Flyers' }
     ];
     var anchor = $('.status-pill'), pill = null, games = [], timer = null;
     if (!anchor || !window.fetch) return;
@@ -855,7 +855,7 @@
       pill.style.setProperty('--team', pick.t.color);
       document.documentElement.style.setProperty('--team', pick.t.color);
       pill.className = 'gd-pill ' + pick.g.state;
-      pill.innerHTML = '<span class="gd-dot"></span>' + pick.t.emoji + ' ' + esc(line(pick.t, pick.g));
+      pill.innerHTML = '<span class="gd-dot"></span><i class="fas fa-' + pick.t.icon + '" aria-hidden="true"></i> ' + esc(line(pick.t, pick.g));
       pill.title = 'Type scores in the terminal';
       pill.onclick = function (e) { e.preventDefault(); RW.run('scores'); $('#terminal').scrollIntoView({ behavior: 'smooth' }); };
       // The first visit after a Philly win opens with confetti, once per game.
@@ -863,7 +863,7 @@
         var seen = store('rw-gd-won') || [];
         if (seen.indexOf(pick.g.id) < 0) {
           store('rw-gd-won', seen.concat(pick.g.id).slice(-20));
-          setTimeout(function () { RW.party(); RW.toast(pick.t.emoji + ' ' + pick.t.cheer + '! ' + pick.t.name + ' won ' + pick.g.us + '–' + pick.g.them); }, 1600);
+          setTimeout(function () { RW.party(); RW.toast(pick.t.cheer + '! ' + pick.t.name + ' won ' + pick.g.us + '–' + pick.g.them); }, 1600);
         }
       }
     }
@@ -881,8 +881,8 @@
     C.scores = function () {
       if (!games.length) { print('Checking the scoreboard… try again in a sec.', 'dim'); refresh(); return; }
       games.forEach(function (x) {
-        if (!x.g) print(x.t.emoji + ' ' + x.t.name + ': no game today', 'dim');
-        else print(x.t.emoji + ' ' + esc(line(x.t, x.g)), x.g.state === 'in' ? 'ok' : '');
+        if (!x.g) print(x.t.name + ': no game today', 'dim');
+        else print(esc(line(x.t, x.g)), x.g.state === 'in' ? 'ok' : '');
       });
     };
     C.score = C.scores;

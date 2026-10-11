@@ -113,7 +113,7 @@
     if (head) head.attach(sock);
     mixer = new T.AnimationMixer(m); run = mixer.clipAction(g.animations[0]); run.play(); run.setEffectiveWeight(0);
     size(); start();
-    if (!reduce) setTimeout(function () { if (dog.state === 'enter' || dog.state === 'idle') speak(paper.held ? 'mmf! 📄' : 'woof!'); }, 1500);
+    if (!reduce) setTimeout(function () { if (dog.state === 'enter' || dog.state === 'idle') speak(paper.held ? 'mmf!' : 'woof!'); }, 1500);
   }).catch(function () { stage.classList.add('flat'); canvas.remove(); });
 
   function step(dt, now) {
@@ -174,16 +174,16 @@
 
   wire({
     drop: function () {
-      if (!paper.held) { dog.vy = reduce ? 0 : 3.2; speak('woof! 🐾'); start(); return; }
+      if (!paper.held) { dog.vy = reduce ? 0 : 3.2; speak('woof!'); start(); return; }
       paper.held = false; paper.vy = 0.6; paper.rx = 0;
       if (!reduce) dog.vy = 2.6; // a happy hop
-      speak('ok ok, here 📄'); start(); settle();
+      speak('ok ok, here'); start(); settle();
     },
     home: function (href) {
       if (reduce || leaving) return false;
       leaving = true;
       if (!paper.held) { paper.held = true; }
-      dog.state = 'home'; speak('🏃 this way!'); start();
+      dog.state = 'home'; speak('this way!'); start();
       setTimeout(function () { location.href = href; }, 1100);
       return true;
     }
@@ -192,7 +192,7 @@
   function wire(api) {
     $('#lost-drop').addEventListener('click', function () {
       if (api) api.drop();
-      else speak('woof! 🐾');
+      else speak('woof!');
     });
     $('#lost-home').addEventListener('click', function (e) {
       if (api && api.home(this.getAttribute('href'))) e.preventDefault();

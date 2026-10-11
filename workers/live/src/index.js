@@ -1,4 +1,4 @@
-/* robwiscount.org live — presence, cursors and a coarse visitor map.
+/* robwiscount.org live - presence, cursors and a coarse visitor map.
    One Durable Object ("global") holds every socket and the visit tallies.
    Privacy: only Cloudflare's city/region/country (+ lat/lon rounded to 0.1°) is used.
    No IPs are stored or sent; browsers are deduped by a random per-day id they make up. */
@@ -163,7 +163,7 @@ export default {
     const admin = route.startsWith('/admin/');
     if (!['/live', '/visit', '/stats', '/guestbook', '/pool'].includes(route) && !admin) return json({ error: 'not found' }, 404, origin);
     if (admin) {
-      if (!env.ADMIN_TOKEN) return json({ error: 'ADMIN_TOKEN is not set — run: npx wrangler secret put ADMIN_TOKEN' }, 503, origin);
+      if (!env.ADMIN_TOKEN) return json({ error: 'ADMIN_TOKEN is not set. Run: npx wrangler secret put ADMIN_TOKEN' }, 503, origin);
       if (!(await sameSecret(request.headers.get('Authorization') || '', 'Bearer ' + env.ADMIN_TOKEN))) return json({ error: 'unauthorized' }, 401, origin);
     }
     if (route === '/guestbook' && request.method === 'POST' && !allowed(origin)) return json({ error: 'forbidden origin' }, 403, origin);
@@ -316,15 +316,15 @@ export class Live {
     const id = String(b.id || ''), note = cleanNote(b.note, NOTE_MAX), name = cleanNote(b.name, NAME_MAX);
     if (!/^[A-Za-z0-9_-]{8,64}$/.test(id)) return json({ error: 'bad id' }, 400);
     if (note.length < 2) return json({ error: 'Say a little more than that.' }, 400);
-    if (LINKY.test(note) || LINKY.test(name)) return json({ error: 'No links, please — just a note.' }, 400);
+    if (LINKY.test(note) || LINKY.test(name)) return json({ error: 'No links, please. Just a note.' }, 400);
     const now = Date.now(), day = new Date(now).toISOString().slice(0, 10), hour = Math.floor(now / 3600000);
     if (this.noteWindow.h !== hour) this.noteWindow = { h: hour, n: 0 };
-    if (this.noteWindow.n >= NOTES_PER_HOUR) return json({ error: 'The guestbook is busy — try again in a bit.' }, 429);
+    if (this.noteWindow.n >= NOTES_PER_HOUR) return json({ error: 'The guestbook is busy. Try again in a bit.' }, 429);
     const pending = this.sql.exec("SELECT COUNT(*) AS c FROM notes WHERE status = 'pending'").one().c;
-    if (pending >= PENDING_CAP) return json({ error: 'The guestbook is full for now — try again later.' }, 429);
+    if (pending >= PENDING_CAP) return json({ error: 'The guestbook is full for now. Try again later.' }, 429);
     const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('note:' + day + ':' + id));
     const h = [...new Uint8Array(digest).slice(0, 12)].map((x) => x.toString(16).padStart(2, '0')).join('');
-    if (this.sql.exec('SELECT 1 FROM notes WHERE h = ?', h).toArray().length) return json({ error: 'One note a day — come back tomorrow.' }, 429);
+    if (this.sql.exec('SELECT 1 FROM notes WHERE h = ?', h).toArray().length) return json({ error: 'One note a day. Come back tomorrow.' }, 429);
     this.noteWindow.n++;
     const status = auto ? 'ok' : 'pending';
     this.sql.exec('INSERT INTO notes (t, status, name, note, city, region, country, lat, lon, h) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',

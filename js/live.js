@@ -1,4 +1,4 @@
-/* robwiscount.org — live mode: other visitors' cursors + a dot-matrix visitor map.
+/* robwiscount.org - live mode: other visitors' cursors + a dot-matrix visitor map.
    Talks to the Cloudflare Worker in workers/live. Off unless <meta name="rw-live" content="https://…"> is set.
    Coarse city-level location only (from Cloudflare); no IPs, no cookies. */
 (function () {
@@ -97,7 +97,7 @@
     countTo($('#lv-cities'), stats.cityCount || (stats.cities || []).length);
     var top = (stats.cities || [])[0];
     var topEl = $('#lv-top');
-    if (topEl) topEl.textContent = top ? top.city : '—';
+    if (topEl) topEl.textContent = top ? top.city : '–';
     var topLbl = $('#lv-top-label');
     if (topLbl && top) topLbl.textContent = 'Top city · ' + top.n.toLocaleString() + ' visit' + (top.n === 1 ? '' : 's');
     var rec = (stats.recent || []).slice(0, 5).map(function (v) {
@@ -151,7 +151,7 @@
   function loadStats() { getJSON(BASE + '/stats').then(setStats).catch(function () {}); }
 
   /* ---------- Who's here: device hints + prefs ---------- */
-  var DEV = { phone: '📱 on a phone', tablet: '📱 on a tablet', desktop: '💻 on a computer' };
+  var DEV = { phone: 'on a phone', tablet: 'on a tablet', desktop: 'on a computer' };
   var myDevice = (function () {
     if (finePointer) return 'desktop';
     var s = Math.min(screen.width || 0, screen.height || 0);
@@ -311,7 +311,7 @@
       hello = document.createElement('div');
       hello.className = 'lv-hello';
       hello.setAttribute('role', 'status');
-      hello.innerHTML = '<span class="lv-hello-ico" aria-hidden="true">👋</span><p></p>' +
+      hello.innerHTML = '<span class="lv-hello-ico" aria-hidden="true"><i class="fas fa-hand-paper"></i></span><p></p>' +
         '<button type="button" class="lv-hello-go">Who\'s here?</button><button type="button" class="lv-hello-x" aria-label="Dismiss">&times;</button>';
       document.body.appendChild(hello);
       $('.lv-hello-go', hello).addEventListener('click', function () { openPanel(pillEl && pillEl.classList.contains('show') && !pillEl.classList.contains('away') ? pillEl : hello); });
@@ -337,7 +337,7 @@
     var first = null;
     for (var id in peers) { first = peers[id]; break; }
     var where = n === 1 && placeOf(first) ? ' from ' + esc(placeOf(first)) : '';
-    sayHello('<b>' + (n === 1 ? 'Someone' + where + ' is here right now too' : n + ' other people are here right now') + '</b> — you\'re not alone. Say hi in the guestbook.');
+    sayHello('<b>' + (n === 1 ? 'Someone' + where + ' is here right now too' : n + ' other people are here right now') + '</b>. You\'re not alone. Say hi in the guestbook.');
   }
 
   // Joins wait a beat (so a burst becomes one note and devices are known), then at most one note per 20s.
@@ -353,13 +353,13 @@
     if (!still.length || document.hidden || (panel && !panel.hidden)) return;
     var p = peers[still[0]], where = placeOf(p), dev = p.d === 'phone' || p.d === 'tablet' ? ' on their ' + p.d : '';
     if (still.length === 1) {
-      sayHello('<b>Someone' + (where ? ' in ' + esc(where) : '') + ' just joined you' + dev + '</b> — you\'re not alone!');
+      sayHello('<b>Someone' + (where ? ' in ' + esc(where) : '') + ' just joined you' + dev + '</b>. You\'re not alone!');
       return;
     }
     var places = [];
     still.forEach(function (id) { var w = placeOf(peers[id]); if (w && places.indexOf(w) < 0) places.push(w); });
     var from = places.length ? ' from ' + places.slice(0, 2).map(esc).join(' and ') + (places.length > 2 ? ' and more' : '') : '';
-    sayHello('<b>' + still.length + ' people just joined you</b>' + from + ' — you\'re not alone!');
+    sayHello('<b>' + still.length + ' people just joined you</b>' + from + '. You\'re not alone!');
   }
 
   /* ---------- Other people's cursors ----------
@@ -797,7 +797,7 @@
       if (best.n) txt += ' · ' + best.n.toLocaleString() + ' visit' + (best.n === 1 ? '' : 's');
       if (best.live) txt += ' · ' + best.live + ' here now';
       else if (best.mine) txt += ' · you';
-      if (best.notes.length) txt += ' · 💬 “' + best.notes[0].note.slice(0, 70) + (best.notes[0].note.length > 70 ? '…' : '') + '”';
+      if (best.notes.length) txt += ' · “' + best.notes[0].note.slice(0, 70) + (best.notes[0].note.length > 70 ? '…' : '') + '”';
       tip.textContent = txt;
       var cr = card.getBoundingClientRect();
       var x = br.left - cr.left + (best.c + 0.5) * pitch, half = tip.offsetWidth / 2 + 8;
@@ -866,12 +866,12 @@
           var n = d.note; n.d = today();
           save('rw-note', n);
           form.reset(); form.classList.add('done');
-          msg.textContent = d.status === 'ok' ? 'Signed — thanks! 👋' : 'Thanks! Your note shows up here once Rob approves it. 👋';
+          msg.textContent = d.status === 'ok' ? 'Signed. Thanks!' : 'Thanks! Your note shows up here once Rob approves it.';
           if (d.status === 'ok') notes.unshift(n);
           paintNotes(); map.notesChanged();
           if (RW.egg) RW.egg('guestbook');
         })
-        .catch(function (err) { msg.textContent = (err && err.error) || 'Couldn\'t reach the guestbook — try again in a minute.'; })
+        .catch(function (err) { msg.textContent = (err && err.error) || 'Couldn\'t reach the guestbook. Try again in a minute.'; })
         .then(function () { btn.disabled = false; });
     });
   }
@@ -903,9 +903,9 @@
     RW.commands.movies = RW.commands.letterboxd = function () {
       if (!films) { RW.print('Checking Letterboxd…', 'dim'); return; }
       if (!films.length) { RW.print('Letterboxd is quiet right now. <a href="https://letterboxd.com/robwizzie/" target="_blank" rel="noopener">→ letterboxd.com/robwizzie</a>'); return; }
-      RW.print('🎬 Recently on Letterboxd:', 'ok');
+      RW.print('Recently on Letterboxd:', 'ok');
       films.slice(0, 5).forEach(function (f) {
-        RW.print('  ' + esc(f.title) + (f.year ? ' (' + f.year + ')' : '') + '  ' + stars(f.rating) + (f.rewatch ? ' ↻' : '') + (f.watched ? ' <span class="dim">— ' + watched(f.watched) + '</span>' : ''));
+        RW.print('  ' + esc(f.title) + (f.year ? ' (' + f.year + ')' : '') + '  ' + stars(f.rating) + (f.rewatch ? ' ↻' : '') + (f.watched ? ' <span class="dim">· ' + watched(f.watched) + '</span>' : ''));
       });
       RW.print('<a href="https://letterboxd.com/robwizzie/" target="_blank" rel="noopener">→ letterboxd.com/robwizzie</a>');
     };
@@ -915,12 +915,12 @@
   if (RW.commands) {
     RW.commands.who = RW.commands.w = function () {
       if (!wsOpen) {
-        RW.print('Not connected to the live server right now' + (me.place && me.place.city ? ' — but hi, ' + esc(label(me.place)) + '.' : '.'), 'dim');
+        RW.print('Not connected to the live server right now' + (me.place && me.place.city ? ', but hi, ' + esc(label(me.place)) + '.' : '.'), 'dim');
         RW.print('<a href="#visitors">→ see the visitor map</a>');
         return;
       }
       var names = [];
-      for (var id in peers) names.push(esc(label(peers[id])) + (peers[id].d === 'phone' ? ' 📱' : ''));
+      for (var id in peers) names.push(esc(label(peers[id])) + (peers[id].d === 'phone' ? ' (phone)' : ''));
       if (!names.length) {
         RW.print('Just you right now' + (me.place && me.place.city ? ' (' + esc(label(me.place)) + ')' : '') + '. Open a second tab and wave.', 'ok');
       } else {

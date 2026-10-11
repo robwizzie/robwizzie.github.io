@@ -25,7 +25,7 @@ async function finishAll(page, seen) {
 test('celebrate: the trophy, the real count, every badge and the three buttons', async ({ page }) => {
   await finishAll(page, true);
   const n = await page.evaluate(() => { window.RW.celebrate(); return window.RW.achievements.list().length; });
-  const dlg = page.getByRole('dialog', { name: /every\. single\. one\./i });
+  const dlg = page.getByRole('dialog', { name: /all \d+ found\./i });
   await expect(dlg).toBeVisible();
   await expect(dlg.locator('.cele-sub')).toContainText(n + ' of ' + n + ' secrets found');
   await expect(dlg.locator('.cele-sub')).toContainText('in 2 days');
@@ -64,7 +64,7 @@ test('celebrate: Share copies a line when the share sheet is not there', async (
   });
   await page.locator('.cele-share').click();
   const n = await page.evaluate(() => window.RW.achievements.list().length);
-  expect(await page.evaluate(() => window.__copied)).toBe('I found all ' + n + ' secrets on robwiscount.org 🏆 https://robwiscount.org');
+  expect(await page.evaluate(() => window.__copied)).toBe('I found all ' + n + ' secrets on robwiscount.org https://robwiscount.org');
   await expect(page.locator('.toast')).toContainText('Copied');
 });
 
@@ -89,7 +89,7 @@ test('the celebrate command waits until everything is found', async ({ page }) =
   await page.goto('/');
   await term(page, 'celebrate');
   const out = await termOut(page);
-  expect(out).toMatch(/Not yet — \d+ secrets? left to find/);
+  expect(out).toMatch(/Not yet: \d+ secrets? left to find/);
   expect(out).toContain('hint');
   await expect(page.locator('.cele')).toHaveCount(0);
 });
