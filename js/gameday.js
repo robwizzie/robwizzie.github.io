@@ -117,7 +117,9 @@
   function seg(label, items) { return '<div class="gc-seg" role="tablist" aria-label="' + esc(label) + '">' + items.join('') + '</div>'; }
 
   /* ---------- The pill in the hero: today's score, or the four teams on an off day ---------- */
-  var anchor = $('.status-pill'), pill = null, games = [], timer = null;
+  // The pill sits next to "Open to new opportunities". Until ESPN first answers it holds a quiet placeholder of the
+  // same size, so the hero never flashes "Game center" and then jumps to a score.
+  var row = $('.hero-pills'), pill = null, games = [], timer = null, ready = false;
 
   function todayPick() {
     var pick = null;
@@ -129,16 +131,24 @@
   }
 
   function renderPill() {
-    if (!anchor) return;
-    var pick = todayPick();
+    if (!row) return;
+    var pick = todayPick(), was = pill && pill.classList.contains('loading');
     document.documentElement.classList.toggle('gameday', !!(pick && pick.g.state === 'in'));
     if (!pill) {
       pill = document.createElement('button'); pill.type = 'button';
-      anchor.parentNode.insertBefore(pill, anchor.nextSibling);
+      row.appendChild(pill);
       pill.addEventListener('click', function () { open(pill.getAttribute('data-team') || null); });
     }
+    if (!ready) {
+      pill.className = 'gd-pill loading';
+      pill.setAttribute('aria-label', 'Philly game center: checking today\'s scores');
+      pill.innerHTML = '<span class="gd-skel" aria-hidden="true"><i></i><i></i><b></b></span>';
+      return;
+    }
+    var enter = was ? ' enter' : ''; // the real content fades in over the placeholder, once
+    if (was) setTimeout(function () { pill.classList.remove('enter'); }, 500);
     if (!pick) {
-      pill.className = 'gd-pill idle';
+      pill.className = 'gd-pill idle' + enter;
       pill.removeAttribute('data-team');
       pill.style.removeProperty('--team');
       pill.setAttribute('aria-label', 'Open the Philly game center: scores, records and stats');
@@ -150,7 +160,7 @@
     pill.setAttribute('data-team', t.id);
     pill.style.setProperty('--team', t.color);
     document.documentElement.style.setProperty('--team', t.color);
-    pill.className = 'gd-pill ' + g.state;
+    pill.className = 'gd-pill ' + g.state + enter;
     pill.setAttribute('aria-label', line(t, g) + '. Open the game center');
     pill.innerHTML = '<span class="gd-dot" aria-hidden="true"></span>' +
       '<span class="gd-match" aria-hidden="true">' + img(g.us.logo || t.logo, 'gd-logo', '') +
@@ -171,6 +181,7 @@
   function refresh() {
     return Promise.all(TEAMS.map(loadToday)).then(function (res) {
       games = TEAMS.map(function (t, i) { return { t: t, g: res[i] }; });
+      ready = true; clearTimeout(slow);
       renderPill();
       if (panel && !panel.hidden) {
         var live = view.game && games.some(function (x) { return x.g && x.g.id === view.game && x.g.state === 'in'; });
@@ -182,8 +193,11 @@
       }
     });
   }
-  renderPill(); // the off-day pill shows right away; today's score replaces it once ESPN answers
-  setTimeout(refresh, 1200);
+  // Ask right away (answers from the last minute come straight from sessionStorage). If ESPN is slow,
+  // settle on the plain Game center pill after a few seconds; a score still slides in if it turns up.
+  var slow = setTimeout(function () { if (!ready) { ready = true; renderPill(); } }, 4000);
+  renderPill();
+  refresh();
 
   /* ---------- Data for the panel ---------- */
   var teamData = {}, seasons = {}, summaries = {};
