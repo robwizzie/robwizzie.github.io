@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link href="assets/fonts.css" rel="stylesheet">
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
-    <link href="css/site.css" rel="stylesheet">
+    <link href="css/site.css?v=20261011b" rel="stylesheet">
     <style>
         .co-top { position: sticky; top: 0; z-index: 10; background: rgba(6,8,13,.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
         .co-top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 62px; }
@@ -87,8 +87,8 @@
                 <tr><td>css/site.css</td><td>One stylesheet built on design tokens (<code>--blue</code>, <code>--surface</code>…). The terminal's <code>theme</code> command re-skins everything by swapping four of them.</td><td class="n">~16 KB gz</td></tr>
                 <tr><td>js/site.js</td><td>Nav, reveals, the typed hero, the GitHub squares, LeBronify, the Fetch player, the terminal, confetti, and the <code>RW</code> API the others use.</td><td class="n">~16 KB gz</td></tr>
                 <tr><td>js/eggs.js</td><td>Achievements and the trophy case, terminal tricks, end credits, Mile A Day mode, the console note.</td><td class="n">~11 KB gz</td></tr>
-                <tr><td>js/gameday.js</td><td>Philly scores in the hero and the Game center: box score, leaders, team stats, records and recent results.</td><td class="n">~7 KB gz</td></tr>
-                <tr><td>js/live.js</td><td>Live cursors, the dot-matrix visitor map, the guestbook and the Letterboxd card.</td><td class="n">~10 KB gz</td></tr>
+                <tr><td>js/gameday.js</td><td>Philly scores in the hero and the Game center: every game back three seasons, box scores, full player stats, scoring plays and win probability.</td><td class="n">~12 KB gz</td></tr>
+                <tr><td>js/live.js</td><td>The dot-matrix visitor map with who's here now, opt-in multiplayer cursors, the guestbook and the Letterboxd card.</td><td class="n">~10 KB gz</td></tr>
                 <tr><td>js/dog.js</td><td>The fetch game: a 3D dog from my game, a thrown logo, and physics.</td><td class="n">~8 KB gz</td></tr>
                 <tr><td>js/pool.js</td><td>Turns the About cards into a pool rack and breaks it.</td><td class="n">~9 KB gz</td></tr>
                 <tr><td>workers/live/</td><td>A Cloudflare Worker and one SQLite-backed Durable Object: WebSockets, visit counts, the guestbook, a Letterboxd proxy.</td><td class="n">~420 lines</td></tr>
@@ -151,6 +151,7 @@
             <h2 class="h-display">One Durable Object, <span class="blue">everyone's cursor.</span></h2>
             <p class="lede">Every visitor connects to the same Durable Object called "global". It uses Cloudflare's hibernation API, so an idle room costs nothing, and pings are answered without waking it up.</p>
             <ul class="co-steps">
+                <li><strong>Calm by default.</strong> Presence lives in the Visitors section: a "here now" count, a list of cities and pulsing squares on the map. Nothing pops up over the page. Cursors are opt-in both ways: yours is only sent after you turn on multiplayer cursors, and you only see people who did the same.</li>
                 <li><strong>Cursors</strong> go up about 15 times a second as fractions of the page, so they land in the right spot on any screen size. The server clamps, size-limits (200 bytes) and rate-limits (30/s) every message before relaying it, and the client smooths each one between updates.</li>
                 <li><strong>Location</strong> comes from Cloudflare's <code>request.cf</code>: city, region and country, with latitude and longitude rounded to a tenth of a degree. No IP is ever stored or sent to anyone.</li>
                 <li><strong>Visits</strong> are counted once per browser per day. The browser makes up a random id, and the server stores only a hash of that id plus the date, so it's useless by tomorrow.</li>
@@ -197,7 +198,7 @@
                 <div><b>Terminal:</b> a little shell with a command parser and a way for one feature to take over the prompt. That's how <code>vim</code> traps you until you press Esc and type <code>:wq</code>.</div>
                 <div><b>rm -rf /</b>: everything on screen falls with the Web Animations API, then plays in reverse as "git" restores it.</div>
                 <div><b>Mile A Day mode:</b> a runner rides the scroll bar. My own streak card reads the real number from the Mile A Day API, in Eastern time.</div>
-                <div><b>Gameday:</b> when a Philly team is playing, ESPN's scoreboard turns into a live score pill with both teams' logos, and the nav takes the team's color. Click it for the Game center: the box score, leaders, team stats, the season record and recent results.</div>
+                <div><b>Gameday:</b> when a Philly team is playing, ESPN's scoreboard turns into a live score pill with both teams' logos, and the nav takes the team's color. On off days it shows the four teams instead. Either way it opens the Game center: each team's season, numbers worth a look and every game back three seasons, and for any game the box score, every player's stats, the scoring plays and a win-probability chart.</div>
                 <div><b>Tab away:</b> the Page Visibility API swaps the title, and the favicon becomes a spinning canvas hexagon.</div>
                 <div><b>Console:</b> open DevTools. There's a <code>rob</code> object waiting for you.</div>
             </div>

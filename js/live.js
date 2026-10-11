@@ -1,4 +1,4 @@
-/* robwiscount.org - live mode: other visitors' cursors + a dot-matrix visitor map.
+/* robwiscount.org - live mode: a dot-matrix visitor map with a calm "who's here now", plus opt-in live cursors.
    Talks to the Cloudflare Worker in workers/live. Off unless <meta name="rw-live" content="https://…"> is set.
    Coarse city-level location only (from Cloudflare); no IPs, no cookies. */
 (function () {
@@ -115,7 +115,6 @@
     countTo($('#lv-now'), n);
     var head = $('#lv-live-n');
     if (head) head.textContent = n === 1 ? 'Just you here now' : n + ' people here now';
-    pill(n);
   }
 
   // Tell eggs.js the live server is really up, so the live achievements only count when they can be earned.
@@ -157,36 +156,17 @@
     var s = Math.min(screen.width || 0, screen.height || 0);
     return window.matchMedia('(pointer: coarse)').matches ? (s && s < 600 ? 'phone' : 'tablet') : 'desktop';
   })();
-  var showCursors = load('rw-live-cursors') !== false;
-  var MAX_SHOW = 6, CALM_AT = 7, IDLE_MS = 7000, NOTE_GAP = 20000;
+  // Presence stays in the Visitors section: a count, a list of cities and pulsing squares on the map. Nothing pops up
+  // over the page. Cursors are opt-in both ways: yours is only sent once you turn them on, and you only see people who did too.
+  var showCursors = load('rw-live-cursors-v2') === true;
+  var MAX_SHOW = 6, CALM_AT = 7, IDLE_MS = 7000;
   function others() { return Math.max(0, here - 1); }
   function calm() { return here >= CALM_AT; }
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many || one + 's'); }
   var HEXS = '<svg viewBox="0 0 24 26" aria-hidden="true"><polygon points="12,1.5 22,7 22,19 12,24.5 2,19 2,7" style="fill:var(--blue)" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>';
 
   /* ---------- Presence pill + the "Here now" panel ---------- */
-  var pillEl = null, secBtn = null, panel = null, panelFrom = null;
-  function pill(n) {
-    if (!pillEl) {
-      if (n < 2) return;
-      pillEl = document.createElement('button');
-      pillEl.className = 'lv-pill';
-      pillEl.type = 'button';
-      pillEl.setAttribute('aria-haspopup', 'dialog');
-      pillEl.setAttribute('aria-expanded', 'false');
-      pillEl.setAttribute('aria-controls', 'lv-here');
-      pillEl.innerHTML = '<i aria-hidden="true"></i><span></span><svg class="lv-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 7.5 6 4.5 9 7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-      pillEl.addEventListener('click', function () { togglePanel(pillEl); });
-      document.body.appendChild(pillEl);
-      if (map.visible && map.visible()) pillEl.classList.add('away');
-      void pillEl.offsetWidth;
-    }
-    pillEl.children[1].textContent = n + ' people here now';
-    pillEl.title = 'Live: everyone on this site right now. Tap to see who.';
-    pillEl.setAttribute('aria-label', n + ' people are on this site right now. Show who\'s here.');
-    pillEl.classList.toggle('show', n > 1);
-  }
-
+  var secBtn = null, panel = null, panelFrom = null;
   // The "N people here now" chip on the map card opens the same panel.
   function sectionButton() {
     var old = section && $('.lv-live', section);
@@ -201,6 +181,9 @@
     secBtn.insertAdjacentHTML('beforeend', '<svg class="lv-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>');
     old.parentNode.replaceChild(secBtn, old);
     secBtn.addEventListener('click', function () { togglePanel(secBtn); });
+    // "here now" in the section's intro opens the same panel
+    var link = $('[data-lv-here]');
+    if (link) link.addEventListener('click', function (e) { e.preventDefault(); secBtn.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' }); setTimeout(function () { openPanel(secBtn); }, reduceMotion ? 0 : 450); });
   }
 
   function buildPanel() {
@@ -214,9 +197,9 @@
     panel.innerHTML =
       '<div class="lv-here-hd"><i aria-hidden="true"></i><b id="lv-here-t">Here now</b><span class="lv-here-n"></span>' +
       '<button type="button" class="lv-here-x" aria-label="Close">&times;</button></div>' +
-      '<p class="lv-here-what"><b>Live:</b> everyone on robwiscount.org right now. Cursors are other visitors\' mice.</p>' +
+      '<p class="lv-here-what">Everyone on robwiscount.org right now, by city. Nobody sees your cursor unless you turn it on.</p>' +
       '<ul class="lv-here-list"></ul>' +
-      '<div class="lv-here-sw"><span><b id="lv-here-sw-l">Live cursors</b><small class="lv-here-sw-h"></small></span>' +
+      '<div class="lv-here-sw"><span><b id="lv-here-sw-l">Multiplayer cursors</b><small class="lv-here-sw-h"></small></span>' +
       '<button type="button" role="switch" class="lv-sw" aria-labelledby="lv-here-sw-l"><i aria-hidden="true"></i></button></div>' +
       '<a class="lv-here-gb" href="#lv-gb">Say hi in the guestbook <span aria-hidden="true">→</span></a>';
     document.body.appendChild(panel);
@@ -236,7 +219,7 @@
       closePanel(false);
     });
     window.addEventListener('resize', placePanel);
-    window.addEventListener('scroll', function () { if (!panel.hidden && panelFrom !== pillEl) placePanel(); }, { passive: true });
+    window.addEventListener('scroll', function () { if (!panel.hidden) placePanel(); }, { passive: true });
   }
 
   // Groups people by place + device so a busy minute reads "Austin, TX ×3", not 30 rows.
@@ -266,7 +249,7 @@
     sw.setAttribute('aria-checked', showCursors ? 'true' : 'false');
     var moving = 0;
     for (var cid in curs) if (Date.now() - curs[cid].last < IDLE_MS) moving++;
-    $('.lv-here-sw-h', panel).textContent = !showCursors ? 'Off: you won\'t see anyone\'s cursor, and yours is hidden too.' :
+    $('.lv-here-sw-h', panel).textContent = !showCursors ? 'Off. Turn on to see the cursors of anyone else who has, and share yours with them.' :
       moving > MAX_SHOW ? 'Showing the ' + MAX_SHOW + ' most active · +' + (moving - MAX_SHOW) + ' more moving' :
       calm() ? 'Busy in here, so cursors go small and quiet.' :
       !finePointer ? 'People on a computer show up as little hexagons.' : 'Your mouse shows up for them as a hexagon.';
@@ -285,10 +268,9 @@
     if (!panel) buildPanel();
     panelFrom = from;
     panel.hidden = false;
-    hideHello();
     paintPanel();
     placePanel();
-    [pillEl, secBtn].forEach(function (b) { if (b) b.setAttribute('aria-expanded', b === from ? 'true' : 'false'); });
+    if (secBtn) secBtn.setAttribute('aria-expanded', secBtn === from ? 'true' : 'false');
     void panel.offsetWidth;
     panel.classList.add('open');
     panel.focus({ preventScroll: true });
@@ -299,68 +281,10 @@
     panel.classList.remove('open');
     panel.hidden = true;
     panelFrom = null;
-    [pillEl, secBtn].forEach(function (b) { if (b) b.setAttribute('aria-expanded', 'false'); });
+    if (secBtn) secBtn.setAttribute('aria-expanded', 'false');
     if (refocus && from && from.offsetParent !== null) from.focus({ preventScroll: true });
   }
   function togglePanel(from) { if (panel && !panel.hidden && panelFrom === from) closePanel(true); else openPanel(from); }
-
-  /* ---------- "Someone just joined you" ---------- */
-  var hello = null, helloT = 0, lastHello = 0, joinQ = [], joinT = 0, greeted = false, known = null;
-  function sayHello(html) {
-    if (!hello) {
-      hello = document.createElement('div');
-      hello.className = 'lv-hello';
-      hello.setAttribute('role', 'status');
-      hello.innerHTML = '<span class="lv-hello-ico" aria-hidden="true"><i class="fas fa-hand-paper"></i></span><p></p>' +
-        '<button type="button" class="lv-hello-go">Who\'s here?</button><button type="button" class="lv-hello-x" aria-label="Dismiss">&times;</button>';
-      document.body.appendChild(hello);
-      $('.lv-hello-go', hello).addEventListener('click', function () { openPanel(pillEl && pillEl.classList.contains('show') && !pillEl.classList.contains('away') ? pillEl : hello); });
-      $('.lv-hello-x', hello).addEventListener('click', hideHello);
-      hello.addEventListener('mouseenter', function () { clearTimeout(helloT); });
-      hello.addEventListener('mouseleave', function () { helloT = setTimeout(hideHello, 3000); });
-      void hello.offsetWidth;
-    }
-    lastHello = Date.now();
-    hello.querySelector('p').innerHTML = html;
-    hello.classList.add('show');
-    clearTimeout(helloT);
-    helloT = setTimeout(hideHello, 7000);
-  }
-  function hideHello() { clearTimeout(helloT); if (hello) hello.classList.remove('show'); }
-
-  function placeOf(p) { return p && p.city ? label(p) : p && p.country ? p.country : ''; }
-
-  // When you arrive and others are already here.
-  function greet() {
-    var n = others();
-    if (!n || document.hidden || (panel && !panel.hidden)) return;
-    var first = null;
-    for (var id in peers) { first = peers[id]; break; }
-    var where = n === 1 && placeOf(first) ? ' from ' + esc(placeOf(first)) : '';
-    sayHello('<b>' + (n === 1 ? 'Someone' + where + ' is here right now too' : n + ' other people are here right now') + '</b>. You\'re not alone. Say hi in the guestbook.');
-  }
-
-  // Joins wait a beat (so a burst becomes one note and devices are known), then at most one note per 20s.
-  function queueJoins(ids) {
-    joinQ = joinQ.concat(ids);
-    if (joinT) return;
-    joinT = setTimeout(flushJoins, Math.max(1500, lastHello + NOTE_GAP - Date.now()));
-  }
-  function flushJoins() {
-    joinT = 0;
-    var still = joinQ.filter(function (id, i) { return peers[id] && joinQ.indexOf(id) === i; });
-    joinQ = [];
-    if (!still.length || document.hidden || (panel && !panel.hidden)) return;
-    var p = peers[still[0]], where = placeOf(p), dev = p.d === 'phone' || p.d === 'tablet' ? ' on their ' + p.d : '';
-    if (still.length === 1) {
-      sayHello('<b>Someone' + (where ? ' in ' + esc(where) : '') + ' just joined you' + dev + '</b>. You\'re not alone!');
-      return;
-    }
-    var places = [];
-    still.forEach(function (id) { var w = placeOf(peers[id]); if (w && places.indexOf(w) < 0) places.push(w); });
-    var from = places.length ? ' from ' + places.slice(0, 2).map(esc).join(' and ') + (places.length > 2 ? ' and more' : '') : '';
-    sayHello('<b>' + still.length + ' people just joined you</b>' + from + '. You\'re not alone!');
-  }
 
   /* ---------- Other people's cursors ----------
      Everyone's last position is tracked, but only the MAX_SHOW most recently moved get drawn,
@@ -428,7 +352,7 @@
 
   function setCursors(on) {
     showCursors = on;
-    save('rw-live-cursors', on);
+    save('rw-live-cursors-v2', on);
     if (!on) { for (var id in curs) release(curs[id]); if (ptr && here > 1) send({ t: 'h' }); }
     else sendCursor();
     paintPanel();
@@ -487,21 +411,13 @@
 
   function send(m) { if (wsOpen) try { ws.send(JSON.stringify(m)); } catch (e) {} }
 
-  function setPeers(list, n, hi) {
+  function setPeers(list, n) {
     peers = {};
     (list || []).forEach(function (p) { if (p && p.id && p.id !== me.id) peers[p.id] = p; });
     var ids = Object.keys(peers);
     here = Math.max(1, n || 0, ids.length + 1);
     // "Not Alone": anyone else on the site counts, so phones (which don't send a cursor) can earn it too.
     if (here > 1 && !seenOther) { seenOther = true; if (RW.egg) RW.egg('live'); }
-    if (hi || !known) {
-      if (!greeted) { greeted = true; setTimeout(greet, 1200); }
-    } else {
-      var fresh = ids.filter(function (id) { return !known[id]; });
-      if (fresh.length) queueJoins(fresh);
-    }
-    known = {};
-    ids.forEach(function (id) { known[id] = 1; });
     for (var id in curs) if (!peers[id]) dropCursor(id);
     if (layer) layer.classList.toggle('calm', calm());
     paintNow();
@@ -512,14 +428,14 @@
 
   function handle(m) {
     if (!m || typeof m !== 'object') return;
-    if (m.t === 'hi') { me.id = m.id; setYou(m.you); setPeers(m.peers, m.n, true); }
+    if (m.t === 'hi') { me.id = m.id; setYou(m.you); setPeers(m.peers, m.n); }
     else if (m.t === 'p') setPeers(m.peers, m.n);
     else if (m.t === 'c' && m.id !== me.id && typeof m.x === 'number' && typeof m.y === 'number') onCursor(m);
     else if (m.t === 'h') hideCursor(m.id);
   }
 
   function cleanup() {
-    wsOpen = false; ws = null; here = 0; peers = {}; known = null;
+    wsOpen = false; ws = null; here = 0; peers = {};
     clearInterval(pingTimer);
     for (var id in curs) dropCursor(id);
     paintNow();
@@ -819,7 +735,6 @@
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (en) {
         onScreen = en[0].isIntersecting;
-        if (pillEl) pillEl.classList.toggle('away', onScreen);
         if (onScreen && !raf && cols) draw(performance.now());
       }).observe(box);
     } else onScreen = true;
