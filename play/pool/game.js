@@ -468,7 +468,7 @@
     ev = null;
     if (game.over) { hud(); return setTimeout(gameOver, 700); }
     var parts = [];
-    if (res.assigned) parts.push(who === 0 ? 'You\'re ' + res.assigned + '.' : 'CPU takes ' + res.assigned + ' — you\'re ' + game.groups[0] + '.');
+    if (res.assigned) parts.push(who === 0 ? 'You\'re ' + res.assigned + '.' : 'CPU takes ' + res.assigned + ', so you\'re ' + game.groups[0] + '.');
     if (res.foul) parts.push('Foul: ' + res.foul.toLowerCase() + '. ' + (who === 0 ? 'CPU has ball in hand' : 'Ball in hand for you') + (res.kitchen ? ' behind the line.' : '.'));
     else if (res.keep) parts.push(who === 0 ? pick(['Nice.', 'Good shot.', 'Clean.', 'Keep going.']) : 'CPU makes one.');
     else if (!res.foul) parts.push(who === 0 ? 'Missed. CPU\'s turn.' : 'CPU misses. Your shot.');
@@ -712,7 +712,11 @@
     $('#menu').hidden = true; paused = null; beginTurn();
   });
   var muteBtn = $('#mute');
-  function muteUI() { muteBtn.textContent = muted ? '🔇' : '🔊'; muteBtn.setAttribute('aria-pressed', String(!muted)); }
+  var SPEAKER = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor"/>';
+  function muteUI() {
+    muteBtn.innerHTML = SPEAKER + (muted ? '<path d="m23 9-6 6M17 9l6 6"/>' : '<path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/>') + '</svg>';
+    muteBtn.setAttribute('aria-pressed', String(!muted));
+  }
   muteBtn.addEventListener('click', function () { muted = !muted; store('rw-pool-mute', muted); if (!muted) audio(); muteUI(); });
   muteUI();
   $('#start').addEventListener('click', function () { audio(); newGame(); });

@@ -19,7 +19,7 @@ test('GitHub squares draw a year of contributions', async ({ page }) => {
   await page.goto('/');
   await page.locator('#commits').scrollIntoViewIfNeeded();
   await expect(page.locator('#gh-grid .gh-c[data-i]')).toHaveCount(371);
-  await expect(page.locator('#gh-total')).not.toHaveText('—');
+  await expect(page.locator('#gh-total')).not.toHaveText('–');
 });
 
 test('streak card says when today\'s mile is done', async ({ page }) => {
