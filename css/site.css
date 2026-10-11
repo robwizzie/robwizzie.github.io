@@ -541,9 +541,12 @@ kbd { font-family: var(--mono); font-size: .74rem; min-width: 24px; text-align: 
 .life-card .emoji .eight-ball { display: block; filter: drop-shadow(0 6px 10px rgba(0,0,0,.45)); }
 .life-card .philly-logos { display: flex; gap: 10px; align-items: center; }
 .life-card .philly-logos img { width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,.4)); transition: transform .3s var(--ease); }
-.life-card:hover .philly-logos { transform: none; }
-.life-card:hover .philly-logos img:nth-child(odd) { transform: translateY(-3px) rotate(-6deg); }
-.life-card:hover .philly-logos img:nth-child(even) { transform: translateY(-3px) rotate(6deg); }
+/* The row of logos doesn't tilt like a single icon; each logo just hops, one after another. */
+.life-card:hover .emoji.philly-logos { transform: none; }
+.life-card:hover .philly-logos img { transform: translateY(-4px); }
+.life-card .philly-logos img:nth-child(2) { transition-delay: .05s; }
+.life-card .philly-logos img:nth-child(3) { transition-delay: .1s; }
+.life-card .philly-logos img:nth-child(4) { transition-delay: .15s; }
 .life-card:hover .emoji { transform: scale(1.18) rotate(-10deg); }
 .life-card h3 { margin: 12px 0 6px; font-size: 1.1rem; }
 .life-card p { margin: 0; color: var(--muted); font-size: .94rem; }
@@ -800,9 +803,11 @@ kbd { font-family: var(--mono); font-size: .74rem; min-width: 24px; text-align: 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 
 /* Gameday pill + nav accent while a Philly team is live (js/gameday.js) */
-.gd-pill { --team: var(--blue); display: inline-flex; align-items: center; gap: 10px; margin: 0 0 0 8px; padding: 5px 14px 5px 10px; border-radius: 999px; font-size: .84rem; font-weight: 600;
+.hero-pills { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.hero-pills > * { min-height: 36px; box-sizing: border-box; }
+.gd-pill { --team: var(--blue); display: inline-flex; align-items: center; gap: 10px; padding: 5px 14px 5px 10px; border-radius: 999px; font-size: .84rem; font-weight: 600;
   color: #fff; background: color-mix(in srgb, var(--team) 14%, transparent); border: 1px solid color-mix(in srgb, var(--team) 45%, transparent); vertical-align: middle;
-  animation: fadeUp .6s var(--ease) both; transition: background .2s; }
+  transition: background .2s; }
 .gd-pill:hover, .gd-pill:focus-visible { background: color-mix(in srgb, var(--team) 24%, transparent); }
 .gd-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--team); flex: none; display: inline-block; }
 .gd-pill.in .gd-dot, .gc-status.in .gd-dot, .gc-tab .gd-dot { animation: gdBlink 1.2s ease-in-out infinite; }
@@ -820,7 +825,17 @@ kbd { font-family: var(--mono); font-size: .74rem; min-width: 24px; text-align: 
 .gd-more { padding-left: 10px; border-left: 1px solid color-mix(in srgb, var(--team) 40%, transparent); color: var(--muted); font-weight: 500; }
 html.gameday .nav { border-color: color-mix(in srgb, var(--team) 55%, transparent); box-shadow: 0 0 30px -10px var(--team); }
 html.gameday .progress { background: var(--team); }
-@media (max-width: 560px) { .gd-pill { margin: 8px 0 0; } .gd-pill:not(.idle) .gd-more { display: none; } }
+/* Placeholder while the first scores load: same size as the real pill, a soft shimmer, no text */
+.gd-pill.loading { --team: var(--blue); width: 196px; cursor: progress; animation: fadeUp .6s var(--ease) both; }
+.gd-skel { display: inline-flex; align-items: center; gap: 8px; width: 100%; }
+.gd-skel i { width: 20px; height: 20px; border-radius: 50%; }
+.gd-skel b { flex: 1; height: 9px; border-radius: 6px; }
+.gd-skel i, .gd-skel b { background: linear-gradient(90deg, rgba(255,255,255,.06) 25%, rgba(255,255,255,.14) 50%, rgba(255,255,255,.06) 75%) 0 0 / 300% 100%; animation: gdShimmer 1.4s ease-in-out infinite; }
+@keyframes gdShimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.gd-pill.enter > * { animation: gdIn .45s var(--ease) both; }
+@keyframes gdIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gd-skel i, .gd-skel b, .gd-pill.enter > * { animation: none; } }
+@media (max-width: 560px) { .gd-pill:not(.idle) .gd-more { display: none; } }
 
 /* Game center: box score, leaders, team stats, season and recent results */
 .gc-panel { position: fixed; inset: 0; z-index: 480; display: grid; place-items: center; padding: 16px; background: rgba(4,6,10,.72);

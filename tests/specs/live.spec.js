@@ -30,10 +30,11 @@ test('last film on the movie card, and the movies command', async ({ page }) => 
   expect(await termOut(page)).toContain('Weapons (2025)');
 });
 
-test('"Not Alone" unlocks from just sharing the site, so phones can earn it', async ({ page }) => {
+test('the live achievement list has the guestbook, and no "Not Alone"', async ({ page }) => {
   await page.goto('/');
   await page.locator('.ach-foot').click();
-  await expect(page.locator('.ach-grid li.on', { hasText: 'Not Alone' })).toHaveCount(1);
+  await expect(page.locator('.ach-grid li', { hasText: 'Signed the Guestbook' })).toHaveCount(1);
+  await expect(page.locator('.ach-grid li', { hasText: 'Not Alone' })).toHaveCount(0);
 });
 
 test('live achievements only count when the live server is reachable', async ({ page }) => {
@@ -63,7 +64,7 @@ async function liveServer(page, script) {
   return sent;
 }
 
-test('presence is calm: "Not Alone" unlocks quietly and nothing pops up over the page', async ({ page }) => {
+test('presence is calm: nothing pops up over the page', async ({ page }) => {
   const sent = await liveServer(page, (say) => {
     say({ t: 'hi', id: 'me', you, n: 1, peers: [] });
     setTimeout(() => say({ t: 'p', n: 2, peers: [peer(0, 'phone')] }), 1500);
@@ -74,8 +75,6 @@ test('presence is calm: "Not Alone" unlocks quietly and nothing pops up over the
   await page.waitForTimeout(1500);
   await expect(page.locator('.lv-hello, .lv-pill')).toHaveCount(0); // no toasts, no floating counter
   expect(sent.map((m) => JSON.parse(m)).some((m) => m.t === 'd' && ['phone', 'desktop', 'tablet'].includes(m.d))).toBe(true);
-  await page.locator('.ach-foot').click();
-  await expect(page.locator('.ach-grid li.on', { hasText: 'Not Alone' })).toHaveCount(1);
 });
 
 test('"Here now" panel: who, where, on what, and closes on Escape', async ({ page }) => {
