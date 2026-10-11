@@ -1,5 +1,5 @@
 /* robwiscount.org - easter eggs: achievements, the console, tab-away, terminal tricks,
-   end credits, Mile A Day mode and Philly gameday. Needs window.RW from js/site.js. */
+   end credits and Mile A Day mode. Needs window.RW from js/site.js. */
 (function () {
   'use strict';
   var RW = window.RW;
@@ -800,91 +800,4 @@
     window.addEventListener('resize', onScroll);
   })();
 
-  /* ==========================================================================
-     Gameday: if a Philly team is playing, the hero knows the score
-     ========================================================================== */
-  (function () {
-    var TEAMS = [
-      { league: 'football/nfl', name: 'Eagles', icon: 'feather-alt', color: '#1fb5a8', cheer: 'GO BIRDS' },
-      { league: 'basketball/nba', name: 'Sixers', icon: 'basketball-ball', color: '#3d7bff', cheer: 'Trust the process' },
-      { league: 'baseball/mlb', name: 'Phillies', icon: 'baseball-ball', color: '#ff3347', cheer: 'Ring the bell' },
-      { league: 'hockey/nhl', name: 'Flyers', icon: 'hockey-puck', color: '#ff6a2b', cheer: 'Let\'s go Flyers' }
-    ];
-    var anchor = $('.status-pill'), pill = null, games = [], timer = null;
-    if (!anchor || !window.fetch) return;
-
-    function load(team) {
-      var key = 'rw-gd-' + team.league;
-      try { var c = JSON.parse(sessionStorage.getItem(key)); if (c && Date.now() - c.t < 90000) return Promise.resolve(c.g); } catch (e) {}
-      return fetch('https://site.api.espn.com/apis/site/v2/sports/' + team.league + '/scoreboard')
-        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
-        .then(function (data) {
-          var g = null;
-          (data.events || []).forEach(function (ev) {
-            var comp = ev.competitions && ev.competitions[0];
-            if (!comp) return;
-            var us = comp.competitors.filter(function (c) { return c.team && c.team.abbreviation === 'PHI'; })[0];
-            if (!us) return;
-            var them = comp.competitors.filter(function (c) { return c !== us; })[0] || { team: {} };
-            var st = (ev.status || comp.status || {}).type || {};
-            g = { id: ev.id, state: st.state, detail: st.shortDetail || '', date: ev.date, us: +us.score || 0, them: +them.score || 0,
-                  opp: them.team.shortDisplayName || them.team.name || 'them', won: !!us.winner };
-          });
-          try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), g: g })); } catch (e) {}
-          return g;
-        })
-        .catch(function () { return null; });
-    }
-
-    function line(t, g) {
-      if (g.state === 'in') return t.name + ' ' + g.us + ', ' + g.opp + ' ' + g.them + ' · ' + g.detail;
-      if (g.state === 'post') return (g.won ? t.name + ' beat the ' + g.opp + ' ' + g.us + '–' + g.them + ' · ' + t.cheer : t.name + ' fell to the ' + g.opp + ' ' + g.them + '–' + g.us + ' · we go again');
-      return t.name + ' vs ' + g.opp + ' · ' + new Date(g.date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-    }
-    function fresh(g) { return g && (g.state === 'in' || Math.abs(Date.now() - new Date(g.date)) < 20 * 3600e3); }
-
-    function render() {
-      var pick = null;
-      ['in', 'post', 'pre'].some(function (s) {
-        games.some(function (x) { if (x.g && x.g.state === s && fresh(x.g)) { pick = x; return true; } return false; });
-        return !!pick;
-      });
-      document.documentElement.classList.toggle('gameday', !!(pick && pick.g.state === 'in'));
-      if (!pick) { if (pill) { pill.remove(); pill = null; } return; }
-      if (!pill) { pill = document.createElement('a'); pill.className = 'gd-pill'; pill.href = '#terminal'; anchor.parentNode.insertBefore(pill, anchor.nextSibling); }
-      pill.style.setProperty('--team', pick.t.color);
-      document.documentElement.style.setProperty('--team', pick.t.color);
-      pill.className = 'gd-pill ' + pick.g.state;
-      pill.innerHTML = '<span class="gd-dot"></span><i class="fas fa-' + pick.t.icon + '" aria-hidden="true"></i> ' + esc(line(pick.t, pick.g));
-      pill.title = 'Type scores in the terminal';
-      pill.onclick = function (e) { e.preventDefault(); RW.run('scores'); $('#terminal').scrollIntoView({ behavior: 'smooth' }); };
-      // The first visit after a Philly win opens with confetti, once per game.
-      if (pick.g.state === 'post' && pick.g.won) {
-        var seen = store('rw-gd-won') || [];
-        if (seen.indexOf(pick.g.id) < 0) {
-          store('rw-gd-won', seen.concat(pick.g.id).slice(-20));
-          setTimeout(function () { RW.party(); RW.toast(pick.t.cheer + '! ' + pick.t.name + ' won ' + pick.g.us + '–' + pick.g.them); }, 1600);
-        }
-      }
-    }
-
-    function refresh() {
-      Promise.all(TEAMS.map(load)).then(function (res) {
-        games = TEAMS.map(function (t, i) { return { t: t, g: res[i] }; });
-        render();
-        clearTimeout(timer);
-        if (games.some(function (x) { return x.g && x.g.state === 'in'; })) timer = setTimeout(function () { if (!document.hidden) refresh(); else timer = setTimeout(refresh, 60000); }, 60000);
-      });
-    }
-    setTimeout(refresh, 1200);
-
-    C.scores = function () {
-      if (!games.length) { print('Checking the scoreboard… try again in a sec.', 'dim'); refresh(); return; }
-      games.forEach(function (x) {
-        if (!x.g) print(x.t.name + ': no game today', 'dim');
-        else print(esc(line(x.t, x.g)), x.g.state === 'in' ? 'ok' : '');
-      });
-    };
-    C.score = C.scores;
-  })();
 })();
