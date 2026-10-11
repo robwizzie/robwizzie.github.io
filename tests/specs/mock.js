@@ -5,6 +5,7 @@ const { test: base, expect } = require('@playwright/test');
 
 const WORKER = 'https://rw-live.robertwiscount.workers.dev';
 const world = fs.readFileSync(require.resolve('world-atlas/land-110m.json'));
+const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64');
 
 function ymd(d) { return d.toISOString().slice(0, 10); }
 function contributions() {
@@ -37,7 +38,8 @@ async function mockWorld(page, opts = {}) {
   await page.route(/^https?:\/\/(?!localhost)/, async (route) => {
     const req = route.request(), url = req.url(), cors = { 'access-control-allow-origin': '*' };
     if (url.includes('github-contributions-api')) return route.fulfill({ json: contributions(), headers: cors });
-    if (url.includes('site.api.espn.com')) return route.fulfill({ json: { events: [] }, headers: cors });
+    if (url.includes('site.api.espn.com')) return route.fulfill({ json: (opts.espn && opts.espn(url)) || { events: [] }, headers: cors });
+    if (url.includes('a.espncdn.com')) return route.fulfill({ body: PNG, contentType: 'image/png', headers: cors });
     if (url.includes('mad.mindgoblin.tech/public/users/rob')) return route.fulfill({ json: { username: 'rob', current_streak: opts.ranToday === false ? calendarStreak() - 1 : calendarStreak() }, headers: cors });
     if (url.includes('mad.mindgoblin.tech/public/stats')) return route.fulfill({ json: {}, headers: cors });
     if (url.includes('world-atlas')) return route.fulfill({ body: world, contentType: 'application/json', headers: cors });
