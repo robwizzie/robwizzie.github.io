@@ -1,4 +1,4 @@
-# Robert Wiscount — Resume
+# Robert Wiscount: Resume
 
 > Front-end-focused software developer, now working across the full stack, based in South Jersey (Philadelphia area), USA. 5+ years shipping production web and mobile software. Software Developer at Foley Prep since March 2023; co-founder of Mile A Day (iOS + Apple Watch, live on the App Store). Also a graphic designer and video editor. Open to new opportunities.
 

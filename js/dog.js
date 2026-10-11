@@ -122,7 +122,7 @@
         var m = g.scene, clip = g.animations[0], skins = [];
         m.traverse(function (o) { if (o.isSkinnedMesh) skins.push(o); });
         var stand = standClip(m, clip); // before anything animates, while the bones still hold the bind pose
-        // Normalise to 1.2 m tall, feet on the floor, centred — the game's own conventions, and where its grips are measured.
+        // Normalise to 1.2 m tall, feet on the floor, centred - the game's own conventions, and where its grips are measured.
         var box = new T.Box3().setFromObject(m), k = 1.2 / (box.max.y - box.min.y);
         m.scale.setScalar(k);
         box.setFromObject(m);
@@ -222,13 +222,13 @@
 
   function prepare(id) {
     loading = true;
-    var slow = setTimeout(function () { RW.toast('🐕 Whistling for ' + DOGS[id].name + '…'); }, 350);
+    var slow = setTimeout(function () { RW.toast('Whistling for ' + DOGS[id].name + '…'); }, 350);
     return loadScript('vendor/three/rw-three.min.js')
       .then(function () { if (!gl) { setup(); size(); gl = makeGL(); } return gl.use(id); })
       .then(function () { clearTimeout(slow); loading = false; })
       .catch(function (e) {
         clearTimeout(slow); loading = false;
-        RW.toast('🐕 ' + DOGS[id].name + '’s napping — this browser couldn’t load the 3D dog.');
+        RW.toast(DOGS[id].name + '’s napping. This browser couldn’t load the 3D dog.');
         throw e;
       });
   }
@@ -266,7 +266,7 @@
     active = true; leaving = false;
     pill.hidden = false;
     if (bone) bone.setAttribute('aria-pressed', 'true');
-    RW.toast('🐕 ' + DOGS[id].name + ' got out! ' + (RW.finePointer ? 'Click' : 'Tap') + ' anywhere to throw.');
+    RW.toast(DOGS[id].name + ' got out! ' + (RW.finePointer ? 'Click' : 'Tap') + ' anywhere to throw.');
     start();
   }
 
@@ -436,7 +436,7 @@
     ball.thrown = false;
     if (fetches && fetches % 5 === 0) {
       RW.burst(dog.x, ground - DOGH, 60);
-      RW.toast('Good ' + (who === 'luna' || who === 'posey' ? 'girl' : 'boy') + ', ' + DOGS[who].name + '! ' + fetches + ' fetches 🐶');
+      RW.toast('Good ' + (who === 'luna' || who === 'posey' ? 'girl' : 'boy') + ', ' + DOGS[who].name + '! ' + fetches + ' fetches.');
     }
   }
 
@@ -555,13 +555,13 @@
   RW.commands.dog = function (arg) {
     var name = (arg || '').trim().toLowerCase();
     if (name && !DOGS[name]) { RW.print('Who? The pack is: ' + IDS.map(function (k) { return DOGS[k].name; }).join(', ') + '. Try <span class="p">dog luna</span>.', 'warn'); return; }
-    if (active && !leaving && (!name || name === who)) { RW.print('🐕 Okay ' + DOGS[who].name + ', give it back. Returning the logo.', 'dim'); dismiss(); return; }
+    if (active && !leaving && (!name || name === who)) { RW.print('Okay ' + DOGS[who].name + ', give it back. Returning the logo.', 'dim'); dismiss(); return; }
     var id = name || pick();
-    RW.print('🐕 *whistle* — here comes ' + DOGS[id].name + ' from Fetch. ' + DOGS[id].line + ' Click anywhere to throw; Esc or <span class="p">dog</span> sends them home.', 'ok');
+    RW.print('*whistle* Here comes ' + DOGS[id].name + ' from Fetch. ' + DOGS[id].line + ' Click anywhere to throw; Esc or <span class="p">dog</span> sends them home.', 'ok');
     summon(id);
   };
   RW.commands.dogs = function () {
-    RW.print('The Fetch pack — whistle with <span class="p">dog &lt;name&gt;</span>:', 'ok');
+    RW.print('The Fetch pack. Whistle with <span class="p">dog &lt;name&gt;</span>:', 'ok');
     IDS.forEach(function (k) { RW.print('  ' + (DOGS[k].name + '        ').slice(0, 9) + DOGS[k].line, 'dim'); });
   };
 
@@ -571,7 +571,7 @@
     bone.type = 'button'; bone.className = 'dog-bone';
     bone.setAttribute('aria-label', 'Whistle for a dog'); bone.setAttribute('aria-pressed', 'false');
     bone.title = 'Whistle for a dog';
-    bone.textContent = '🦴';
+    bone.innerHTML = '<i class="fas fa-bone" aria-hidden="true"></i>';
     bone.addEventListener('click', toggle);
     slot.appendChild(bone);
   }

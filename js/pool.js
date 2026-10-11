@@ -1,4 +1,4 @@
-/* Break the rack: the About cards turn into a pool table. Type `break`, or triple-click the 🎱 card. */
+/* Break the rack: the About cards turn into a pool table. Type `break`, or triple-click the pool card. */
 (function () {
   'use strict';
   var RW = window.RW;
@@ -7,9 +7,9 @@
   var life = RW.$('#about .life');
   if (!life) return;
   var cards = RW.$$('.life-card', life);
-  var eightCard = cards.filter(function (c) { return /🎱/.test(c.textContent); })[0];
+  var eightCard = cards.filter(function (c) { return c.hasAttribute('data-eight'); })[0];
 
-  // Ball 1 rides the Mile A Day card, Eagles get the green 6, the 🎱 card gets the 8.
+  // Ball 1 rides the Mile A Day card, Eagles get the green 6, the pool card gets the 8.
   // Felt and trim follow the site theme (RW.tc is the current theme color; see js/site.js).
   function shade(k, a) { var c = (RW.tc && RW.tc.blue) || [91, 143, 249]; return 'rgba(' + c.map(function (v) { return Math.round(v * k); }).join(',') + ',' + (a == null ? 1 : a) + ')'; }
   function hi(a) { return 'rgba(' + ((RW.tc && RW.tc.hi) || [141, 178, 255]).join(',') + ',' + a + ')'; }
@@ -386,19 +386,19 @@
   function finish(now) {
     var sunk = st.sunk.filter(function (n) { return n !== 0; }).length;
     var eight = st.sunk.indexOf(8) > -1, scratch = st.sunk.indexOf(0) > -1, msg;
-    if (eight && scratch) msg = '8 on the break… and a scratch. That\'s a loss in APA. Brutal. 💀';
-    else if (eight) { msg = '8 on the break — that\'s a win in APA 🏆'; RW.party(); }
+    if (eight && scratch) msg = '8 on the break… and a scratch. That\'s a loss in APA. Brutal.';
+    else if (eight) { msg = '8 on the break. That\'s a win in APA!'; RW.party(); }
     else if (scratch) msg = 'Scratch' + (sunk ? ' (after sinking ' + sunk + ')' : '') + '. Rob would never.';
     else if (!sunk) msg = 'Dry break. Even Top Dawgs have those nights.';
-    else if (sunk === 1) msg = 'One down on the break. Solid start. 🎱';
-    else msg = 'Sunk ' + sunk + ' on the break. Top Dawgs material 🎱';
+    else if (sunk === 1) msg = 'One down on the break. Solid start.';
+    else msg = 'Sunk ' + sunk + ' on the break. Top Dawgs material.';
     RW.toast(msg);
     RW.egg('pool');
     offer();
     st.phase = 'hold';
     st.holdTimer = setTimeout(function () {
       if (!st) return;
-      // card positions may have shifted (fonts, scroll bars) — re-read them
+      // card positions may have shifted (fonts, scroll bars) - re-read them
       var lr = life.getBoundingClientRect();
       st.balls.forEach(function (b) { if (b.card) b.home2 = center(b.card, lr); });
       st.phase = 'return'; st.retAt = performance.now();
@@ -412,7 +412,7 @@
     if (!offerBtn) {
       offerBtn = document.createElement('button');
       offerBtn.type = 'button'; offerBtn.className = 'pool-offer';
-      offerBtn.innerHTML = '🎱 Rack \'em vs my CPU';
+      offerBtn.innerHTML = 'Rack \'em vs my CPU';
       offerBtn.addEventListener('click', function () { hideOffer(); RW.openGame('pool'); });
     }
     life.classList.add('offering');
@@ -438,7 +438,7 @@
   function start() {
     if (busy) return false;
     if (RW.reduceMotion) {
-      RW.toast('Racked \'em. (Skipping the break — reduced motion is on.) 🎱');
+      RW.toast('Racked \'em. (Skipping the break because reduced motion is on.)');
       RW.egg('pool');
       offer();
       return true;
@@ -515,8 +515,8 @@
 
   /* ---------- Triggers ---------- */
   RW.commands['break'] = function () {
-    if (busy) { RW.print('Already breaking. It\'s a game of inches — be patient.', 'warn'); return; }
-    RW.print('Racking \'em up… 🎱', 'ok');
+    if (busy) { RW.print('Already breaking. It\'s a game of inches. Be patient.', 'warn'); return; }
+    RW.print('Racking \'em up…', 'ok');
     RW.print('<span class="dim">(Esc to put the cue down)</span>', 'dim');
     life.scrollIntoView({ behavior: RW.reduceMotion ? 'auto' : 'smooth', block: 'center' });
     // wait for the smooth scroll to land, then break
