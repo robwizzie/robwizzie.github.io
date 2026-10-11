@@ -86,7 +86,8 @@
                 <tr><td>index.html</td><td>The whole page, hand-written and semantic, with JSON-LD for search engines and an <code>llms.txt</code> for AI agents.</td><td class="n">~860 lines</td></tr>
                 <tr><td>css/site.css</td><td>One stylesheet built on design tokens (<code>--blue</code>, <code>--surface</code>…). The terminal's <code>theme</code> command re-skins everything by swapping four of them.</td><td class="n">~16 KB gz</td></tr>
                 <tr><td>js/site.js</td><td>Nav, reveals, the typed hero, the GitHub squares, LeBronify, the Fetch player, the terminal, confetti, and the <code>RW</code> API the others use.</td><td class="n">~16 KB gz</td></tr>
-                <tr><td>js/eggs.js</td><td>Achievements and the trophy case, terminal tricks, end credits, Mile A Day mode, Gameday scores, the console note.</td><td class="n">~11 KB gz</td></tr>
+                <tr><td>js/eggs.js</td><td>Achievements and the trophy case, terminal tricks, end credits, Mile A Day mode, the console note.</td><td class="n">~11 KB gz</td></tr>
+                <tr><td>js/gameday.js</td><td>Philly scores in the hero and the Game center: box score, leaders, team stats, records and recent results.</td><td class="n">~7 KB gz</td></tr>
                 <tr><td>js/live.js</td><td>Live cursors, the dot-matrix visitor map, the guestbook and the Letterboxd card.</td><td class="n">~10 KB gz</td></tr>
                 <tr><td>js/dog.js</td><td>The fetch game: a 3D dog from my game, a thrown logo, and physics.</td><td class="n">~8 KB gz</td></tr>
                 <tr><td>js/pool.js</td><td>Turns the About cards into a pool rack and breaks it.</td><td class="n">~9 KB gz</td></tr>
@@ -196,7 +197,7 @@
                 <div><b>Terminal:</b> a little shell with a command parser and a way for one feature to take over the prompt. That's how <code>vim</code> traps you until you press Esc and type <code>:wq</code>.</div>
                 <div><b>rm -rf /</b>: everything on screen falls with the Web Animations API, then plays in reverse as "git" restores it.</div>
                 <div><b>Mile A Day mode:</b> a runner rides the scroll bar. My own streak card reads the real number from the Mile A Day API, in Eastern time.</div>
-                <div><b>Gameday:</b> when a Philly team is playing, ESPN's scoreboard turns into a live score pill and the nav takes the team's color.</div>
+                <div><b>Gameday:</b> when a Philly team is playing, ESPN's scoreboard turns into a live score pill with both teams' logos, and the nav takes the team's color. Click it for the Game center: the box score, leaders, team stats, the season record and recent results.</div>
                 <div><b>Tab away:</b> the Page Visibility API swaps the title, and the favicon becomes a spinning canvas hexagon.</div>
                 <div><b>Console:</b> open DevTools. There's a <code>rob</code> object waiting for you.</div>
             </div>
@@ -235,7 +236,7 @@
         <div class="wrap">
             <span class="eyebrow">Image credits</span>
             <h2 class="h-display">Borrowed, <span class="blue">with thanks.</span></h2>
-            <p class="lede">The terminal's themes bring in a few guests, from my own photos, cut out onto transparent backgrounds by <code>tests/theme_cutout.py</code>. Team mascots and names belong to their teams; they're here as a fan's tribute, not an endorsement.</p>
+            <p class="lede">The terminal's themes bring in a few guests, from my own photos, cut out onto transparent backgrounds by <code>tests/theme_cutout.py</code>. Team logos, mascots and names belong to their teams (the logos and scores come from ESPN); they're here as a fan's tribute, not an endorsement.</p>
             <ul class="co-credits"><li>LeBron head and album art: from my own <a href="https://lebronify.app" target="_blank" rel="noopener">LeBronify</a>.</li></ul>
         </div>
     </section>
