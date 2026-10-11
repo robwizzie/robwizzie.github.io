@@ -96,7 +96,12 @@
     return t.name + ' vs ' + g.them.name + ' · ' + new Date(g.date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   }
   function fresh(g) { return g && (g.state === 'in' || Math.abs(Date.now() - new Date(g.date)) < 20 * 3600e3); }
-  function img(src, cls, alt) { return src ? '<img class="' + cls + '" src="' + esc(src) + '" alt="' + esc(alt || '') + '" loading="lazy" onerror="this.style.visibility=\'hidden\'">' : '<span class="' + cls + '"></span>'; }
+  // Width and height go in the markup too, so a 500px logo can never render full size (say, next to a stale stylesheet).
+  var SIZE = { 'gd-logo': 22, 'gc-mini': 20, 'gc-logo': 64, 'gc-tab-logo': 22, 'gc-shot': 34 };
+  function img(src, cls, alt) {
+    var px = SIZE[cls.split(' ')[0]] || 24;
+    return src ? '<img class="' + cls + '" src="' + esc(src) + '" alt="' + esc(alt || '') + '" width="' + px + '" height="' + px + '" loading="lazy" onerror="this.style.visibility=\'hidden\'">' : '<span class="' + cls + '"></span>';
+  }
 
   function renderPill() {
     if (!anchor) return;

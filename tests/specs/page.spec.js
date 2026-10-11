@@ -69,3 +69,15 @@ test('the mile pill logs your time at the bottom, then packs itself away', async
   await page.evaluate(() => scrollTo(0, 3000)); // scrolling again doesn't bring it back
   await expect(chip).not.toHaveClass(/show/);
 });
+
+// GitHub Pages caches every file for 10 minutes on its own, so a fresh page next to a stale
+// stylesheet renders broken. Every local CSS/JS link carries ?v=, bumped when they change.
+test('local stylesheets and scripts are versioned so caches never mix old and new', async ({ page }) => {
+  for (const path of ['/', '/how-it-works.html', '/nope']) {
+    await page.goto(path);
+    const unversioned = await page.evaluate(() => [...document.querySelectorAll('link[rel=stylesheet][href], script[src]')]
+      .map((el) => el.getAttribute('href') || el.getAttribute('src'))
+      .filter((u) => /^\/?(css|js)\//.test(u) && !/\?v=\w+/.test(u)));
+    expect(unversioned, path).toEqual([]);
+  }
+});

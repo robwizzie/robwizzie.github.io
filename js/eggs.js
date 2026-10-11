@@ -714,7 +714,7 @@
     cue.innerHTML = '<span class="cc-text"><i class="fas fa-film" aria-hidden="true"></i> Keep scrolling for the credits</span><span class="cc-bar"><i></i></span>';
     cue.setAttribute('aria-label', 'Roll the end credits');
     var foot = $('.footer'); (foot || document.body).appendChild(cue); // its own row at the very end of the page, never over anything
-    var fill = cue.querySelector('i');
+    var fill = cue.querySelector('.cc-bar i');
     function atBottom() { return innerHeight + scrollY >= document.documentElement.scrollHeight - 12; }
     function paint() { fill.style.transform = 'scaleX(' + Math.min(1, pushed / NEED).toFixed(3) + ')'; }
     function roll() { pushed = 0; paint(); cooldown = Date.now() + 1500; rollCredits(); }
