@@ -80,6 +80,10 @@ test('scrolling past the bottom fills the credits reel and rolls them', async ({
     }
   } else {
     await page.mouse.move(600, 400);
+    for (let i = 0; i < 3; i++) await page.mouse.wheel(0, 120);
+    // the reel itself fills, not the film icon next to the label
+    await expect.poll(() => cue.locator('.cc-bar i').evaluate((el) => el.style.transform)).not.toMatch(/^$|scaleX\(0(\.000)?\)/);
+    expect(await cue.locator('.cc-text i').evaluate((el) => el.style.transform)).toBe('');
     for (let i = 0; i < 8; i++) await page.mouse.wheel(0, 120);
   }
   await expect(page.locator('.credits')).toBeVisible();
