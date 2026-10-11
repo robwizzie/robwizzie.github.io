@@ -290,7 +290,7 @@
      Everyone's last position is tracked, but only the MAX_SHOW most recently moved get drawn,
      and a cursor fades out after IDLE_MS without moving. 7+ people: calm mode (small, quiet, no labels). */
   var HEX = '<svg viewBox="0 0 24 26" aria-hidden="true"><polygon points="12,1.5 22,7 22,19 12,24.5 2,19 2,7" style="fill:var(--blue)" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>';
-  var layer = null, curs = {}, nShown = 0, rafC = 0, seenOther = false;
+  var layer = null, curs = {}, nShown = 0, rafC = 0;
 
   function getLayer() {
     if (!layer) { layer = document.createElement('div'); layer.className = 'lv-layer'; layer.setAttribute('aria-hidden', 'true'); document.body.appendChild(layer); }
@@ -341,7 +341,6 @@
     c.tx = m.x; c.ty = m.y; c.last = Date.now();
     clearTimeout(c.t2);
     c.t2 = setTimeout(function () { release(c); }, IDLE_MS);
-    if (!seenOther) { seenOther = true; if (RW.egg) RW.egg('live'); }
     if (!showCursors) return;
     if (!c.el) show(c, m.id);
     else if (reduceMotion) { c.x = c.tx; c.y = c.ty; }
@@ -416,8 +415,6 @@
     (list || []).forEach(function (p) { if (p && p.id && p.id !== me.id) peers[p.id] = p; });
     var ids = Object.keys(peers);
     here = Math.max(1, n || 0, ids.length + 1);
-    // "Not Alone": anyone else on the site counts, so phones (which don't send a cursor) can earn it too.
-    if (here > 1 && !seenOther) { seenOther = true; if (RW.egg) RW.egg('live'); }
     for (var id in curs) if (!peers[id]) dropCursor(id);
     if (layer) layer.classList.toggle('calm', calm());
     paintNow();

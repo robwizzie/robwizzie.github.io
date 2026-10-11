@@ -192,3 +192,19 @@ test('a team with no data says so instead of breaking', async ({ page }) => {
   await expect(gc.locator('.gc-tab.on')).toContainText('Flyers');
   await expect(gc.locator('.gc-empty')).toBeVisible();
 });
+
+test('the hero pill waits for ESPN instead of flashing "Game center" before the score', async ({ page }) => {
+  let release;
+  const gate = new Promise((r) => { release = r; });
+  await mockWorld(page, { espn: espn() });
+  await page.route(/site\.api\.espn\.com\/.*scoreboard/, async (route) => { await gate; await route.fallback(); }); // hold the scoreboards
+  await page.goto('/');
+  const pill = page.locator('.hero-pills .gd-pill');
+  await expect(pill).toHaveClass(/loading/);
+  await page.waitForTimeout(1500);
+  await expect(pill).toHaveClass(/loading/); // still the placeholder, never the off-day pill
+  await expect(pill).not.toContainText('Game center');
+  release();
+  await expect(pill).toHaveClass(/\bin\b/);
+  await expect(pill).toContainText('78');
+});
