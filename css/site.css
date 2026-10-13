@@ -817,16 +817,16 @@ kbd { font-family: var(--mono); font-size: .74rem; min-width: 24px; text-align: 
 .gd-dash, .gd-vs { color: var(--muted); font-weight: 500; }
 .gd-logo { width: 22px; height: 22px; object-fit: contain; flex: none; }
 .gd-detail { color: color-mix(in srgb, #fff 75%, var(--team)); font-weight: 500; }
-.gd-pill.idle { padding: 5px 14px 5px 8px; }
-.gd-teams { display: inline-flex; align-items: center; }
-.gd-team { width: 20px; height: 20px; object-fit: contain; flex: none; }
-.gd-team + .gd-team { margin-left: -3px; }
+.gd-pill.idle { padding: 5px 16px 5px 12px; }
+/* Each logo gets the same square slot with even spacing, so wide marks (Flyers) and tall ones (76ers) line up */
+.gd-teams { display: inline-flex; align-items: center; gap: 4px; }
+.gd-team { width: 20px; height: 20px; object-fit: contain; flex: none; display: block; }
 .gd-pill.idle .gd-more { border-left: 0; padding-left: 2px; color: var(--text); }
 .gd-more { padding-left: 10px; border-left: 1px solid color-mix(in srgb, var(--team) 40%, transparent); color: var(--muted); font-weight: 500; }
 html.gameday .nav { border-color: color-mix(in srgb, var(--team) 55%, transparent); box-shadow: 0 0 30px -10px var(--team); }
 html.gameday .progress { background: var(--team); }
 /* Placeholder while the first scores load: same size as the real pill, a soft shimmer, no text */
-.gd-pill.loading { --team: var(--blue); width: 196px; cursor: progress; animation: fadeUp .6s var(--ease) both; }
+.gd-pill.loading { --team: var(--blue); width: 216px; cursor: progress; animation: fadeUp .6s var(--ease) both; }
 .gd-skel { display: inline-flex; align-items: center; gap: 8px; width: 100%; }
 .gd-skel i { width: 20px; height: 20px; border-radius: 50%; }
 .gd-skel b { flex: 1; height: 9px; border-radius: 6px; }
