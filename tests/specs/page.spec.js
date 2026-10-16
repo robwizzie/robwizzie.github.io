@@ -2,7 +2,7 @@ const { test, expect } = require('./mock');
 
 test('home page loads cleanly with every section', async ({ page }) => {
   await page.goto('/');
-  for (const id of ['experience', 'mile-a-day', 'work', 'fetch', 'lebronify', 'skills', 'commits', 'visitors', 'about', 'terminal', 'contact']) {
+  for (const id of ['experience', 'mile-a-day', 'work', 'fetch', 'lebronify', 'skills', 'commits', 'visitors', 'about', 'quote', 'terminal', 'contact']) {
     await expect(page.locator('#' + id), id).toBeAttached();
   }
   await expect(page.locator('h1')).toContainText('Rob');
