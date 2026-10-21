@@ -52,8 +52,9 @@ Tutoring and test-prep company with 7 New Jersey locations. Member of the dev te
 
 - Mile A Day (https://mileaday.run): social fitness app; daily mile streaks, competitions, live group walks, social feed. SwiftUI, watchOS, TypeScript, Express, PostgreSQL, Next.js.
 - Fetch: 3D local-multiplayer party game, Godot. Playable at https://robwiscount.org/#fetch
-- Client sites: Trouble Brewing (React + click-to-edit CMS on Supabase), Pressed by J&H (Stripe checkout), Traveling Tastebuds (interactive food map + admin).
+- Client sites: Trouble Brewing (https://troublebrewingcoffeehouse.com; React + click-to-edit CMS on Supabase), Pressed by J&H (Stripe checkout), Traveling Tastebuds (interactive food map + admin).
 - Giddey (https://playgiddey.com): daily NBA draft puzzle. Next.js.
+- Jawn Legends (https://github.com/robwizzie/jawn-legends): Philly pocket-monster adventure and idle game for iPhone, on TestFlight. HTML/CSS/JS, Capacitor, Game Center.
 - Pick 5 (https://sportspick5.com): odds-weighted NFL pick'em. Next.js, MongoDB, Cloudflare Workers.
 - Top Dawgs (https://poolmaxxing.com): pool league team stats and live scoring. Next.js, Supabase, Cloudflare Workers.
 - Dawg House Duel (https://dawghouseduel.com): game-show picture duel with phone pairing. JavaScript, Cloudflare Workers.
