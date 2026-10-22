@@ -5,6 +5,6 @@
     { "id": "pick5", "file": "pick5.jpg", "url": "https://sportspick5.com", "bg": "#05190e", "glow": "#0b3220", "enabled": true },
     { "id": "ttb", "file": "ttb.jpg", "url": "https://travelingtastebuds.org", "bg": "#160c08", "glow": "#3a1c10", "enabled": false },
     { "id": "trouble-brewing", "file": "trouble-brewing.jpg", "url": "https://troublebrewingcoffeehouse.com", "bg": "#140d07", "glow": "#3b2410", "enabled": true },
-    { "id": "top-dawgs", "file": "top-dawgs.jpg", "url": "https://poolmaxxing.com", "bg": "#131009", "glow": "#3a2e10", "enabled": true }
+    { "id": "top-dawgs", "file": "top-dawgs.jpg", "url": "https://poolmaxxing.com", "bg": "#07120c", "glow": "#163a26", "enabled": true }
   ]
 }
