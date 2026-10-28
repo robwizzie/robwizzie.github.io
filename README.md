@@ -13,6 +13,16 @@ with every outside API mocked (`tests/specs/mock.js`), plus a Lighthouse report.
 cd tests && npm ci && npx playwright install chromium && npm test
 ```
 
+## Link preview video (`og-src/`)
+
+Shared links preview as a looping video of the site's easter eggs (`og:video`, which iMessage plays), with its
+first frame as the `og:image` everywhere else. The scene is plain HTML in `og-src/og-video.html`; to re-render
+`assets/og-video.mp4` and `assets/og-video-poster.png` after changing it (needs ffmpeg):
+
+```bash
+cd tests && node build-og-video.js
+```
+
 ## Live mode (`workers/live/`)
 
 Live cursors, the visitor map, the guestbook, visit sources and the Letterboxd card run on a Cloudflare
