@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OG video source</title>
+<!--
+  Source for assets/og-video.mp4 and assets/og-video-poster.png (the link preview).
+  Every frame is a pure function of time: render(t) draws the scene at t seconds, so
+  tests/build-og-video.js can step through it frame by frame. Open this file in a
+  browser to watch it play live. The light blue strip along the bottom is on purpose:
+  iMessage colours the caption bar under a preview from the media's bottom edge.
+-->
+<link href="../assets/fonts.css" rel="stylesheet">
+<link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+<style>
+  :root { --bg: #06080d; --text: #eef2fb; --muted: #98a3bd; --blue: #5b8ff9; --blue-hi: #8db2ff; --sky: #a9c6ff; --ink: #0a1430; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; background: var(--bg); }
+  body { font-family: 'Inter', sans-serif; color: var(--text); -webkit-font-smoothing: antialiased; }
+  #stage { position: relative; width: 1200px; height: 630px; overflow: hidden;
+    background: radial-gradient(ellipse 60% 70% at 78% 40%, rgba(91,143,249,.16), transparent 70%),
+                radial-gradient(ellipse 50% 60% at 10% 100%, rgba(91,143,249,.08), transparent 70%), var(--bg); }
+  #dots { position: absolute; inset: 0; }
+  .abs { position: absolute; }
+  .display { font-family: 'Saira Extra Condensed', sans-serif; font-weight: 800; text-transform: uppercase; line-height: .86; letter-spacing: .01em; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .outline { color: transparent; -webkit-text-stroke: 2.5px var(--blue); }
+  .blue { color: var(--blue-hi); }
+
+  /* Persistent chrome */
+  #brand { left: 56px; top: 40px; display: flex; align-items: center; gap: 12px; }
+  #brand img { width: 40px; height: 40px; }
+  #brand span { font-family: 'Saira Extra Condensed', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: .02em; }
+  #counter { right: 56px; top: 42px; display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 12px; border-radius: 999px;
+    background: rgba(91,143,249,.1); border: 1px solid rgba(91,143,249,.35); font-size: 15px; font-weight: 600; color: var(--muted); }
+  #counter i { color: #f5c542; font-size: 16px; }
+  #counter b { color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 16px; }
+
+  /* Bottom strip: light blue, drives the iMessage caption bar colour */
+  #band { left: 0; right: 0; bottom: 0; height: 64px; background: var(--sky); overflow: hidden; display: flex; align-items: center; }
+  #band .url { position: relative; z-index: 2; height: 100%; display: flex; align-items: center; gap: 10px; padding: 0 22px 0 56px;
+    background: var(--sky); color: var(--ink); font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 19px; box-shadow: 18px 0 18px -6px var(--sky); }
+  #ticker { position: absolute; left: 0; top: 0; height: 100%; display: flex; align-items: center; white-space: nowrap; will-change: transform; }
+  #ticker span { display: inline-flex; align-items: center; gap: 9px; padding: 0 22px; font-size: 17px; font-weight: 600; color: #1d3270; }
+  #ticker i { color: var(--blue); font-size: 15px; }
+
+  /* Scenes */
+  .scene { position: absolute; left: 0; top: 0; width: 1200px; height: 566px; opacity: 0; }
+  .kicker { font-family: 'JetBrains Mono', monospace; font-size: 17px; letter-spacing: .22em; text-transform: uppercase; color: var(--blue-hi); }
+  .say { font-family: 'Saira Extra Condensed', sans-serif; font-weight: 800; font-size: 74px; line-height: .95; text-transform: uppercase; }
+
+  /* 1: intro */
+  #s-intro .kicker { left: 56px; top: 132px; }
+  #s-intro .name { left: 52px; top: 172px; font-size: 170px; }
+  #s-intro .name > div { overflow: hidden; padding-right: 8px; }
+  #s-intro .name span { display: inline-block; }
+  #s-intro .hint { left: 56px; top: 482px; font-size: 22px; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 12px; }
+  #s-intro .hint i { color: var(--blue-hi); }
+  .hex { clip-path: polygon(50% 0, 96% 22%, 96% 78%, 50% 100%, 4% 78%, 4% 22%); }
+  #portrait { left: 760px; top: 96px; width: 360px; height: 389px; }
+  #portrait .rim { position: absolute; inset: 0; background: var(--blue); }
+  #portrait .inner { position: absolute; inset: 0; transform: scale(.955);
+    background: #0a0f1c radial-gradient(rgba(91,143,249,.32) 1.4px, transparent 1.5px) 0 0 / 18px 18px; }
+  #portrait img { position: absolute; bottom: 0; left: 50%; width: 94%; transform: translateX(-50%); }
+
+  /* 2: konami */
+  #s-konami .kicker { left: 0; right: 0; top: 116px; text-align: center; }
+  #s-konami .say { left: 0; right: 0; top: 150px; text-align: center; }
+  #keys { left: 0; right: 0; top: 278px; display: flex; justify-content: center; gap: 12px; }
+  .key { width: 76px; height: 76px; border-radius: 14px; display: grid; place-items: center; font-size: 30px; font-weight: 800;
+    background: #111829; border: 1px solid #263252; box-shadow: 0 6px 0 #1a2338; color: var(--muted); }
+  .key.on { background: var(--blue); border-color: var(--blue-hi); box-shadow: 0 6px 0 #2e5bc4, 0 0 32px rgba(91,143,249,.55); color: #fff; }
+
+  /* 3: terminal */
+  #s-rmrf .kicker { left: 0; right: 0; top: 104px; text-align: center; }
+  #term { left: 230px; top: 144px; width: 740px; height: 300px; border-radius: 16px; background: #0b0f19; border: 1px solid #263252;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55); overflow: hidden; }
+  #term .bar { height: 42px; display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #111829; border-bottom: 1px solid #1e2740; }
+  #term .bar i { width: 13px; height: 13px; border-radius: 50%; display: block; }
+  #term .bar b { margin-left: 14px; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500; color: var(--muted); }
+  #term .body { padding: 22px 26px; font-family: 'JetBrains Mono', monospace; font-size: 23px; line-height: 1.75; }
+  #term .p { color: #3ddc84; }
+  #term .caret { display: inline-block; width: 12px; height: 26px; background: var(--blue-hi); vertical-align: -5px; margin-left: 2px; }
+  .junk { position: absolute; border-radius: 10px; background: #131b2e; border: 1px solid #263252; display: flex; align-items: center; gap: 10px;
+    padding: 0 16px; font-size: 17px; font-weight: 600; color: var(--muted); }
+  .junk i { color: var(--blue-hi); }
+
+  /* 4: pool */
+  #s-pool .kicker { left: 0; right: 0; top: 104px; text-align: center; }
+  #table { left: 170px; top: 140px; width: 860px; height: 330px; border-radius: 26px; background: #0c2a4d;
+    border: 14px solid #1a2f57; box-shadow: inset 0 0 60px rgba(0,0,0,.45), 0 24px 60px rgba(0,0,0,.5); }
+  .ball { position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%;
+    box-shadow: inset -5px -6px 10px rgba(0,0,0,.35), inset 4px 4px 8px rgba(255,255,255,.25); display: grid; place-items: center; }
+  .ball.stripe { background-image: linear-gradient(#fff 0 22%, transparent 22% 78%, #fff 78%) !important; }
+  .ball b { width: 15px; height: 15px; border-radius: 50%; background: #fff; color: #111; font-size: 9px; font-weight: 800; display: grid; place-items: center; }
+  .pocket { position: absolute; width: 36px; height: 36px; margin: -18px 0 0 -18px; border-radius: 50%; background: #03060c; }
+
+  /* 5: dog */
+  #s-dog .kicker { left: 0; right: 0; top: 116px; text-align: center; }
+  #s-dog .say { left: 0; right: 0; top: 150px; text-align: center; }
+  #whistle { left: 0; right: 0; top: 248px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 22px; color: var(--muted); }
+  #dog { top: 316px; width: 120px; height: 120px; margin-left: -60px; display: grid; place-items: center; font-size: 74px; color: #f2a33a; }
+  #ballf { top: 380px; font-size: 30px; color: #c8ff5b; margin-left: -15px; }
+  #floor { left: 120px; right: 120px; top: 446px; height: 2px; background: linear-gradient(90deg, transparent, rgba(91,143,249,.5), transparent); }
+
+  /* 6: finale */
+  #s-final .say { left: 0; right: 0; top: 104px; text-align: center; font-size: 66px; }
+  #grid { left: 0; right: 0; top: 214px; display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; padding: 0 200px; }
+  #cta { left: 50%; top: 392px; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; padding: 14px 26px; border-radius: 999px;
+    background: var(--sky); color: var(--ink); font-size: 22px; font-weight: 700; white-space: nowrap; box-shadow: 0 0 40px rgba(141,178,255,.35); }
+  .tile { width: 72px; height: 72px; border-radius: 16px; display: grid; place-items: center; font-size: 28px;
+    background: #0f1626; border: 1px solid #222c47; color: #2c3858; }
+  .tile.on { background: linear-gradient(160deg, #6d9cff, #3f6fe0); border-color: #a9c6ff; color: #fff; box-shadow: 0 0 26px rgba(91,143,249,.45); }
+
+  /* Achievement toast (Xbox style, like the site's) */
+  #toast { left: 50%; top: 474px; height: 66px; margin-left: -230px; width: 460px; border-radius: 999px; display: flex; align-items: center; gap: 14px;
+    padding: 0 26px 0 9px; background: #121a2c; border: 1px solid #2c3a62; box-shadow: 0 18px 50px rgba(0,0,0,.6), 0 0 40px rgba(91,143,249,.2); opacity: 0; }
+  #toast .ico { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--blue); color: #fff; font-size: 21px; flex: none; }
+  #toast small { display: block; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue-hi); font-weight: 700; }
+  #toast strong { display: block; font-size: 20px; font-weight: 700; }
+  #toast em { margin-left: auto; font-style: normal; font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 15px; }
+
+  #confetti i { position: absolute; width: 10px; height: 16px; border-radius: 2px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="dots" width="1200" height="630"></canvas>
+
+  <!-- 1: intro -->
+  <section class="scene" id="s-intro">
+    <div class="abs kicker">— Front-end &amp; full-stack developer</div>
+    <div class="abs name display"><div><span>Rob</span></div><div><span class="outline">Wiscount</span></div></div>
+    <div class="abs hint"><i class="fas fa-egg"></i> This site is hiding 17 easter eggs</div>
+    <div class="abs" id="portrait"><div class="rim hex"></div><div class="inner hex"></div><div class="hex" style="position:absolute;inset:0"><img src="../assets/rob.png" alt=""></div></div>
+  </section>
+
+  <!-- 2: konami -->
+  <section class="scene" id="s-konami">
+    <div class="abs kicker">Egg #1 · type it anywhere</div>
+    <div class="abs say">The <span class="blue">Konami</span> code</div>
+    <div class="abs" id="keys"></div>
+  </section>
+
+  <!-- 3: rm -rf -->
+  <section class="scene" id="s-rmrf">
+    <div class="abs kicker">Egg #2 · the site has a terminal</div>
+    <div class="abs" id="term">
+      <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><b>rob@robwiscount.org: ~</b></div>
+      <div class="body"><div><span class="p">➜</span> <span id="cmd"></span><span class="caret" id="caret"></span></div><div id="out"></div></div>
+    </div>
+    <div id="junk"></div>
+  </section>
+
+  <!-- 4: pool -->
+  <section class="scene" id="s-pool">
+    <div class="abs kicker">Egg #3 · the About cards are a pool table</div>
+    <div class="abs" id="table"></div>
+  </section>
+
+  <!-- 5: dog -->
+  <section class="scene" id="s-dog">
+    <div class="abs kicker">Egg #4 · the 3D dogs from my game</div>
+    <div class="abs say">Whistle for <span class="blue">the dog</span></div>
+    <div class="abs" id="whistle"></div>
+    <div class="abs" id="floor"></div>
+    <div class="abs" id="ballf"><i class="fas fa-baseball-ball"></i></div>
+    <div class="abs" id="dog"><i class="fas fa-dog"></i></div>
+  </section>
+
+  <!-- 6: finale -->
+  <section class="scene" id="s-final">
+    <div class="abs say">Can you find <span class="blue">all 17?</span></div>
+    <div class="abs" id="grid"></div>
+    <div class="abs" id="cta">Go egg hunting <i class="fas fa-arrow-right"></i> <span class="mono">robwiscount.org</span></div>
+  </section>
+
+  <div class="abs" id="confetti"></div>
+  <div class="abs" id="toast"><div class="ico"><i class="fas fa-trophy"></i></div><div><small>Achievement unlocked</small><strong id="toast-t"></strong></div><em id="toast-g"></em></div>
+
+  <div class="abs" id="brand"><img src="../assets/rw-logo.png" alt=""><span>ROB WISCOUNT</span></div>
+  <div class="abs" id="counter"><i class="fas fa-trophy"></i> Eggs found <b id="count">0/17</b></div>
+
+  <div class="abs" id="band"><div class="url"><i class="fas fa-link"></i> robwiscount.org</div><div id="ticker"></div></div>
+</div>
+
+<script>
+var DURATION = 14;  // seconds; the loop is seamless at this length
+var $ = function (s) { return document.querySelector(s); };
+var clamp = function (x, a, b) { return Math.max(a, Math.min(b, x)); };
+var prog = function (t, a, b) { return clamp((t - a) / (b - a), 0, 1); };
+var easeOut = function (x) { return 1 - Math.pow(1 - x, 3); };
+var easeIn = function (x) { return x * x * x; };
+var back = function (x) { var c = 1.70158; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+var seed = 7, rnd = function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+
+var EGGS = [
+  ['gamepad', 'Cheat Code'], ['sync-alt', 'Spin Doctor'], ['dog', 'Good Game'], ['crown', 'LeBronified'],
+  ['water', 'Making Waves'], ['wrench', 'Under the Hood'], ['hand-paper', 'You Came Back'], ['running', 'Ran the Mile'],
+  ['film', 'Stayed for the Credits'], ['keyboard', 'Escaped Vim'], ['bomb', 'Nuked It'], ['palette', 'Repainted'],
+  ['bone', 'Who Let the Dog Out'], ['dot-circle', 'Break Shot'], ['trophy', 'Called Pocket'], ['book-open', 'Read the Manual'],
+  ['signature', 'Signed the Guestbook']
+];
+
+// Scene windows [in, out]; each fades over FADE seconds at either end.
+var FADE = 0.3;
+var SCENES = { intro: [0, 2.6], konami: [2.6, 4.9], rmrf: [4.9, 7.2], pool: [7.2, 9.4], dog: [9.4, 11.3], final: [11.3, 14] };
+function sceneAlpha(name, t) {
+  var w = SCENES[name], a = prog(t, w[0], w[0] + FADE), b = 1 - prog(t, w[1] - FADE, w[1]);
+  // The loop opens on a full intro frame (also the poster), which fades back in as the finale ends
+  if (name === 'intro') return t < w[1] ? b : prog(t, DURATION - FADE, DURATION);
+  return Math.min(a, b);
+}
+
+// ---- Build static DOM ----
+var ticker = $('#ticker'), tickerHTML = '';
+EGGS.forEach(function (e) { tickerHTML += '<span><i class="fas fa-' + e[0] + '"></i>' + e[1] + '</span>'; });
+ticker.innerHTML = tickerHTML + tickerHTML;
+
+var KEYS = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'B', 'A'];
+$('#keys').innerHTML = KEYS.map(function (k) { return '<div class="key">' + (k.length > 1 ? '<i class="fas fa-arrow-' + k + '"></i>' : k) + '</div>'; }).join('');
+
+var JUNK = [['fas fa-briefcase', 'Experience', 90, 470, 230], ['fas fa-code', 'Projects', 930, 470, 190], ['fas fa-mobile-alt', 'Mile A Day', 50, 120, 200],
+            ['fas fa-gamepad', 'Fetch', 990, 120, 150], ['fas fa-envelope', 'Contact', 520, 476, 170]];
+$('#junk').innerHTML = JUNK.map(function (j) {
+  return '<div class="junk" style="left:' + j[2] + 'px;top:' + j[3] + 'px;width:' + j[4] + 'px;height:52px"><i class="' + j[0] + '"></i>' + j[1] + '</div>';
+}).join('');
+
+// Pool: rack + cue ball, with a hand-tuned break (positions in table px)
+var BALLS = [], COLORS = ['#f5c542', '#3f6fe0', '#e0475f', '#7a4cc9', '#f08a24', '#2fae66', '#8a2b2b', '#111', '#f5c542', '#3f6fe0', '#e0475f', '#7a4cc9', '#f08a24', '#2fae66', '#8a2b2b'];
+(function () {
+  var n = 0, ox = 560, oy = 151;
+  for (var col = 0; col < 5; col++) for (var r = 0; r <= col; r++) {
+    var num = [1, 9, 2, 10, 8, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15][n];
+    var x = ox + col * 30, y = oy + (r - col / 2) * 35;
+    var ang = Math.atan2(y - oy, x - ox + 20) * 1.6 + (rnd() - .5) * 1.2;
+    var sp = 380 + rnd() * 420;
+    BALLS.push({ x: x, y: y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, num: num, color: COLORS[num - 1], stripe: num > 8 });
+    n++;
+  }
+})();
+var table = $('#table');
+[[0, 0], [416, -4], [832, 0], [0, 302], [416, 306], [832, 302]].forEach(function (p) {
+  table.insertAdjacentHTML('beforeend', '<div class="pocket" style="left:' + p[0] + 'px;top:' + p[1] + 'px"></div>');
+});
+BALLS.forEach(function (b, i) {
+  b.el = document.createElement('div');
+  b.el.className = 'ball' + (b.stripe ? ' stripe' : '');
+  b.el.style.background = b.color;
+  b.el.style.backgroundColor = b.color;
+  b.el.innerHTML = '<b>' + b.num + '</b>';
+  table.appendChild(b.el);
+});
+var cue = document.createElement('div');
+cue.className = 'ball'; cue.style.background = '#f4f1e8'; table.appendChild(cue);
+
+// Simulates the break in table space with wall bounces and friction. Deterministic.
+function poolState(dt) {
+  var W = 832, H = 302, R = 17, k = 1.6;
+  return BALLS.map(function (b) {
+    var d = Math.max(0, dt), f = (1 - Math.exp(-k * d)) / k;
+    var x = b.x + b.vx * f, y = b.y + b.vy * f;
+    var fold = function (p, lo, hi) { var span = hi - lo, m = ((p - lo) % (2 * span) + 2 * span) % (2 * span); return lo + (m > span ? 2 * span - m : m); };
+    return { x: fold(x, R, W - R), y: fold(y, R, H - R) };
+  });
+}
+
+$('#grid').innerHTML = EGGS.map(function (e) { return '<div class="tile"><i class="fas fa-' + e[0] + '"></i></div>'; }).join('');
+var tiles = document.querySelectorAll('.tile');
+
+var CONF = [];
+(function () {
+  var cols = ['#5b8ff9', '#8db2ff', '#a9c6ff', '#f5c542', '#3ddc84', '#e0475f', '#ffffff'];
+  for (var i = 0; i < 90; i++) {
+    var el = document.createElement('i');
+    el.style.background = cols[i % cols.length];
+    $('#confetti').appendChild(el);
+    var a = -Math.PI / 2 + (rnd() - .5) * 2.4;
+    CONF.push({ el: el, vx: Math.cos(a) * (300 + rnd() * 500), vy: Math.sin(a) * (420 + rnd() * 420), spin: (rnd() - .5) * 1400, x0: 600 + (rnd() - .5) * 120 });
+  }
+})();
+
+// Toasts: [start, icon, title, count after]
+var TOASTS = [[4.0, 'gamepad', 'Cheat Code', 1], [6.25, 'bomb', 'Nuked It', 2], [8.45, 'dot-circle', 'Break Shot', 3], [10.4, 'bone', 'Who Let the Dog Out', 4]];
+
+// ---- Dot grid background (same wave as the site's hero canvas, looped to DURATION) ----
+var ctx = $('#dots').getContext('2d'), DOTS = [];
+for (var y = 17; y < 630; y += 34) for (var x = 17; x < 1200; x += 34) DOTS.push([x, y]);
+var OMEGA = 2 * Math.PI * 3 / DURATION;
+
+function render(t) {
+  t = ((t % DURATION) + DURATION) % DURATION;
+
+  ctx.clearRect(0, 0, 1200, 630);
+  for (var i = 0; i < DOTS.length; i++) {
+    var d = DOTS[i], wave = Math.sin(t * OMEGA + d[0] * 0.012 + d[1] * 0.01) * 0.5 + 0.5;
+    ctx.fillStyle = 'rgba(91,143,249,' + (0.07 + wave * 0.12).toFixed(3) + ')';
+    ctx.beginPath(); ctx.arc(d[0], d[1], 1.3, 0, 6.283); ctx.fill();
+  }
+
+  // Ticker scrolls exactly one copy per loop
+  var tw = ticker.scrollWidth / 2;
+  ticker.style.transform = 'translateX(' + (-tw * (t / DURATION)) + 'px)';
+
+  for (var name in SCENES) {
+    var el = $('#s-' + (name === 'final' ? 'final' : name));
+    el.style.opacity = sceneAlpha(name, t);
+  }
+
+  // 1: intro. Static at t=0 so the first frame works as the poster; the portrait floats gently.
+  $('#portrait').style.transform = 'translateY(' + (Math.sin(t / DURATION * 2 * Math.PI * 4) * 6).toFixed(2) + 'px)';
+  var hintPulse = 0.75 + 0.25 * Math.sin(t * 6);
+  document.querySelector('#s-intro .hint i').style.opacity = hintPulse;
+
+  // 2: konami keys light up in order
+  var keys = document.querySelectorAll('.key');
+  keys.forEach(function (k, i) {
+    var at = 2.95 + i * 0.1, p = prog(t, at, at + 0.12);
+    k.classList.toggle('on', t >= at);
+    k.style.transform = 'translateY(' + (p > 0 && p < 1 ? 5 : 0) + 'px) scale(' + (1 + 0.08 * Math.sin(p * Math.PI)) + ')';
+  });
+
+  // 3: rm -rf /
+  var full = 'rm -rf /', typed = Math.floor(clamp((t - 5.15) / 0.07, 0, full.length));
+  $('#cmd').textContent = full.slice(0, typed);
+  $('#caret').style.opacity = (t < 5.75 && Math.floor(t * 4) % 2 === 0) || (t >= 5.15 && t < 5.75) ? 1 : 0;
+  var out = '';
+  if (t > 5.8) out += '<div style="color:#e0475f">deleting everything…</div>';
+  if (t > 6.9) out += '<div style="color:#3ddc84"><span class="p">➜</span> git restore . <span style="color:#98a3bd">// phew</span></div>';
+  $('#out').innerHTML = out;
+  var fallT = t - 5.85;
+  document.querySelectorAll('.junk').forEach(function (j, i) {
+    var dt = Math.max(0, fallT - i * 0.06);
+    var appear = prog(t, 5.0 + i * 0.05, 5.3 + i * 0.05);
+    j.style.opacity = appear;
+    j.style.transform = 'translateY(' + (900 * dt * dt) + 'px) rotate(' + ((i % 2 ? 1 : -1) * 70 * dt * dt) + 'deg)';
+  });
+  var shake = t > 5.8 && t < 6.2 ? Math.sin(t * 90) * 5 : 0;
+  $('#term').style.transform = 'translateX(' + shake + 'px)';
+
+  // 4: pool break
+  var hit = 7.95, toHit = prog(t, 7.45, hit);
+  cue.style.left = (140 + (520 - 140) * easeIn(toHit) + (t > hit ? -Math.min(40, (t - hit) * 60) : 0)) + 'px';
+  cue.style.top = '151px';
+  var ps = poolState(t - hit);
+  BALLS.forEach(function (b, i) {
+    b.el.style.left = ps[i].x + 'px'; b.el.style.top = ps[i].y + 'px';
+    b.el.style.transform = 'rotate(' + (t > hit ? (t - hit) * (i % 2 ? 300 : -260) * Math.exp(-(t - hit)) : 0) + 'deg)';
+  });
+
+  // 5: dog runs after a ball
+  var ballP = prog(t, 9.6, 10.3), dogP = prog(t, 9.8, 11.0);
+  $('#whistle').innerHTML = t > 9.55 ? '<i class="fas fa-music"></i> fweeeeet!' : '';
+  $('#whistle').style.opacity = prog(t, 9.55, 9.75);
+  var bx = 180 + 840 * easeOut(ballP);
+  $('#ballf').style.left = bx + 'px';
+  $('#ballf').style.transform = 'translateY(' + (-Math.abs(Math.sin(ballP * Math.PI * 3)) * 70 * (1 - ballP)) + 'px) rotate(' + ballP * 720 + 'deg)';
+  var dx = 150 + 850 * easeOut(dogP);
+  $('#dog').style.left = dx + 'px';
+  $('#dog').style.transform = 'translateY(' + (-Math.abs(Math.sin(t * 16)) * 14 * (dogP < 1 ? 1 : 0)) + 'px)';
+
+  // 6: finale - every egg lights up, confetti
+  tiles.forEach(function (tile, i) {
+    var at = 11.65 + i * 0.07, p = prog(t, at, at + 0.25);
+    tile.classList.toggle('on', t >= at);
+    tile.style.transform = 'scale(' + (t >= at ? 0.9 + 0.1 * back(p) : 0.9) + ')';
+  });
+  var cp = prog(t, 12.85, 13.15);
+  $('#cta').style.transform = 'translateX(-50%) scale(' + (0.6 + 0.4 * back(cp)) + ')';
+  $('#cta').style.opacity = cp;
+  var cT = t - 12.9;
+  CONF.forEach(function (c) {
+    if (cT < 0 || cT > 1.7) { c.el.style.opacity = 0; return; }
+    c.el.style.opacity = 1 - prog(cT, 1.2, 1.7);
+    c.el.style.left = (c.x0 + c.vx * cT * 0.8) + 'px';
+    c.el.style.top = (380 + c.vy * cT + 520 * cT * cT) + 'px';
+    c.el.style.transform = 'rotate(' + c.spin * cT + 'deg)';
+  });
+
+  // Toast + counter
+  var count = 0, toast = null;
+  TOASTS.forEach(function (tt) { if (t >= tt[0]) count = tt[3]; if (t >= tt[0] && t < tt[0] + 1.1) toast = tt; });
+  if (t >= 11.65) count = Math.min(17, 4 + Math.max(0, Math.floor((t - 11.65) / 0.07) + 1 - 4));
+  $('#count').textContent = (count < 10 ? '0' : '') + count + '/17';
+  var tEl = $('#toast');
+  if (toast) {
+    var a = prog(t, toast[0], toast[0] + 0.25), z = 1 - prog(t, toast[0] + 0.85, toast[0] + 1.1);
+    tEl.style.opacity = Math.min(a, z);
+    tEl.style.transform = 'translateY(' + (1 - back(a)) * 40 + 'px) scale(' + (0.9 + 0.1 * back(a)) + ')';
+    tEl.querySelector('.ico i').className = 'fas fa-' + toast[1];
+    $('#toast-t').textContent = toast[2];
+    $('#toast-g').textContent = '+' + (toast[3] * 10) + 'G';
+  } else tEl.style.opacity = 0;
+  var bump = 0;
+  TOASTS.forEach(function (tt) { var p = prog(t, tt[0], tt[0] + 0.3); if (p > 0 && p < 1) bump = Math.sin(p * Math.PI); });
+  $('#counter').style.transform = 'scale(' + (1 + bump * 0.08) + ')';
+  $('#counter').style.borderColor = bump > 0 || count === 17 ? 'rgba(141,178,255,.9)' : '';
+}
+
+window.render = render;
+window.DURATION = DURATION;
+window.ready = document.fonts.ready.then(function () {
+  return Promise.all(Array.prototype.map.call(document.images, function (img) { return img.decode().catch(function () {}); }));
+});
+if (!/[?&]capture/.test(location.search)) {
+  window.ready.then(function () {
+    var start = performance.now();
+    (function loop() { render((performance.now() - start) / 1000); requestAnimationFrame(loop); })();
+  });
+}
+</script>
+</body>
+</html>
