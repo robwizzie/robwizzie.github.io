@@ -20,8 +20,8 @@ const FPS = process.argv.indexOf('--fps') > -1 ? Number(process.argv[process.arg
     const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
     const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
     await page.goto('http://localhost:' + PORT + '/og-src/og-video.html?capture', { waitUntil: 'networkidle' });
-    // Draw one frame at the very end so every icon font face gets requested, then wait for them all
-    await page.evaluate(async () => { render(12.5); render(0); await document.fonts.ready; await window.ready; });
+    // Draw a frame with the toast showing so its icon font gets requested, then wait for every font and image
+    await page.evaluate(async () => { render(6); render(0); await document.fonts.ready; await window.ready; });
 
     const duration = await page.evaluate(() => window.DURATION);
     const total = Math.round(duration * FPS);
