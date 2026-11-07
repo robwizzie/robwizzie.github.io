@@ -40,15 +40,3 @@ godot --headless --path . --import            # twice on a fresh clone
 godot --headless --path . --export-release "Web" build/web/index.html
 cp build/web/* ../robwizzie.github.io/play/fetch/
 ```
-
-## Capacity scheduler demo (`play/scheduler/`)
-
-A built copy of [robwizzie/capacity-based-scheduling-app](https://github.com/robwizzie/capacity-based-scheduling-app)
-in public-demo mode (made-up data, a "Public demo" banner and a warning before any import). Never load
-real company data into it. To refresh it, from that repo:
-
-```bash
-npm install && npm run build:demo
-rm -rf ../robwizzie.github.io/play/scheduler && mkdir -p ../robwizzie.github.io/play/scheduler
-cp -r apps/web/dist-demo/* ../robwizzie.github.io/play/scheduler/
-```
