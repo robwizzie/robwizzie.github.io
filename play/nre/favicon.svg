@@ -48,29 +48,29 @@
 <clipPath id="nr-clip">
 <rect width="512" height="512" rx="114"/>
 </clipPath>
-<marker id="nr-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#007aff"/></marker>
+<marker id="nr-arrow" viewBox="0 0 12 12" refX="3" refY="6" markerWidth="2.6" markerHeight="2.6" markerUnits="strokeWidth" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#007aff"/></marker>
 </defs>
 <g clip-path="url(#nr-clip)">
 <rect width="512" height="512" fill="url(#nr-bg)"/>
 </g>
 <rect class="rim" x="2" y="2" width="508" height="508" rx="112" fill="none" stroke="url(#nr-rim)" stroke-width="4"/>
 <rect class="rim" x=".75" y=".75" width="510.5" height="510.5" rx="113.25" fill="none" stroke="#0b1530" stroke-opacity=".09" stroke-width="1.5"/>
-<path d="M 204 148 H 252 V 188" fill="none" stroke="#007aff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#nr-arrow)"/>
-<path d="M 308 256 H 356 V 296" fill="none" stroke="#007aff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#nr-arrow)"/>
+<path d="M 194 136 H 256 V 190" fill="none" stroke="#007aff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#nr-arrow)"/>
+<path d="M 314 256 H 376 V 310" fill="none" stroke="#007aff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#nr-arrow)"/>
 <g filter="url(#nr-sh)">
-<rect x="92" y="96" width="112" height="104" rx="30" fill="url(#nr-p0)"/>
-<rect x="100" y="101" width="96" height="46" rx="21" fill="url(#nr-gloss)"/>
-<rect x="93.5" y="97.5" width="109" height="101" rx="28.5" fill="none" stroke="url(#nr-prim)" stroke-width="3"/>
+<rect x="88" y="92" width="96" height="88" rx="26" fill="url(#nr-p0)"/>
+<rect x="96" y="97" width="80" height="37" rx="18" fill="url(#nr-gloss)"/>
+<rect x="89.5" y="93.5" width="93" height="85" rx="24.5" fill="none" stroke="url(#nr-prim)" stroke-width="3"/>
 </g>
 <g filter="url(#nr-sh)">
-<rect x="196" y="204" width="112" height="104" rx="30" fill="url(#nr-p1)"/>
-<rect x="204" y="209" width="96" height="46" rx="21" fill="url(#nr-gloss)"/>
-<rect x="197.5" y="205.5" width="109" height="101" rx="28.5" fill="none" stroke="url(#nr-prim)" stroke-width="3"/>
+<rect x="208" y="212" width="96" height="88" rx="26" fill="url(#nr-p1)"/>
+<rect x="216" y="217" width="80" height="37" rx="18" fill="url(#nr-gloss)"/>
+<rect x="209.5" y="213.5" width="93" height="85" rx="24.5" fill="none" stroke="url(#nr-prim)" stroke-width="3"/>
 </g>
 <g filter="url(#nr-sh)">
-<rect x="300" y="312" width="112" height="104" rx="30" fill="url(#nr-p2)"/>
-<rect x="308" y="317" width="96" height="46" rx="21" fill="url(#nr-gloss)"/>
-<rect x="301.5" y="313.5" width="109" height="101" rx="28.5" fill="none" stroke="url(#nr-prim)" stroke-width="3"/>
+<rect x="328" y="332" width="96" height="88" rx="26" fill="url(#nr-p2)"/>
+<rect x="336" y="337" width="80" height="37" rx="18" fill="url(#nr-gloss)"/>
+<rect x="329.5" y="333.5" width="93" height="85" rx="24.5" fill="none" stroke="url(#nr-prim)" stroke-width="3"/>
 </g>
-<path d="M 334 365 l 14 14 l 28 -28" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 354 376 L 368.96 391 L 398 361" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
