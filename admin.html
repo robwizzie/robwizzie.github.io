@@ -23,6 +23,8 @@
         .adm-card h2 small { color: var(--dim); letter-spacing: .06em; text-transform: none; font-family: var(--body); font-size: .8rem; font-weight: 400; }
         .adm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .adm-grid > .adm-card { margin-top: 0; }
+        .adm-page-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+        .adm-page-tabs h3 { font-size: .9rem; margin: 0 0 8px; }
         .adm-row { display: flex; gap: 8px; flex-wrap: wrap; }
         .adm-in { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line-strong); border-radius: 12px; padding: 10px 14px; min-width: 0; flex: 1; }
         .adm-in:focus { outline: none; border-color: var(--blue); }
@@ -108,6 +110,14 @@
             <section class="adm-card"><h2>Campaigns <small>utm_campaign</small></h2><div class="adm-wrap"><table class="adm-table" id="adm-campaigns"></table></div></section>
         </div>
 
+        <section class="adm-card" id="adm-pages">
+            <h2>Private pages <small>The unlisted demos under /play/. A visitor is one browser on one day; tabs are the pages inside each app.</small></h2>
+            <div class="adm-wrap"><table class="adm-table" id="adm-page-totals"></table></div>
+            <div class="adm-page-tabs" id="adm-page-tabs"></div>
+            <h2 style="margin-top:22px">Recent views</h2>
+            <div class="adm-wrap"><table class="adm-table" id="adm-page-recent"></table></div>
+        </section>
+
         <section class="adm-card" id="adm-gb">
             <h2>Guestbook <small>Waiting notes are only visible here and to the person who wrote them.</small></h2>
             <ul class="adm-notes" id="adm-pending"></ul>
@@ -175,6 +185,24 @@
       table($('#adm-campaigns'), ['Campaign', 'Medium', 'Visits'], d.campaigns.map(function (r) { return '<tr><td>' + esc(r.campaign) + '</td><td>' + esc(r.medium || '–') + '</td><td class="n">' + r.n + '</td></tr>'; }));
       table($('#adm-recent'), ['When', 'From', 'Source', 'Tag', 'Page'], d.recent.map(function (r) {
         return '<tr><td>' + when(r.t) + '</td><td>' + esc(place(r)) + '</td><td>' + esc(r.source) + (r.host && r.host !== r.source ? ' <small class="adm-empty">' + esc(r.host) + '</small>' : '') + '</td><td class="adm-tag">' + esc(r.tag || r.campaign || '') + '</td><td>' + esc(r.page || '/') + '</td></tr>';
+      }));
+      // Private pages: totals, which tabs people opened, and the latest views.
+      var pages = d.pages || [], secs = d.pageSections || [], pr = d.pageRecent || [];
+      var NAMES = { '/play/nre/': 'NRE Tracker', '/play/scheduler/': 'Capacity scheduler' };
+      var pname = function (p) { return NAMES[p] || NAMES[p + '/'] || p; };
+      table($('#adm-page-totals'), ['Page', 'Views', 'Visitors', 'Last viewed'], pages.map(function (r) {
+        return '<tr><td><b>' + esc(pname(r.page)) + '</b> <small class="adm-empty">' + esc(r.page) + '</small></td><td class="n">' + r.views + '</td><td class="n">' + r.visitors + '</td><td>' + when(r.last) + '</td></tr>';
+      }));
+      $('#adm-page-tabs').innerHTML = pages.map(function (p) {
+        var mine = secs.filter(function (x) { return x.page === p.page; });
+        if (!mine.length) return '';
+        var max = Math.max.apply(null, mine.map(function (x) { return x.views; }).concat(1));
+        return '<div><h3>' + esc(pname(p.page)) + ' tabs</h3><ul class="adm-bars">' + mine.map(function (x) {
+          return '<li><span>' + esc(x.section) + '</span><b>' + x.views + '</b><i style="width:' + Math.max(2, x.views / max * 100) + '%"></i></li>';
+        }).join('') + '</ul></div>';
+      }).join('');
+      table($('#adm-page-recent'), ['When', 'Page', 'Tab', 'From', 'Source', 'Visitor'], pr.map(function (r) {
+        return '<tr><td>' + when(r.t) + '</td><td>' + esc(pname(r.page)) + '</td><td>' + esc(r.section || '–') + '</td><td>' + esc(place(r)) + '</td><td>' + esc(r.tag ? '?r=' + r.tag : r.source || '–') + '</td><td class="adm-empty" title="Same code = same browser that day">' + esc(String(r.vid || '').slice(0, 6)) + '</td></tr>';
       }));
       $('#adm-pending').innerHTML = d.pending.length ? d.pending.map(function (n) { return note(n, false); }).join('') : '<li class="adm-empty">Nothing waiting. 🎉</li>';
       $('#adm-approved').innerHTML = d.approved.length ? d.approved.map(function (n) { return note(n, true); }).join('') : '<li class="adm-empty">No published notes yet.</li>';

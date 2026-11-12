@@ -16,6 +16,8 @@ const LETTERBOXD_USER = 'robwizzie';
 const LETTERBOXD_TTL = 1800;  // seconds
 const NOTE_MAX = 120, NAME_MAX = 24, NOTES_SHOWN = 40, PENDING_CAP = 300, NOTES_PER_HOUR = 30;
 const SOURCE_DAYS = 120;      // how long visit sources are kept
+const VIEWS_PER_MIN = 600;    // global safety valve on /view
+const VIEW_GAP = 30000;       // the same browser re-viewing the same page and tab within this counts once
 const DEVICES = ['phone', 'tablet', 'desktop'];
 const POOL_LEVELS = ['easy', 'medium', 'hard'];
 const POOL_PER_DAY = 40, POOL_PER_HOUR = 600; // per browser, and a global safety valve
@@ -161,7 +163,7 @@ export default {
     if (route === '/') return json({ ok: true, service: 'rw-live' }, 200, origin);
     if (route === '/letterboxd') return letterboxd(request, origin);
     const admin = route.startsWith('/admin/');
-    if (!['/live', '/visit', '/stats', '/guestbook', '/pool'].includes(route) && !admin) return json({ error: 'not found' }, 404, origin);
+    if (!['/live', '/visit', '/view', '/stats', '/guestbook', '/pool'].includes(route) && !admin) return json({ error: 'not found' }, 404, origin);
     if (admin) {
       if (!env.ADMIN_TOKEN) return json({ error: 'ADMIN_TOKEN is not set. Run: npx wrangler secret put ADMIN_TOKEN' }, 503, origin);
       if (!(await sameSecret(request.headers.get('Authorization') || '', 'Bearer ' + env.ADMIN_TOKEN))) return json({ error: 'unauthorized' }, 401, origin);
@@ -172,7 +174,7 @@ export default {
       if (request.headers.get('Upgrade') !== 'websocket') return json({ error: 'expected websocket' }, 426, origin);
       if (!allowed(origin)) return new Response('forbidden origin', { status: 403 });
     }
-    if (route === '/visit') {
+    if (route === '/visit' || route === '/view') {
       if (request.method !== 'POST') return json({ error: 'POST only' }, 405, origin);
       if (!allowed(origin)) return json({ error: 'forbidden origin' }, 403, origin);
     }
@@ -223,7 +225,11 @@ export class Live {
       CREATE TABLE IF NOT EXISTS pool (level TEXT PRIMARY KEY, w INTEGER NOT NULL, l INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS pool_seen (g TEXT PRIMARY KEY, b TEXT NOT NULL, day TEXT NOT NULL);
       CREATE INDEX IF NOT EXISTS pool_seen_b ON pool_seen (b, day);
+      CREATE TABLE IF NOT EXISTS views (id INTEGER PRIMARY KEY AUTOINCREMENT, t INTEGER NOT NULL, day TEXT NOT NULL, page TEXT NOT NULL, section TEXT, vid TEXT NOT NULL, source TEXT, host TEXT, tag TEXT, city TEXT, region TEXT, country TEXT);
+      CREATE INDEX IF NOT EXISTS views_day ON views (day);
+      CREATE INDEX IF NOT EXISTS views_vid ON views (vid, page, section, t);
     `);
+    this.viewWindow = { m: 0, n: 0 };
     this.poolWindow = { h: 0, n: 0 };
     this.noteWindow = { h: 0, n: 0 };
     // Answer keepalive pings without waking the object.
@@ -236,6 +242,7 @@ export class Live {
     try { place = JSON.parse(request.headers.get('X-RW-Place') || '{}'); } catch (e) {}
     if (url.pathname === '/live') return this.connect(place);
     if (url.pathname === '/visit') return this.visit(place, await request.text());
+    if (url.pathname === '/view') return this.view(place, await request.text());
     if (url.pathname === '/guestbook') return request.method === 'POST' ? this.sign(place, await request.text(), !!request.headers.get('X-RW-Auto')) : json(this.notes());
     if (url.pathname === '/pool') return request.method === 'POST' ? this.poolResult(await request.text()) : json(this.poolTotals());
     if (url.pathname === '/admin/summary') return json(this.summary(+url.searchParams.get('days') || 30));
@@ -290,6 +297,35 @@ export class Live {
     out.counted = counted;
     out.you = { city: place.city || '', region: place.region || '', country: place.country || '', lat: place.lat, lon: place.lon };
     return json(out);
+  }
+
+  /* ---------- Page views (the unlisted demos under /play/) ----------
+     Every load and in-app tab of a page, for the admin page only: nothing here reaches /stats or the public map. */
+  async view(place, raw) {
+    let id = '', body = {};
+    try { body = JSON.parse(raw || '{}') || {}; id = String(body.id || ''); } catch (e) {}
+    if (!/^[A-Za-z0-9_-]{8,64}$/.test(id)) return json({ error: 'bad id' }, 400);
+    const page = clean(body.path, 80).replace(/[?#].*$/, '');
+    if (!/^\/play\/[a-z0-9-]+\/?$/.test(page)) return json({ error: 'bad page' }, 400);
+    const section = slug(body.section, 40);
+    const now = Date.now(), day = new Date(now).toISOString().slice(0, 10);
+    const minute = Math.floor(now / 60000);
+    if (this.viewWindow.m !== minute) this.viewWindow = { m: minute, n: 0 };
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('view:' + day + ':' + id));
+    const vid = [...new Uint8Array(digest).slice(0, 12)].map((b) => b.toString(16).padStart(2, '0')).join('');
+    const recent = this.sql.exec('SELECT 1 FROM views WHERE vid = ? AND page = ? AND section = ? AND t > ?', vid, page, section, now - VIEW_GAP).toArray().length > 0;
+    let counted = false;
+    if (!recent && this.viewWindow.n++ < VIEWS_PER_MIN) {
+      counted = true;
+      const host = hostOf(body.ref), utm = clean(body.utm_source, 40);
+      this.sql.exec('INSERT INTO views (t, day, page, section, vid, source, host, tag, city, region, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        now, day, page, section, vid, sourceOf(host, utm), host, slug(body.r, 40), place.city || '', place.region || '', place.country || '');
+    }
+    if (now - (this.lastViewPrune || 0) > 3600000) {
+      this.sql.exec('DELETE FROM views WHERE day < ?', new Date(now - SOURCE_DAYS * 86400000).toISOString().slice(0, 10));
+      this.lastViewPrune = now;
+    }
+    return json({ counted });
   }
 
   stats() {
@@ -391,7 +427,12 @@ export class Live {
       daily: q('SELECT day, COUNT(*) AS n FROM sources WHERE day >= ? GROUP BY day ORDER BY day', since),
       recent: q('SELECT t, source, host, tag, campaign, page, city, region, country FROM sources ORDER BY id DESC LIMIT 60'),
       pending: q("SELECT id, t, name, note, city, region, country FROM notes WHERE status = 'pending' ORDER BY id DESC LIMIT 100"),
-      approved: q("SELECT id, t, name, note, city, region, country FROM notes WHERE status = 'ok' ORDER BY id DESC LIMIT 100")
+      approved: q("SELECT id, t, name, note, city, region, country FROM notes WHERE status = 'ok' ORDER BY id DESC LIMIT 100"),
+      // The unlisted demos: views, visitors (a visitor is one browser on one day), last view, and which tabs.
+      pages: q('SELECT page, COUNT(*) AS views, COUNT(DISTINCT vid) AS visitors, MAX(t) AS last FROM views WHERE day >= ? GROUP BY page ORDER BY last DESC', since),
+      pageSections: q("SELECT page, section, COUNT(*) AS views FROM views WHERE day >= ? AND section != '' GROUP BY page, section ORDER BY views DESC LIMIT 60", since),
+      pageDaily: q('SELECT day, COUNT(*) AS views FROM views WHERE day >= ? GROUP BY day ORDER BY day', since),
+      pageRecent: q('SELECT t, page, section, vid, source, host, tag, city, region, country FROM views ORDER BY id DESC LIMIT 80')
     };
   }
 
